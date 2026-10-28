@@ -25,7 +25,7 @@ const categoryInfo: { name: Exclude<Category, "All">; img: string; desc: string 
   { name: "Shoes", img: "photo-1542291026-7eec264c27ff", desc: "Step out in style" },
   { name: "Cosmetics", img: "photo-1596462502278-27bfdc403348", desc: "Your daily glow" },
   { name: "Accessories", img: "photo-1548036328-c9fa89d128fa", desc: "Finish the look" },
-  { name: "Socks", img: "photo-1586350977771-b3b0c4e?x=1", desc: "Everyday comfort" },
+  { name: "Socks", img: "photo-1586350977771-b3b0c4e", desc: "Everyday comfort" },
   { name: "Shoe Care", img: "photo-1525966222134-fcfa99b8ae77", desc: "Keep them fresh" },
   { name: "Hair & Body Care", img: "photo-1547887538-e3a2f32cb1cc", desc: "Feel fresh daily" }
 ];
