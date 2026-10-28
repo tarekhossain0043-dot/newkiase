@@ -23,3 +23,37 @@
 @media(max-width:760px){.product .quick-add{min-height:40px;margin-top:9px;padding:10px 5px;font-size:10px}}
 @media(max-width:420px){.product .quick-add{min-height:38px;margin-top:8px;padding:9px 3px;font-size:9px;gap:4px}}
 @media(max-width:360px){.product .quick-add{font-size:8px;gap:3px;padding:8px 2px}}
+
+
+/* Sticky storefront header and manual wallet payment proof UI */
+.header{position:sticky;top:0;z-index:50;background:rgba(247,246,241,.97);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 4px 16px #24241f08}
+html{scroll-padding-top:100px}
+.payment-option{display:flex!important;flex-direction:row!important;align-items:center;gap:10px!important;padding:14px!important;border:1px solid #e4e1d9;background:#fff;border-radius:4px;cursor:pointer}
+.payment-option.selected{border-color:var(--purple);background:#f4f0fa}
+.payment-option input{accent-color:var(--purple);flex-shrink:0}
+.payment-option>span{display:flex;flex-direction:column;gap:5px}
+.payment-option small{display:block;font-size:10px;color:var(--muted);font-weight:400;line-height:1.5}
+.manual-payment{margin:18px 0 24px;padding:clamp(14px,3vw,22px);border:1px solid #e7dff1;background:#fbf9ff;border-radius:5px;min-width:0}
+.manual-payment-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:17px}
+.wallet-symbol{width:38px;height:38px;border-radius:8px;display:grid;place-items:center;color:white;flex-shrink:0}
+.manual-payment-head>div:nth-child(2){display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}
+.manual-payment-head b{font-size:12px}
+.manual-payment-head small{font-size:10px;color:var(--muted)}
+.pending-pill{font-size:9px;background:#fff0cf;color:#805c11;border-radius:20px;padding:6px 9px}
+.payment-steps{padding-left:20px;margin:0 0 18px;font-size:11px;line-height:1.8;color:#55544d}
+.payment-steps li{padding:3px 0}
+.checkout-form .recipient-label{font-size:10px}
+.recipient-number{display:flex;gap:8px;min-width:0}
+.recipient-number input{flex:1;min-width:0;background:#f3f0f8!important;font-size:15px!important;font-weight:700;letter-spacing:.5px}
+.recipient-number button{display:flex;align-items:center;justify-content:center;gap:5px;flex-shrink:0;border:1px solid #d7cde6;background:#fff;border-radius:3px;padding:0 11px;font-size:10px}
+.checkout-form .manual-payment>label{margin-bottom:15px}
+.payment-warning{display:flex;align-items:flex-start;gap:7px;font-size:10px;line-height:1.7;color:#87571c;background:#fff5e7;padding:11px;border-radius:3px;margin:8px 0 17px;overflow-wrap:anywhere}
+.payment-warning svg{flex-shrink:0;margin-top:2px}
+.manual-review{padding:13px;background:#fbf9ff;border:1px solid #e7dff1;border-radius:4px}
+.manual-review>div{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #e9e3f0;font-size:11px}
+.manual-review>div span{color:var(--muted)}
+.manual-review>div b{text-align:right;overflow-wrap:anywhere}
+.pending-text{display:inline-flex;align-items:center;gap:5px;color:#895f16}
+.manual-review>p{font-size:10px;line-height:1.7;color:var(--muted);margin-bottom:0}
+@media(max-width:760px){.header{min-height:68px;top:0}.manual-payment{padding:14px}.pending-pill{margin-left:48px}}
+@media(max-width:360px){.header{gap:5px;padding:0 10px}.logo{font-size:25px}.actions{gap:3px}.bag{padding:8px 7px;gap:4px}.manual-payment-head{gap:7px}.pending-pill{margin-left:0}.recipient-number{gap:5px}.recipient-number button{padding:0 7px}}
