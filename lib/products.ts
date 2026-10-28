@@ -1,4 +1,4 @@
-"export type Category = "All" | "Shoes" | "Cosmetics" | "Accessories" | "Socks" | "Shoe Care" | "Hair & Body Care";
+export type Category = "All" | "Shoes" | "Cosmetics" | "Accessories" | "Socks" | "Shoe Care" | "Hair & Body Care";
 export type Product = { id: number; name: string; category: Exclude<Category, "All">; brand: string; price: number; old?: number; rating: string; image: string; badge?: string; description: string };
 export const categories: Category[] = ["All", "Shoes", "Cosmetics", "Accessories", "Socks", "Shoe Care", "Hair & Body Care"];
 const catalog: { category: Product["category"]; brands: string[]; names: string[]; images: string[]; base: number; description: string }[] = [
