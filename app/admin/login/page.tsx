@@ -1,10 +1,10 @@
 "use client";
-import { FormEvent, useState } from "react";
+import { FormEvent, Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { LockKeyhole, Eye, EyeOff, ShieldCheck, ArrowRight } from "lucide-react";
 
-export default function AdminLogin() {
+function AdminLoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
@@ -70,5 +70,14 @@ export default function AdminLogin() {
         <p className="admin-login-legal">© {new Date().getFullYear()} NEXORA. Secure administrator access.</p>
       </section>
     </main>
+  );
+}
+
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={<main className="admin-login-page"><section className="admin-login-panel"><p>Loading secure sign-in…</p></section></main>}>
+      <AdminLoginForm />
+    </Suspense>
   );
 }
