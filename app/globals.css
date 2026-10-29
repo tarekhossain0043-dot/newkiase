@@ -313,3 +313,22 @@ main{overflow-x:clip;overflow-y:visible}
 .admin-nav-group-toggle .group-chevron{transition:transform .18s ease}
 .admin-nav-group-toggle .group-chevron.expanded{transform:rotate(180deg)}
 @media(prefers-reduced-motion:reduce){.admin-nav-group-toggle .group-chevron{transition:none}}
+
+
+/* Live admin notification popover */
+.admin-notification-wrap{position:relative;flex:0 0 auto}
+.admin-notification-popover{position:absolute;right:0;top:calc(100% + 10px);z-index:1000;width:min(360px,calc(100vw - 32px));max-height:420px;overflow-y:auto;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 18px 48px #10182824;color:#20231f}
+.admin-notification-heading{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;background:#fff;border-bottom:1px solid #edf0e8}
+.admin-notification-heading b{font-size:13px}
+.admin-notification-heading button{border:0;background:none;color:#687c40;font-size:11px;cursor:pointer}
+.admin-notification-item{display:flex;width:100%;gap:10px;align-items:flex-start;padding:12px 14px;border:0;border-bottom:1px solid #f0f1ed;background:#fff;text-align:left;cursor:pointer}
+.admin-notification-item:hover{background:#f8faF3}
+.admin-notification-item.read{opacity:.62}
+.admin-notification-dot{width:8px;height:8px;flex:0 0 8px;margin-top:5px;border-radius:50%;background:#b7d96b}
+.admin-notification-item>span:last-child{display:flex;flex-direction:column;gap:4px;min-width:0}
+.admin-notification-item b{font-size:12px;font-weight:650}
+.admin-notification-item small{font-size:11px;color:#777e72;overflow-wrap:anywhere}
+.admin-notification-empty{padding:20px 16px;color:#777e72;font-size:12px}
+.admin-sales-panel .chart-bars{align-items:stretch}
+.admin-sales-panel .chart-bar-column{min-width:0;flex:1}
+@media(max-width:640px){.admin-notification-popover{right:-55px}}
