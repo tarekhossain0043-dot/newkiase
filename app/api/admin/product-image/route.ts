@@ -40,7 +40,7 @@ export async function POST(request: Request) {
       if (createError && !createError.message.toLowerCase().includes("already exists")) throw createError;
     }
 
-    const safeBase = file.name.replace(/\\.[^.]+$/, "").toLowerCase().replace(/[^a-z0-9-_]+/g, "-").slice(0, 50) || "product";
+    const safeBase = file.name.split(".").slice(0, -1).join(".").toLowerCase().replace(/[^a-z0-9-_]+/g, "-").slice(0, 50) || "product";
     const path = `${Date.now()}-${crypto.randomUUID()}-${safeBase}.${extension}`;
     const { error: uploadError } = await storage.from(BUCKET).upload(path, file, {
       contentType: file.type,
