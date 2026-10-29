@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseServiceClient } from "@/lib/supabase/service";
 
 const validPaymentMethods = ["cod", "bkash_manual", "nagad_manual"] as const;
 
@@ -7,6 +8,7 @@ export async function POST(request: Request) {
   try {
     const supabase = await createSupabaseServerClient();
     const { data: { user } } = await supabase.auth.getUser();
+    const db = createSupabaseServiceClient();
     const body = await request.json();
 
     const customerName = typeof body.customer_name === "string" ? body.customer_name.trim() : "";
@@ -62,7 +64,7 @@ export async function POST(request: Request) {
     const total = subtotal + deliveryFee;
     const paymentStatus = method === "cod" ? "unpaid" : "pending_verification";
 
-    const { data: order, error: orderError } = await supabase.from("orders").insert({
+    const { data: order, error: orderError } = await db.from("orders").insert({
       customer_id: user?.id ?? null,
       customer_name: customerName,
       customer_phone: phone,
@@ -78,13 +80,13 @@ export async function POST(request: Request) {
     }).select("*").single();
     if (orderError || !order) return NextResponse.json({ error: "Could not create order." }, { status: 500 });
 
-    const { error: itemsError } = await supabase.from("order_items").insert(orderLines.map(line => ({ ...line, order_id: order.id })));
+    const { error: itemsError } = await db.from("order_items").insert(orderLines.map(line => ({ ...line, order_id: order.id })));
     if (itemsError) {
-      await supabase.from("orders").delete().eq("id", order.id);
+      await db.from("orders").delete().eq("id", order.id);
       return NextResponse.json({ error: "Could not save order items." }, { status: 500 });
     }
 
-    const { error: paymentError } = await supabase.from("payments").insert({
+    const { error: paymentError } = await db.from("payments").insert({
       order_id: order.id,
       method,
       status: paymentStatus,
@@ -92,7 +94,7 @@ export async function POST(request: Request) {
       transaction_reference: typeof body.transaction_reference === "string" ? body.transaction_reference.trim().slice(0, 80) : null,
     });
     if (paymentError) {
-      await supabase.from("orders").delete().eq("id", order.id);
+      await db.from("orders").delete().eq("id", order.id);
       return NextResponse.json({ error: "Could not save payment details." }, { status: 500 });
     }
 
