@@ -63,9 +63,10 @@ export async function POST(request: Request) {
       const duplicate = error.code === "23505";
       return NextResponse.json({ error: duplicate ? "SKU or slug already exists." : "Could not create product." }, { status: duplicate ? 409 : 400 });
     }
-    if (typeof body.image_url === "string" && body.image_url.trim()) {
-      const { error: imageError } = await supabase.from("product_images").insert({ product_id: data.id, storage_path: body.image_url.trim().slice(0, 2000), alt_text: name, sort_order: 0 });
-      if (imageError) { await supabase.from("products").delete().eq("id", data.id); return NextResponse.json({ error: "Product image URL could not be saved." }, { status: 400 }); }
+    const imageUrls = Array.isArray(body.image_urls) ? body.image_urls.filter((v: unknown) => typeof v === "string" && v.trim()).slice(0, 5) : (typeof body.image_url === "string" && body.image_url.trim() ? [body.image_url.trim()] : []);
+    if (imageUrls.length) {
+      const { error: imageError } = await supabase.from("product_images").insert(imageUrls.map((storage_path: string, index: number) => ({ product_id: data.id, storage_path: storage_path.slice(0, 2000), alt_text: name, sort_order: index })));
+      if (imageError) { await supabase.from("products").delete().eq("id", data.id); return NextResponse.json({ error: "Product images could not be saved." }, { status: 400 }); }
     }
     return NextResponse.json({ product: data }, { status: 201 });
   } catch {
