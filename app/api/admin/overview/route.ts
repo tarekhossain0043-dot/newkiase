@@ -14,15 +14,26 @@ export async function GET(request: Request) {
     start.setDate(start.getDate() - (days - 1));
     start.setHours(0, 0, 0, 0);
 
-    const [{ data: orders, error: ordersError }, { count: customers, error: customersError }, { data: items, error: itemsError }, { data: payments, error: paymentsError }] = await Promise.all([
+    const [
+      { data: orders, error: ordersError },
+      { count: customers, error: customersError },
+      { data: items, error: itemsError },
+      { data: payments, error: paymentsError },
+    ] = await Promise.all([
       supabase.from("orders").select("id,total,status,created_at,customer_id,order_number,payment_status").order("created_at", { ascending: false }).limit(10000),
       supabase.from("profiles").select("id", { count: "exact", head: true }).eq("role", "customer"),
+      supabase.from("order_items").select("product_name,line_total,quantity,order_id,orders!inner(status)").limit(10000),
+      supabase.from("payments").select("method,status,order_id,orders!inner(status,total)").limit(10000),
     ]);
     if (ordersError) throw ordersError;
-    if (customersError) throw customersError;\n    if (itemsError) throw itemsError;\n    if (paymentsError) throw paymentsError;
+    if (customersError) throw customersError;
+    if (itemsError) throw itemsError;
+    if (paymentsError) throw paymentsError;
+
     const all = orders || [];
     const revenueEligible = (o: any) => !["cancelled", "returned"].includes(String(o.status).toLowerCase());
-    const totalSales = all.filter(revenueEligible).reduce((sum: number, o: any) => sum + Number(o.total || 0), 0);
+    const sumRevenue = (rows: any[]) => rows.filter(revenueEligible).reduce((sum: number, o: any) => sum + Number(o.total || 0), 0);
+    const totalSales = sumRevenue(all);
     const netRevenue = all.filter((o: any) => revenueEligible(o) && o.payment_status === "verified").reduce((sum: number, o: any) => sum + Number(o.total || 0), 0);
     const startMs = start.getTime();
     const currentPeriod = all.filter((o: any) => new Date(o.created_at).getTime() >= startMs);
@@ -32,7 +43,6 @@ export async function GET(request: Request) {
       const time = new Date(o.created_at).getTime();
       return time >= previousStart.getTime() && time < startMs;
     });
-    const sumRevenue = (rows: any[]) => rows.filter(revenueEligible).reduce((sum: number, o: any) => sum + Number(o.total || 0), 0);
     const percentChange = (current: number, previous: number) => previous === 0 ? (current > 0 ? 100 : 0) : Math.round(((current - previous) / previous) * 1000) / 10;
     const chart = Array.from({ length: days }, (_, index) => {
       const day = new Date(start);
@@ -41,31 +51,46 @@ export async function GET(request: Request) {
       const matching = currentPeriod.filter((o: any) => new Date(o.created_at).toISOString().slice(0, 10) === key);
       return { label: days === 7 ? day.toLocaleDateString("en-US", { weekday: "short" }) : days === 30 ? String(day.getDate()) : day.toLocaleDateString("en-US", { month: "short", day: "numeric" }), date: key, sales: Math.round(sumRevenue(matching) * 100) / 100, orders: matching.length };
     });
-    const topProducts = (items || []).filter((item: any) => !["cancelled", "returned"].includes(String(item.orders?.status || "").toLowerCase())).reduce((acc: Record<string, any>, item: any) => { const name = String(item.product_name || "Product"); if (!acc[name]) acc[name] = { name, revenue: 0, units: 0 }; acc[name].revenue += Number(item.line_total || 0); acc[name].units += Number(item.quantity || 0); return acc; }, {} as Record<string, any>);\n    const paymentTotals = (payments || []).filter((p: any) => !["cancelled", "returned"].includes(String(p.orders?.status || "").toLowerCase())).reduce((acc: Record<string, number>, p: any) => { const method = String(p.method || "other"); acc[method] = (acc[method] || 0) + Number(p.orders?.total || 0); return acc; }, {} as Record<string, number>);\n    const paymentBreakdown = Object.entries(paymentTotals).map(([method, total]) => ({ method, total, percent: sumRevenue(all) > 0 ? Math.round(Number(total) / sumRevenue(all) * 100) : 0 }));\n    const notifications = all.slice(0, 8).map((o: any) => ({
+
+    const topProductMap = (items || []).filter((item: any) => !["cancelled", "returned"].includes(String(item.orders?.status || "").toLowerCase())).reduce((acc: Record<string, any>, item: any) => {
+      const name = String(item.product_name || "Product");
+      if (!acc[name]) acc[name] = { name, revenue: 0, units: 0 };
+      acc[name].revenue += Number(item.line_total || 0);
+      acc[name].units += Number(item.quantity || 0);
+      return acc;
+    }, {} as Record<string, any>);
+    const totalPaymentRevenue = sumRevenue(all);
+    const paymentTotals = (payments || []).filter((p: any) => !["cancelled", "returned"].includes(String(p.orders?.status || "").toLowerCase())).reduce((acc: Record<string, number>, p: any) => {
+      const method = String(p.method || "other");
+      acc[method] = (acc[method] || 0) + Number(p.orders?.total || 0);
+      return acc;
+    }, {} as Record<string, number>);
+    const paymentBreakdown = Object.entries(paymentTotals).map(([method, total]) => ({ method, total, percent: totalPaymentRevenue > 0 ? Math.round(Number(total) / totalPaymentRevenue * 100) : 0 }));
+    const notifications = all.slice(0, 8).map((o: any) => ({
       id: o.id,
       title: "New order received",
       description: `${o.order_number || "Order"} · ${moneySafe(Number(o.total || 0))} · ${String(o.status || "pending").replaceAll("_", " ")}`,
       created_at: o.created_at,
       read: false,
     }));
-    const recent = all.slice(0, 5);
-    const previousRevenue = sumRevenue(previousPeriod);
-    const currentRevenue = sumRevenue(currentPeriod);
+
     return NextResponse.json({
       metrics: {
-        totalSales, totalOrders: all.length, totalCustomers: customers || 0, netRevenue,
-        salesChange: percentChange(currentRevenue, previousRevenue),
+        totalSales,
+        totalOrders: all.length,
+        totalCustomers: customers || 0,
+        netRevenue,
+        salesChange: percentChange(sumRevenue(currentPeriod), sumRevenue(previousPeriod)),
         ordersChange: percentChange(currentPeriod.length, previousPeriod.length),
-        customersChange: 0,
-        netRevenueChange: 0,
       },
       chart,
       notifications,
-      recentOrderIds: recent.map((o: any) => o.id),
+      topProducts: Object.values(topProductMap).sort((a: any, b: any) => b.revenue - a.revenue).slice(0, 4),
+      paymentBreakdown,
       period,
       generatedAt: now.toISOString(),
     }, { headers: { "Cache-Control": "no-store, max-age=0" } });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Could not load live dashboard analytics. Check admin access and database configuration." }, { status: 500 });
   }
 }
