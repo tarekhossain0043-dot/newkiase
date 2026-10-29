@@ -13,10 +13,10 @@ export default function ProductPage(){
  const [activeImage,setActiveImage]=useState(0); const [galleryOpen,setGalleryOpen]=useState(false);
  const [zoom,setZoom]=useState(false); const [origin,setOrigin]=useState("50% 50%");
  const [reviews,setReviews]=useState<Review[]>([]); const [reviewName,setReviewName]=useState(""); const [reviewRating,setReviewRating]=useState(5); const [reviewComment,setReviewComment]=useState(""); const [reviewNotice,setReviewNotice]=useState("");
- useEffect(()=>{if(!p)return;try{setReviews(JSON.parse(localStorage.getItem("nexora-reviews-"+p.id)||"[]"))}catch{}},[p?.id]);
+ useEffect(()=>{setSize("");setAdded(false);setActiveImage(0);if(!p)return;try{setReviews(JSON.parse(localStorage.getItem("nexora-reviews-"+p.id)||"[]"))}catch{}},[p?.id]);
  const gallery=useMemo(()=>{if(!p)return [];const urls=[...(productGallery.length?productGallery:[p.image])];return urls.filter((url,i,arr)=>url&&arr.indexOf(url)===i).slice(0,5)},[p,productGallery]);
  if(loading)return <main className="checkout-page"><a href="/">← Back to shop</a><h1>Loading product…</h1></main>;if(!p)return <main className="checkout-page"><a href="/">← Back to shop</a><h1>Product not found</h1><p>This product may be unpublished or archived.</p></main>;
- const inStock=p.stock>0; const needsSize=p.category==="Shoes"||p.category==="Socks";
+ const inStock=p.stock>0; const needsSize=Array.isArray(p.sizes)&&p.sizes.length>0;
  const related=liveProducts.filter(x=>x.category===p.category&&String(x.id)!==String(p.id)).slice(0,4);
  const avg=reviews.length?reviews.reduce((sum,r)=>sum+r.rating,0)/reviews.length:Number(p.rating);
  const onZoomMove=(e:React.MouseEvent<HTMLDivElement>)=>{const rect=e.currentTarget.getBoundingClientRect();setOrigin(((e.clientX-rect.left)/rect.width*100)+"% "+((e.clientY-rect.top)/rect.height*100)+"%")};
