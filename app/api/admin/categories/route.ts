@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     const { supabase } = await requireAdmin();
     const body = await request.json();
     const name = typeof body.name === "string" ? body.name.trim() : "";
-    const slug = makeSlug(typeof body.slug === "string" && body.slug.trim() ? body.slug : name);
+    const slug = makeSlug(typeof body.slug === "string" && body.slug.trim() ? body.slug : name) || ("category-" + Date.now());
     if (!name || name.length > 100 || !slug) return NextResponse.json({ error: "A valid category name is required." }, { status: 400 });
     const { data, error } = await supabase.from("categories").insert({
       name, slug,
