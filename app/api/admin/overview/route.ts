@@ -27,13 +27,25 @@ export async function GET(request: Request) {
       supabase.from("payments").select("method,status,order_id,orders!inner(status,total)").limit(10000),
       supabase.from("products").select("id,cost_price").limit(10000),
     ]);
-    if (ordersError) throw ordersError;
-    if (customersError) throw customersError;
-    if (itemsError) throw itemsError;
-    if (paymentsError) throw paymentsError;
-    if (productsError) throw productsError;
+    // Orders are the core dashboard source. Other analytics are optional so a
+    // missing cost_price column or payments table does not blank the entire dashboard.
+    if (ordersError) {
+      console.error("[admin/overview] orders query failed:", ordersError);
+      return NextResponse.json({
+        error: "Dashboard could not read orders from Supabase.",
+        diagnostic: { source: "orders", code: ordersError.code ?? null, message: ordersError.message ?? "Unknown database error" },
+      }, { status: 500 });
+    }
+    if (customersError) console.error("[admin/overview] customer count unavailable:", customersError);
+    if (itemsError) console.error("[admin/overview] order item analytics unavailable:", itemsError);
+    if (paymentsError) console.error("[admin/overview] payment breakdown unavailable:", paymentsError);
+    if (productsError) console.error("[admin/overview] product cost analytics unavailable:", productsError);
 
     const all = orders || [];
+    const safeCustomers = customersError ? 0 : (customers || 0);
+    const safeItems = itemsError ? [] : (items || []);
+    const safePayments = paymentsError ? [] : (payments || []);
+    const safeProducts = productsError ? [] : (products || []);
     const revenueEligible = (o: any) => !["cancelled", "returned"].includes(String(o.status).toLowerCase());
     const sumRevenue = (rows: any[]) => rows.filter(revenueEligible).reduce((sum: number, o: any) => sum + Number(o.total || 0), 0);
     const totalSales = sumRevenue(all);
@@ -53,14 +65,14 @@ export async function GET(request: Request) {
       const key = day.toISOString().slice(0, 10);
       const matching = currentPeriod.filter((o: any) => new Date(o.created_at).toISOString().slice(0, 10) === key);
       const orderIds = new Set(matching.map((o: any) => o.id));
-      const costMap = new Map((products || []).map((p: any) => [p.id, Number(p.cost_price || 0)]));
-      const soldItems = (items || []).filter((item: any) => orderIds.has(item.order_id));
+      const costMap = new Map(safeProducts.map((p: any) => [p.id, Number(p.cost_price || 0)]));
+      const soldItems = safeItems.filter((item: any) => orderIds.has(item.order_id));
       const cost = soldItems.reduce((sum: number, item: any) => sum + Number(item.quantity || 0) * Number(costMap.get(item.product_id) || 0), 0);
       const sales = sumRevenue(matching);
       return { label: days === 7 ? day.toLocaleDateString("en-US", { weekday: "short" }) : days === 30 ? String(day.getDate()) : day.toLocaleDateString("en-US", { month: "short", day: "numeric" }), date: key, sales: Math.round(sales * 100) / 100, orders: matching.length, cost: Math.round(cost * 100) / 100, profit: Math.round((sales-cost)*100)/100, loss: Math.round(Math.max(0,cost-sales)*100)/100 };
     });
 
-    const topProductMap = (items || []).filter((item: any) => !["cancelled", "returned"].includes(String(item.orders?.status || "").toLowerCase())).reduce((acc: Record<string, any>, item: any) => {
+    const topProductMap = safeItems.filter((item: any) => !["cancelled", "returned"].includes(String(item.orders?.status || "").toLowerCase())).reduce((acc: Record<string, any>, item: any) => {
       const name = String(item.product_name || "Product");
       if (!acc[name]) acc[name] = { name, revenue: 0, units: 0 };
       acc[name].revenue += Number(item.line_total || 0);
@@ -68,7 +80,7 @@ export async function GET(request: Request) {
       return acc;
     }, {} as Record<string, any>);
     const totalPaymentRevenue = sumRevenue(all);
-    const paymentTotals = (payments || []).filter((p: any) => !["cancelled", "returned"].includes(String(p.orders?.status || "").toLowerCase())).reduce((acc: Record<string, number>, p: any) => {
+    const paymentTotals = safePayments.filter((p: any) => !["cancelled", "returned"].includes(String(p.orders?.status || "").toLowerCase())).reduce((acc: Record<string, number>, p: any) => {
       const method = String(p.method || "other");
       acc[method] = (acc[method] || 0) + Number(p.orders?.total || 0);
       return acc;
@@ -86,7 +98,7 @@ export async function GET(request: Request) {
       metrics: {
         totalSales,
         totalOrders: all.length,
-        totalCustomers: customers || 0,
+        totalCustomers: safeCustomers,
         netRevenue,
         salesChange: percentChange(sumRevenue(currentPeriod), sumRevenue(previousPeriod)),
         ordersChange: percentChange(currentPeriod.length, previousPeriod.length),
@@ -100,7 +112,11 @@ export async function GET(request: Request) {
     }, { headers: { "Cache-Control": "no-store, max-age=0" } });
   } catch (error) {
     console.error("[admin/overview] Failed to load dashboard analytics:", error);
-    return NextResponse.json({ error: "Could not load live dashboard analytics. Check the Vercel function logs and apply the latest Supabase migrations." }, { status: 500 });
+    const message = error instanceof Error ? error.message : "Unknown server error";
+    return NextResponse.json({
+      error: "Could not load live dashboard analytics.",
+      diagnostic: { message },
+    }, { status: 500 });
   }
 }
 function moneySafe(n: number) { return "৳" + n.toLocaleString("en-BD"); }
