@@ -19,6 +19,8 @@ export async function GET(request: Request) {
       .order("created_at", { ascending: false })
       .limit(limit);
 
+    const id = (searchParams.get("id") || "").trim();
+    if (id) query = query.eq("id", id);
     if (category) query = query.eq("categories.slug", category);
     if (brand) query = query.ilike("brand", brand);
     if (q) query = query.or(`name.ilike.%${q.replace(/[,%()]/g, " ")}%,brand.ilike.%${q.replace(/[,%()]/g, " ")}%,sku.ilike.%${q.replace(/[,%()]/g, " ")}%`);
