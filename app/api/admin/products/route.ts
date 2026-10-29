@@ -1,6 +1,16 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/supabase/admin";
 
+function isStoredProductImage(value: string) {
+  try {
+    const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (!base) return false;
+    const expected = new URL(base);
+    const image = new URL(value);
+    return image.origin === expected.origin && image.pathname.startsWith("/storage/v1/object/public/product-images/");
+  } catch { return false; }
+}
+
 export async function GET() {
   try {
     const { supabase } = await requireAdmin();
