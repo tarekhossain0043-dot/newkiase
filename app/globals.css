@@ -299,3 +299,17 @@ main{overflow-x:clip;overflow-y:visible}
  .admin-sidebar-scrim{position:fixed;inset:0;z-index:250;background:#10120dcc;border:0}
 }
 @media(prefers-reduced-motion:reduce){.group-chevron,.admin-sidebar{transition:none}}
+
+
+/* Admin sidebar accordion: one open group, vertically stacked child links. */
+.admin-sidebar{overflow:hidden}
+.admin-nav{min-height:0;overflow-y:auto;overscroll-behavior:contain}
+.admin-nav-group-items{display:flex;flex-direction:column;align-items:stretch;gap:3px;margin:0 0 0 9px;padding:2px 0 5px 10px;border-left:1px solid #45483f}
+.admin-nav-group-items>button{box-sizing:border-box;display:flex;width:100%;min-width:0;min-height:34px;height:auto;align-items:center;gap:9px;margin:0;padding:8px 9px;border:1px solid transparent;border-radius:5px;background:transparent;color:#c1c4bb;text-align:left;font:inherit;font-size:10px;line-height:1.35;cursor:pointer}
+.admin-nav-group-items>button span{flex:1;min-width:0}
+.admin-nav-group-items>button svg{flex:0 0 16px}
+.admin-nav-group-items>button:hover{background:#ffffff0d;color:#fff}
+.admin-nav-group-items>button.active{background:#d8ed8b;color:#282a23;font-weight:700}
+.admin-nav-group-toggle .group-chevron{transition:transform .18s ease}
+.admin-nav-group-toggle .group-chevron.expanded{transform:rotate(180deg)}
+@media(prefers-reduced-motion:reduce){.admin-nav-group-toggle .group-chevron{transition:none}}
