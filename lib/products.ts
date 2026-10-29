@@ -1,5 +1,5 @@
-export type Category = "All" | "Shoes" | "Cosmetics" | "Accessories" | "Socks" | "Shoe Care" | "Hair & Body Care";
-export type Product = { id: number; name: string; category: Exclude<Category, "All">; brand: string; price: number; old?: number; rating: string; image: string; badge?: string; description: string; stock: number; sizes: string[]; sku: string; color: string; };
+export type Category = "All" | string;
+export type Product = { id: number | string; name: string; category: Exclude<Category, "All">; brand: string; price: number; old?: number; rating: string; image: string; badge?: string; description: string; stock: number; sizes: string[]; sku: string; color: string; };
 const sizeOptions = (category: Product["category"], i: number): string[] => category === "Shoes" ? ["EU 38","EU 39","EU 40","EU 41","EU 42","EU 43","EU 44"].filter((_,n)=>n >= (i%3===0?0:1)) : category === "Socks" ? ["S","M","L","Free Size"] : category === "Accessories" ? ["One Size"] : category === "Cosmetics" ? ["10 ml","30 ml","50 ml"] : category === "Hair & Body Care" ? ["100 ml","200 ml","400 ml"] : ["50 g","100 g","150 g"];
 export const categories: Category[] = ["All", "Shoes", "Cosmetics", "Accessories", "Socks", "Shoe Care", "Hair & Body Care"];
 const catalog: { category: Product["category"]; brands: string[]; names: string[]; images: string[]; base: number; description: string }[] = [
