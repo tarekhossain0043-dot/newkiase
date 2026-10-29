@@ -98,8 +98,9 @@ export async function GET(request: Request) {
       period,
       generatedAt: now.toISOString(),
     }, { headers: { "Cache-Control": "no-store, max-age=0" } });
-  } catch {
-    return NextResponse.json({ error: "Could not load live dashboard analytics. Check admin access and database configuration." }, { status: 500 });
+  } catch (error) {
+    console.error("[admin/overview] Failed to load dashboard analytics:", error);
+    return NextResponse.json({ error: "Could not load live dashboard analytics. Check the Vercel function logs and apply the latest Supabase migrations." }, { status: 500 });
   }
 }
 function moneySafe(n: number) { return "৳" + n.toLocaleString("en-BD"); }
