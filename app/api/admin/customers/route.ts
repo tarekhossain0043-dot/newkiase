@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const { supabase } = await requireAdmin();
     const [{ data: profiles, error: profileError }, { data: orders, error: orderError }] = await Promise.all([
-      supabase.from("profiles").select("id,full_name,phone,role,created_at").eq("role", "customer").order("created_at", { ascending: false }).limit(2000),
+      supabase.from("profiles").select("id,full_name,email,phone,role,created_at").eq("role", "customer").order("created_at", { ascending: false }).limit(2000),
       supabase.from("orders").select("customer_id,customer_name,customer_email,total,status,created_at").order("created_at", { ascending: false }).limit(10000),
     ]);
     if (profileError) throw profileError;
