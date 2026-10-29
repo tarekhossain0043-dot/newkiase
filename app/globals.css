@@ -364,3 +364,28 @@ main{overflow-x:clip;overflow-y:visible}
 .admin-gallery-preview img{width:92px;height:92px;object-fit:cover;border:1px solid #dfe3d8;border-radius:8px}
 .admin-gallery-preview button{font-size:10px;border:1px solid #e3e5df;border-radius:5px;background:#fff;padding:4px;cursor:pointer}
 .admin-gallery-preview small{font-size:10px;color:#697064}
+
+
+.customer-account-page{min-height:100vh;background:#f7f6f1;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px}
+.account-back{align-self:flex-start;position:absolute;top:26px;left:5%;font-size:12px;color:#69675f}
+.customer-account-card{width:min(100%,430px);padding:clamp(24px,5vw,42px);border:1px solid #e6e3da;border-radius:12px;background:#fff;box-shadow:0 18px 55px #24241f0b}
+.account-brand{font-size:24px;font-weight:750;letter-spacing:-1.3px}.account-brand span{font-size:9px;letter-spacing:1px;color:#766394}
+.account-icon{width:46px;height:46px;display:grid;place-items:center;border-radius:50%;background:#eeebf4;color:#766394;margin-top:30px}
+.account-eyebrow{font-size:9px;letter-spacing:1.5px;font-weight:700;color:#817d72;margin:20px 0 8px}
+.customer-account-card h1{font-size:29px;letter-spacing:-1px;font-weight:550;margin:0}
+.account-intro{font-size:12px;color:#77766f;line-height:1.7;margin:10px 0 20px}
+.account-google,.account-submit{width:100%;min-height:44px;display:flex;align-items:center;justify-content:center;gap:10px;border-radius:5px;font-size:12px;font-weight:650}
+.account-google{background:#fff;border:1px solid #dedbd3;color:#292923}
+.account-google:disabled,.account-submit:disabled{opacity:.6;cursor:wait}
+.account-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:#929087;font-size:10px}
+.account-divider:before,.account-divider:after{content:"";height:1px;flex:1;background:#e8e5dc}
+.customer-account-card form{display:flex;flex-direction:column;gap:13px}
+.customer-account-card label{display:flex;flex-direction:column;gap:6px;font-size:11px;color:#55534d}
+.customer-account-card input{width:100%;border:1px solid #dedbd3;border-radius:5px;padding:12px;font-size:12px;background:#fff;color:#292923}
+.account-submit{margin-top:4px;border:0;background:#292923;color:#fff}
+.account-notice{font-size:11px;line-height:1.6;color:#8c493a;background:#fbf1ed;padding:10px;border-radius:5px;overflow-wrap:anywhere}
+.account-switch{text-align:center;font-size:11px;color:#77766f;margin:20px 0 14px}
+.account-switch button{border:0;background:transparent;color:#66517e;font-weight:700}
+.account-admin-link{display:flex;justify-content:center;align-items:center;gap:6px;font-size:10px;color:#8b887f}
+.account-terms{font-size:10px;color:#969287;text-align:center}
+@media(max-width:520px){.customer-account-page{padding:20px 14px}.account-back{position:static;align-self:flex-start;margin:0 0 4px}.customer-account-card{padding:26px 20px}.customer-account-card h1{font-size:26px}}
