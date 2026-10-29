@@ -351,3 +351,9 @@ main{overflow-x:clip;overflow-y:visible}
 .admin-profile-action{display:flex;align-items:center;gap:7px;width:100%;padding:10px;border:1px solid #e5e8df;border-radius:7px;background:#fff;text-align:left;font-size:12px;cursor:pointer;margin-top:7px}
 .admin-profile-action:hover{background:#f7f9f1}
 .admin-profile-action.logout{color:#a33434}
+
+
+.admin-icon-button{position:relative}
+.admin-notification-count{position:absolute;top:-6px;right:-6px;min-width:17px;height:17px;padding:0 4px;display:flex;align-items:center;justify-content:center;border-radius:999px;background:#d94a43;color:#fff;font-size:9px;font-weight:800;line-height:1;border:2px solid #fff;box-sizing:border-box}
+.chart-bar-column .chart-bar{cursor:help;transition:filter .15s,opacity .15s}
+.chart-bar-column:hover .chart-bar{filter:brightness(.9);opacity:.9}
