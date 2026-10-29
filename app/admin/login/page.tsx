@@ -1,7 +1,8 @@
 "use client";
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
-import { LockKeyhole, Eye, EyeOff, ShieldCheck, ArrowRight, Monitor } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { LockKeyhole, Eye, EyeOff, ShieldCheck, ArrowRight } from "lucide-react";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -9,6 +10,7 @@ export default function AdminLogin() {
   const [show, setShow] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   function submit(e: FormEvent) {
     e.preventDefault();
@@ -50,10 +52,10 @@ export default function AdminLogin() {
             <button className="admin-signin" type="submit">Sign in securely <ArrowRight size={17}/></button>
           </form>
           <button type="button" className="admin-preview-button" onClick={openPreview}><Monitor size={16}/> Open dashboard preview</button>
-          <div className="admin-security-note"><ShieldCheck size={16}/><span>Preview access is for design review only. Real admin-only access requires server-side authentication and protected APIs.</span></div>
+          <div className="admin-security-note"><ShieldCheck size={16}/><span>Access is checked against your Supabase session and administrator role on the server.</span></div>
           <a className="admin-back-store" href="/">← Return to storefront</a>
         </div>
-        <p className="admin-login-legal">© {new Date().getFullYear()} NEXORA. Admin workspace preview.</p>
+        <p className="admin-login-legal">© {new Date().getFullYear()} NEXORA. Secure administrator access.</p>
       </section>
     </main>
   );
