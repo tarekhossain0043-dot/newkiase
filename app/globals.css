@@ -357,3 +357,10 @@ main{overflow-x:clip;overflow-y:visible}
 .admin-notification-count{position:absolute;top:-6px;right:-6px;min-width:17px;height:17px;padding:0 4px;display:flex;align-items:center;justify-content:center;border-radius:999px;background:#d94a43;color:#fff;font-size:9px;font-weight:800;line-height:1;border:2px solid #fff;box-sizing:border-box}
 .chart-bar-column .chart-bar{cursor:help;transition:filter .15s,opacity .15s}
 .chart-bar-column:hover .chart-bar{filter:brightness(.9);opacity:.9}
+
+
+.admin-gallery-preview{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}
+.admin-gallery-preview>div{display:flex;flex-direction:column;gap:4px;width:92px}
+.admin-gallery-preview img{width:92px;height:92px;object-fit:cover;border:1px solid #dfe3d8;border-radius:8px}
+.admin-gallery-preview button{font-size:10px;border:1px solid #e3e5df;border-radius:5px;background:#fff;padding:4px;cursor:pointer}
+.admin-gallery-preview small{font-size:10px;color:#697064}
