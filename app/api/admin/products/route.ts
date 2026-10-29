@@ -86,13 +86,16 @@ export async function PATCH(request: Request) {
     const { data, error } = await supabase.from("products").update(patch).eq("id", body.id).select("*").maybeSingle();
     if (error) return NextResponse.json({ error: "Could not update product." }, { status: 400 });
     if (!data) return NextResponse.json({ error: "Product not found." }, { status: 404 });
-    if (typeof body.image_url === "string") {
-      const imageUrl = body.image_url.trim().slice(0, 2000);
-      const { data: existingImages, error: readImageError } = await supabase.from("product_images").select("id").eq("product_id", data.id).order("sort_order").limit(1);
-      if (readImageError) return NextResponse.json({ error: "Product updated but image could not be checked." }, { status: 400 });
-      if (imageUrl && existingImages?.[0]) { const { error: imageError } = await supabase.from("product_images").update({ storage_path: imageUrl, alt_text: data.name }).eq("id", existingImages[0].id); if (imageError) return NextResponse.json({ error: "Product updated but image could not be saved." }, { status: 400 }); }
-      else if (imageUrl) { const { error: imageError } = await supabase.from("product_images").insert({ product_id: data.id, storage_path: imageUrl, alt_text: data.name, sort_order: 0 }); if (imageError) return NextResponse.json({ error: "Product updated but image could not be saved." }, { status: 400 }); }
-      else if (existingImages?.[0]) await supabase.from("product_images").delete().eq("id", existingImages[0].id);
+    // The admin editor sends image_urls (gallery), while older clients may send image_url.
+    if (Array.isArray(body.image_urls) || typeof body.image_url === "string") {
+      const rawUrls: unknown[] = Array.isArray(body.image_urls) ? body.image_urls : [body.image_url];
+      const imageUrls = [...new Set(rawUrls.filter((value): value is string => typeof value === "string").map(value => value.trim()).filter(Boolean).map(value => value.slice(0, 2000)))].slice(0, 5);
+      const { error: deleteImagesError } = await supabase.from("product_images").delete().eq("product_id", data.id);
+      if (deleteImagesError) return NextResponse.json({ error: "Product fields updated, but existing gallery images could not be replaced." }, { status: 400 });
+      if (imageUrls.length) {
+        const { error: insertImagesError } = await supabase.from("product_images").insert(imageUrls.map((storage_path, index) => ({ product_id: data.id, storage_path, alt_text: data.name, sort_order: index })));
+        if (insertImagesError) return NextResponse.json({ error: "Product fields updated, but the new gallery images could not be saved." }, { status: 400 });
+      }
     }
     return NextResponse.json({ product: data });
   } catch {
