@@ -16,7 +16,7 @@ Copy `.env.example` to `.env.local` for local development and set the values fro
 
 Add the same two values in **Vercel → Project → Settings → Environment Variables**, then redeploy.
 
-Never put a Supabase secret/service-role key in a `NEXT_PUBLIC_*` variable or expose it to browser code. The current server routes use the user's session plus RLS; no service-role key is required.
+Never put a Supabase secret/service-role key in a `NEXT_PUBLIC_*` variable or expose it to browser code. The admin APIs use the signed-in user session plus RLS. The checkout route uses `SUPABASE_SERVICE_ROLE_KEY` server-side only to write validated orders because public client inserts are intentionally blocked by RLS. Keep this key out of all `NEXT_PUBLIC_*` variables and browser code.
 
 ## 4. Create your admin account
 1. In Supabase **Authentication → Users**, create the admin user (or sign up through a future customer auth page).
