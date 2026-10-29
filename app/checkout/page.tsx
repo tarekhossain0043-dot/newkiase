@@ -1,7 +1,7 @@
 "use client";
 import { useEffect,useState } from "react";
 import { ArrowLeft, ArrowRight, ShieldCheck, Copy, Smartphone, Info } from "lucide-react";
-import { products,formatPrice,type Product } from "@/lib/products";
+import { formatPrice,type Product } from "@/lib/products";
 
 const PAYMENT_DETAILS = {
   bKash: { number: "01XXXXXXXXX", type: "Send Money", color: "#d91d70" },
@@ -9,20 +9,20 @@ const PAYMENT_DETAILS = {
 } as const;
 
 export default function CheckoutPage(){
- const [ids,setIds]=useState<number[]>([]);
+ const [ids,setIds]=useState<(string|number)[]>([]);const [products,setProducts]=useState<Product[]>([]);
  const [ready,setReady]=useState(false);
  const [form,setForm]=useState({name:"",phone:"",email:"",address:"",city:"Bogura",payment:"Cash on Delivery",senderNumber:"",transactionId:"",notes:""});
  const [error,setError]=useState("");
- useEffect(()=>{try{setIds(JSON.parse(sessionStorage.getItem("nexora-checkout-cart")||"[]"))}catch{}setReady(true)},[]);
- const items=ids.map(id=>products.find(p=>p.id===id)).filter((p):p is Product=>Boolean(p));
+ useEffect(()=>{try{setIds(JSON.parse(sessionStorage.getItem("nexora-checkout-cart")||"[]"))}catch{};(async()=>{try{const r=await fetch("/api/products?limit=200",{cache:"no-store"});const d=await r.json();if(r.ok)setProducts((d.products||[]).map((x:any)=>({id:x.id,name:x.name,category:x.categories?.name||"Other",brand:x.brand||"Unbranded",price:Number(x.price)||0,image:x.product_images?.[0]?.storage_path||"https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=82",stock:Number(x.stock_quantity)||0} as Product)))}catch{}finally{setReady(true)}})()},[]);
+ const items=ids.map(id=>products.find(p=>String(p.id)===String(id))).filter((p):p is Product=>Boolean(p));
  const subtotal=items.reduce((s,p)=>s+p.price,0);
  const delivery=subtotal>=3000||subtotal===0?0:80;
  const update=(key:keyof typeof form,value:string)=>setForm(old=>({...old,[key]:value}));
  const isMobileWallet=form.payment==="bKash"||form.payment==="Nagad";
  const paymentDetails=isMobileWallet?PAYMENT_DETAILS[form.payment as "bKash"|"Nagad"]:null;
  const copyNumber=()=>{const input=document.getElementById("payment-number") as HTMLInputElement|null;input?.focus();input?.select();try{document.execCommand("copy")}catch{}};
- const submit=(e:React.FormEvent)=>{e.preventDefault();setError("");if(!items.length){setError("Your cart is empty. Return to the shop and add products.");return}if(isMobileWallet){if(!/^01[3-9]\d{8}$/.test(form.senderNumber.replace(/[\s-]/g,""))){setError("Enter the 11-digit mobile number you used to send money.");return}if(!/^[A-Za-z0-9-]{6,30}$/.test(form.transactionId.trim())){setError("Enter the transaction ID from your bKash/Nagad confirmation message.");return}}
- const order={...form,senderNumber:form.senderNumber.trim(),transactionId:form.transactionId.trim(),items:ids,subtotal,delivery,total:subtotal+delivery,createdAt:new Date().toISOString(),orderId:"NX"+Date.now().toString().slice(-8),paymentStatus:isMobileWallet?"Pending manual verification":"Cash on Delivery"};
+ const submit=(e:React.FormEvent)=>{e.preventDefault();setError("");if(!items.length){setError("Your cart is empty or products are unavailable. Return to the shop and try again.");return}if(isMobileWallet){if(!/^01[3-9]\d{8}$/.test(form.senderNumber.replace(/[\s-]/g,""))){setError("Enter the 11-digit mobile number you used to send money.");return}if(!/^[A-Za-z0-9-]{6,30}$/.test(form.transactionId.trim())){setError("Enter the transaction ID from your bKash/Nagad confirmation message.");return}}
+ const order={...form,senderNumber:form.senderNumber.trim(),transactionId:form.transactionId.trim(),items:ids,subtotal,delivery,total:subtotal+delivery,createdAt:new Date().toISOString(),orderId:"",paymentStatus:isMobileWallet?"Pending manual verification":"Cash on Delivery"};
  sessionStorage.setItem("nexora-pending-order",JSON.stringify(order));window.location.href="/order"};
  if(!ready)return <main className="checkout-page">Loading checkout…</main>;
  return <main className="checkout-page"><a className="back-link" href="/"><ArrowLeft size={16}/> Continue shopping</a><div className="checkout-header"><span className="eyebrow">NEXORA CHECKOUT</span><h1>Almost <em>yours.</em></h1><p>Enter delivery details and select how you want to pay.</p></div>
