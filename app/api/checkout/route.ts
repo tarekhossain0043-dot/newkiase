@@ -98,6 +98,36 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Could not save payment details." }, { status: 500 });
     }
 
+    // Conditional stock updates help prevent overselling when orders arrive together.
+    const adjusted: Array<{ id: string; quantity: number; previous: number }> = [];
+    for (const product of products) {
+      const quantity = normalized.get(product.id) ?? 0;
+      const previous = Number(product.stock_quantity);
+      const { data: updated, error: stockError } = await db
+        .from("products")
+        .update({ stock_quantity: previous - quantity, updated_at: new Date().toISOString() })
+        .eq("id", product.id)
+        .gte("stock_quantity", quantity)
+        .select("id")
+        .maybeSingle();
+      if (stockError || !updated) {
+        for (const item of adjusted.reverse()) {
+          await db.from("products").update({ stock_quantity: item.previous }).eq("id", item.id);
+        }
+        await db.from("orders").delete().eq("id", order.id);
+        return NextResponse.json({ error: "Stock changed during checkout. Refresh your cart and try again." }, { status: 409 });
+      }
+      adjusted.push({ id: product.id, quantity, previous });
+      await db.from("inventory_history").insert({
+        product_id: product.id,
+        quantity_change: -quantity,
+        quantity_after: previous - quantity,
+        reason: "Customer checkout",
+        reference_order_id: order.id,
+        changed_by: user?.id ?? null,
+      });
+    }
+
     return NextResponse.json({ order_number: order.order_number, status: order.status, payment_status: order.payment_status, subtotal, delivery_fee: deliveryFee, total }, { status: 201 });
   } catch (error) {
     const message = error instanceof Error ? error.message : "";
