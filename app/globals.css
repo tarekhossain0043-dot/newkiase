@@ -274,3 +274,28 @@ main{overflow-x:clip;overflow-y:visible}
 .detail-copy .checkout-button:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 24px #76639435}
 @media(max-width:760px){.product-page{padding-top:18px}.product-page .back-link{margin-bottom:18px}.product-detail{gap:26px}.gallery-main{border-radius:7px}.gallery-main img{min-height:300px}.gallery-thumbnails{gap:8px;margin-top:10px}.gallery-thumbnails button{padding:3px;border-radius:5px}.gallery-thumbnails button.active{padding:2px}.detail-copy{position:static;padding:20px 16px;border-radius:7px}.detail-copy h1{font-size:clamp(28px,8vw,38px)}.detail-price{font-size:25px}}
 @media(prefers-reduced-motion:reduce){.gallery-thumbnails button,.detail-copy .checkout-button{transition:none}}
+
+
+/* Admin sidebar: fixed brand/header and footer; independently scrollable menu */
+.admin-sidebar{position:fixed;left:0;top:0;bottom:0;height:100dvh;overflow:hidden;display:flex;flex-direction:column}
+.admin-side-brand{flex:0 0 72px}
+.admin-store-pill{flex:0 0 auto}
+.admin-nav{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#45483f transparent}
+.admin-nav::-webkit-scrollbar{width:5px}
+.admin-nav::-webkit-scrollbar-thumb{background:#45483f;border-radius:6px}
+.admin-nav-group{margin-top:12px}
+.admin-nav-group-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 10px;border:0;background:transparent;color:#8f9388;cursor:pointer;text-align:left}
+.admin-nav-group-toggle>small{font-size:8px;font-weight:700;letter-spacing:1.4px}
+.admin-nav-group-toggle:hover{color:#f7f6f1}
+.group-chevron{transition:transform .2s ease}
+.group-chevron.expanded{transform:rotate(180deg)}
+.admin-nav-group-items{padding-bottom:2px}
+.admin-sidebar-bottom{flex:0 0 auto;background:#20231f}
+.admin-main{width:calc(100% - 258px);margin-left:258px;min-width:0}
+@media(max-width:900px){
+ .admin-sidebar{transform:translateX(-100%);transition:transform .25s ease;z-index:300}
+ .admin-sidebar.sidebar-open{transform:translateX(0)}
+ .admin-main{width:100%;margin-left:0}
+ .admin-sidebar-scrim{position:fixed;inset:0;z-index:250;background:#10120dcc;border:0}
+}
+@media(prefers-reduced-motion:reduce){.group-chevron,.admin-sidebar{transition:none}}
