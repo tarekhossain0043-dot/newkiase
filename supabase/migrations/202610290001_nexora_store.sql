@@ -29,6 +29,21 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
 
+-- Prevent customers from promoting themselves by updating their own profile row.
+create or replace function public.prevent_profile_role_escalation()
+returns trigger language plpgsql security definer set search_path = '' as $
+begin
+  if new.role is distinct from old.role and not public.is_admin() then
+    raise exception 'Only an administrator can change profile roles';
+  end if;
+  return new;
+end;
+$;
+
+create trigger protect_profile_role
+  before update on public.profiles
+  for each row execute procedure public.prevent_profile_role_escalation();
+
 create table public.categories (
   id uuid primary key default gen_random_uuid(),
   name text not null unique,
