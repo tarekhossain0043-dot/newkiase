@@ -18,17 +18,17 @@ export async function GET(request: Request) {
       { data: orders, error: ordersError },
       { count: customers, error: customersError },
       { data: items, error: itemsError },
-      { data: payments, error: paymentsError },
+      { data: payments, error: paymentsError },\n      { data: products, error: productsError },
     ] = await Promise.all([
       supabase.from("orders").select("id,total,status,created_at,customer_id,order_number,payment_status").order("created_at", { ascending: false }).limit(10000),
       supabase.from("profiles").select("id", { count: "exact", head: true }).eq("role", "customer"),
-      supabase.from("order_items").select("product_name,line_total,quantity,order_id,orders!inner(status)").limit(10000),
-      supabase.from("payments").select("method,status,order_id,orders!inner(status,total)").limit(10000),
+      supabase.from("order_items").select("product_id,product_name,line_total,unit_price,quantity,order_id,orders!inner(status)").limit(10000),
+      supabase.from("payments").select("method,status,order_id,orders!inner(status,total)").limit(10000),\n      supabase.from("products").select("id,cost_price").limit(10000),
     ]);
     if (ordersError) throw ordersError;
     if (customersError) throw customersError;
     if (itemsError) throw itemsError;
-    if (paymentsError) throw paymentsError;
+    if (paymentsError) throw paymentsError;\n    if (productsError) throw productsError;
 
     const all = orders || [];
     const revenueEligible = (o: any) => !["cancelled", "returned"].includes(String(o.status).toLowerCase());
@@ -49,7 +49,7 @@ export async function GET(request: Request) {
       day.setDate(start.getDate() + index);
       const key = day.toISOString().slice(0, 10);
       const matching = currentPeriod.filter((o: any) => new Date(o.created_at).toISOString().slice(0, 10) === key);
-      return { label: days === 7 ? day.toLocaleDateString("en-US", { weekday: "short" }) : days === 30 ? String(day.getDate()) : day.toLocaleDateString("en-US", { month: "short", day: "numeric" }), date: key, sales: Math.round(sumRevenue(matching) * 100) / 100, orders: matching.length };
+      const orderIds = new Set(matching.map((o: any) => o.id));\n      const costMap = new Map((products || []).map((p: any) => [p.id, Number(p.cost_price || 0)]));\n      const soldItems = (items || []).filter((item: any) => orderIds.has(item.order_id));\n      const cost = soldItems.reduce((sum: number, item: any) => sum + Number(item.quantity || 0) * Number(costMap.get(item.product_id) || 0), 0);\n      const sales = sumRevenue(matching);\n      return { label: days === 7 ? day.toLocaleDateString("en-US", { weekday: "short" }) : days === 30 ? String(day.getDate()) : day.toLocaleDateString("en-US", { month: "short", day: "numeric" }), date: key, sales: Math.round(sales * 100) / 100, orders: matching.length, cost: Math.round(cost * 100) / 100, profit: Math.round((sales-cost)*100)/100, loss: Math.round(Math.max(0,cost-sales)*100)/100 };
     });
 
     const topProductMap = (items || []).filter((item: any) => !["cancelled", "returned"].includes(String(item.orders?.status || "").toLowerCase())).reduce((acc: Record<string, any>, item: any) => {
