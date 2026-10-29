@@ -14,12 +14,12 @@ export async function GET(request: Request) {
     start.setDate(start.getDate() - (days - 1));
     start.setHours(0, 0, 0, 0);
 
-    const [{ data: orders, error: ordersError }, { count: customers, error: customersError }] = await Promise.all([
+    const [{ data: orders, error: ordersError }, { count: customers, error: customersError }, { data: items, error: itemsError }, { data: payments, error: paymentsError }] = await Promise.all([
       supabase.from("orders").select("id,total,status,created_at,customer_id,order_number,payment_status").order("created_at", { ascending: false }).limit(10000),
       supabase.from("profiles").select("id", { count: "exact", head: true }).eq("role", "customer"),
     ]);
     if (ordersError) throw ordersError;
-    if (customersError) throw customersError;
+    if (customersError) throw customersError;\n    if (itemsError) throw itemsError;\n    if (paymentsError) throw paymentsError;
     const all = orders || [];
     const revenueEligible = (o: any) => !["cancelled", "returned"].includes(String(o.status).toLowerCase());
     const totalSales = all.filter(revenueEligible).reduce((sum: number, o: any) => sum + Number(o.total || 0), 0);
@@ -41,7 +41,7 @@ export async function GET(request: Request) {
       const matching = currentPeriod.filter((o: any) => new Date(o.created_at).toISOString().slice(0, 10) === key);
       return { label: days === 7 ? day.toLocaleDateString("en-US", { weekday: "short" }) : days === 30 ? String(day.getDate()) : day.toLocaleDateString("en-US", { month: "short", day: "numeric" }), date: key, sales: Math.round(sumRevenue(matching) * 100) / 100, orders: matching.length };
     });
-    const notifications = all.slice(0, 8).map((o: any) => ({
+    const topProducts = (items || []).filter((item: any) => !["cancelled", "returned"].includes(String(item.orders?.status || "").toLowerCase())).reduce((acc: Record<string, any>, item: any) => { const name = String(item.product_name || "Product"); if (!acc[name]) acc[name] = { name, revenue: 0, units: 0 }; acc[name].revenue += Number(item.line_total || 0); acc[name].units += Number(item.quantity || 0); return acc; }, {} as Record<string, any>);\n    const paymentTotals = (payments || []).filter((p: any) => !["cancelled", "returned"].includes(String(p.orders?.status || "").toLowerCase())).reduce((acc: Record<string, number>, p: any) => { const method = String(p.method || "other"); acc[method] = (acc[method] || 0) + Number(p.orders?.total || 0); return acc; }, {} as Record<string, number>);\n    const paymentBreakdown = Object.entries(paymentTotals).map(([method, total]) => ({ method, total, percent: sumRevenue(all) > 0 ? Math.round(Number(total) / sumRevenue(all) * 100) : 0 }));\n    const notifications = all.slice(0, 8).map((o: any) => ({
       id: o.id,
       title: "New order received",
       description: `${o.order_number || "Order"} · ${moneySafe(Number(o.total || 0))} · ${String(o.status || "pending").replaceAll("_", " ")}`,
