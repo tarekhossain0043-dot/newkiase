@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { Heart, Search, ShoppingBag, Star, ArrowUpRight, Menu, X, Truck, ShieldCheck, Sparkles, Minus, Plus, SlidersHorizontal, ArrowRight } from "lucide-react";
-import { categories as demoCategories, categoryInfo as demoCategoryInfo, products as demoProducts, formatPrice, type Category, type Product } from "@/lib/products";
+import { formatPrice, type Category, type Product } from "@/lib/products";
 
 export default function HomePage() {
  const [category,setCategory]=useState<Category>("All"),[query,setQuery]=useState(""),[cart,setCart]=useState<(string|number)[]>([]),[wish,setWish]=useState<(string|number)[]>([]),[menu,setMenu]=useState(false),[cartOpen,setCartOpen]=useState(false),[mobileSearchOpen,setMobileSearchOpen]=useState(false),[notice,setNotice]=useState(""),[email,setEmail]=useState("");
