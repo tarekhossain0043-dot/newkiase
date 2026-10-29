@@ -12,14 +12,25 @@ export default function AdminLogin() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  function submit(e: FormEvent) {
+  async function submit(e: FormEvent) {
     e.preventDefault();
-    setError("Secure server-side authentication is not configured yet. The dashboard is currently a UI preview; do not use it to protect real store data.");
-  }
-
-  function openPreview() {
-    sessionStorage.setItem("nexora-admin-demo-session", "active");
-    router.push("/admin");
+    setError("");
+    try {
+      const supabase = createSupabaseBrowserClient();
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) throw signInError;
+      const response = await fetch("/api/admin/session", { cache: "no-store" });
+      if (!response.ok) {
+        await supabase.auth.signOut();
+        setError("This account is not authorised as a NEXORA administrator.");
+        return;
+      }
+      router.replace(searchParams.get("next") || "/admin");
+      router.refresh();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "";
+      setError(message.includes("not configured") ? "Supabase setup is incomplete. Configure the project URL and publishable/anon key first." : "Sign-in failed. Check your email and password, then try again.");
+    }
   }
 
   return (
@@ -49,9 +60,10 @@ export default function AdminLogin() {
             <label>Admin email<input type="email" required autoComplete="username" value={email} onChange={e=>setEmail(e.target.value)} placeholder="admin@yourstore.com"/></label>
             <label>Password<div className="admin-password"><input type={show?"text":"password"} required autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Enter your password"/><button type="button" onClick={()=>setShow(!show)} aria-label={show?"Hide password":"Show password"}>{show?<EyeOff size={17}/>:<Eye size={17}/>}</button></div></label>
             {error&&<p className="admin-login-error" role="alert">{error}</p>}
+            {searchParams.get("setup")==="supabase"&&<p className="admin-login-error" role="alert">Supabase project credentials are not configured yet. Follow SUPABASE_SETUP.md.</p>}
+            {searchParams.get("error")==="not-admin"&&<p className="admin-login-error" role="alert">This account does not have the administrator role.</p>}
             <button className="admin-signin" type="submit">Sign in securely <ArrowRight size={17}/></button>
           </form>
-          <button type="button" className="admin-preview-button" onClick={openPreview}><Monitor size={16}/> Open dashboard preview</button>
           <div className="admin-security-note"><ShieldCheck size={16}/><span>Access is checked against your Supabase session and administrator role on the server.</span></div>
           <a className="admin-back-store" href="/">← Return to storefront</a>
         </div>
