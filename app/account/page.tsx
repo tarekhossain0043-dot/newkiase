@@ -13,28 +13,60 @@ export default function CustomerAccountPage() {
   const [busy,setBusy] = useState(false);
   const [notice,setNotice] = useState("");
   async function submit(e: FormEvent) {
-    e.preventDefault(); setBusy(true); setNotice("");
+    e.preventDefault();
+    if (busy) return;
+    setBusy(true);
+    setNotice("");
+    const timeout = new Promise<never>((_, reject) => {
+      window.setTimeout(() => reject(new Error("The authentication request is taking too long. Please check your internet connection and Supabase Auth settings, then try again.")), 15000);
+    });
     try {
       const supabase=createSupabaseBrowserClient();
       if(mode==="signup") {
-        const {data,error}=await supabase.auth.signUp({email,password,options:{data:{full_name:name.trim(),phone:phone.trim()},emailRedirectTo:location.origin+"/auth/callback"}});
-        if(error) throw error;
-        if(data.session) router.replace("/account?welcome=1");
-        else setNotice("Account created. Check your email to confirm the account, then sign in.");
+        const result = await Promise.race([
+          supabase.auth.signUp({email:email.trim(),password,options:{data:{full_name:name.trim(),phone:phone.trim()},emailRedirectTo:location.origin+"/auth/callback"}}),
+          timeout
+        ]);
+        if(result.error) throw result.error;
+        if(result.data.session) {
+          router.replace("/account?welcome=1");
+          router.refresh();
+        } else {
+          setNotice("Account request submitted. If email confirmation is enabled, check your inbox to activate the account before signing in.");
+        }
       } else {
-        const {error}=await supabase.auth.signInWithPassword({email,password});
-        if(error) throw error;
-        router.replace("/account?welcome=1"); router.refresh();
+        const result = await Promise.race([
+          supabase.auth.signInWithPassword({email:email.trim(),password}),
+          timeout
+        ]);
+        if(result.error) throw result.error;
+        router.replace("/account?welcome=1");
+        router.refresh();
       }
-    } catch(e) { setNotice(e instanceof Error ? e.message : "Authentication failed. Please try again."); }
-    finally {setBusy(false);}
+    } catch(e) {
+      const message = e instanceof Error ? e.message : "Authentication failed. Please try again.";
+      setNotice(message);
+    } finally {
+      setBusy(false);
+    }
   }
   async function google() {
-    setBusy(true);setNotice("");
+    if (busy) return;
+    setBusy(true);
+    setNotice("");
+    const timer = window.setTimeout(() => {
+      setBusy(false);
+      setNotice("Google sign-in did not start. Check Supabase Google provider and redirect URL settings, then try again.");
+    }, 15000);
     try {
       const {error}=await createSupabaseBrowserClient().auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+"/auth/callback"}});
       if(error) throw error;
-    } catch(e) {setNotice(e instanceof Error?e.message:"Google sign-in failed.");setBusy(false);}
+    } catch(e) {
+      setNotice(e instanceof Error?e.message:"Google sign-in failed.");
+      setBusy(false);
+    } finally {
+      window.clearTimeout(timer);
+    }
   }
   async function signOut(){await createSupabaseBrowserClient().auth.signOut();router.refresh();setNotice("Signed out.");}
   return <main className="customer-account-page"><a href="/" className="account-back">← NEXORA Store</a><section className="customer-account-card"><div className="account-brand">NEXORA<span> STORE</span></div><div className="account-icon"><UserRound size={22}/></div><p className="account-eyebrow">CUSTOMER ACCOUNT</p><h1>{mode==="login"?"Welcome back":"Create your account"}</h1><p className="account-intro">{mode==="login"?"Sign in to your NEXORA customer account.":"Create an account to keep your details and order history together."}</p>
