@@ -527,3 +527,16 @@ main{overflow-x:clip;overflow-y:visible}
 .nexora-ai-messenger{display:flex;justify-content:center;align-items:center;gap:6px;padding:0 10px 12px;color:#2459c7;font-size:11px;text-decoration:none;background:#fff}
 @media(max-width:760px){.nexora-ai-launcher{right:14px;bottom:165px;padding:11px 14px}.nexora-ai-panel{right:12px;bottom:228px;height:min(520px,calc(100dvh - 250px))}}
 @media(max-width:420px){.nexora-ai-launcher{bottom:154px}.nexora-ai-panel{bottom:215px;width:calc(100vw - 24px)}}
+
+
+/* NEXORA AI: visible, animated response state */
+.nexora-ai-thinking{align-self:flex-start;display:flex;align-items:center;gap:12px;max-width:92%;padding:13px 15px;border:1px solid #dce6f7;border-radius:14px;border-bottom-left-radius:4px;background:#fff;box-shadow:0 4px 16px #2459c70d;color:#253653}
+.nexora-ai-thinking>span:last-child{display:flex;flex-direction:column;gap:4px;min-width:0}
+.nexora-ai-thinking b{font-size:12px;font-weight:700;line-height:1.45}
+.nexora-ai-thinking small{font-size:10px;color:#78869d;line-height:1.45}
+.nexora-ai-thinking-dots{display:flex;align-items:center;gap:4px;height:20px;flex:0 0 auto}
+.nexora-ai-thinking-dots i{width:7px;height:7px;border-radius:50%;background:#3977e8;animation:nexoraThinkingBounce 1.15s infinite ease-in-out}
+.nexora-ai-thinking-dots i:nth-child(2){animation-delay:.16s}
+.nexora-ai-thinking-dots i:nth-child(3){animation-delay:.32s}
+@keyframes nexoraThinkingBounce{0%,60%,100%{transform:translateY(0);opacity:.45}30%{transform:translateY(-6px);opacity:1}}
+@media(prefers-reduced-motion:reduce){.nexora-ai-thinking-dots i{animation:none;opacity:1}}
