@@ -61,7 +61,10 @@ export async function POST(request: Request) {
 
         const sent = await fetch("https://graph.facebook.com/v21.0/me/messages", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${pageToken}`
+          },
           body: JSON.stringify({
             recipient: { id: senderId },
             messaging_type: "RESPONSE",
@@ -69,7 +72,11 @@ export async function POST(request: Request) {
           }),
           cache: "no-store"
         });
-        if (!sent.ok) console.error("Messenger send failed:", await sent.text());
+        if (!sent.ok) {
+          console.error("Messenger Send API failed:", sent.status, await sent.text());
+        } else {
+          console.info("Messenger reply sent successfully for recipient:", senderId);
+        }
       } catch (error) {
         console.error("Messenger event processing failed:", error);
       }
