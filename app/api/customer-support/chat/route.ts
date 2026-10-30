@@ -55,18 +55,21 @@ export async function POST(request: Request) {
 LIVE STORE KNOWLEDGE (refreshed from database for this request):
 ${JSON.stringify(knowledge)}`;
 
+    const aiStartedAt = Date.now();
     const aiResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: process.env.GEMINI_MODEL || "gemini-3.8-flash",
-        temperature: 0.3,
-        max_tokens: 350,
+        model: process.env.GEMINI_MODEL || "gemini-3.5-flash-lite",
+        temperature: 0.2,
+        max_tokens: 240,
+        reasoning_effort: "low",
         messages: [{ role: "system", content: system }, ...messages]
       }),
       cache: "no-store",
-      signal: AbortSignal.timeout(25000)
+      signal: AbortSignal.timeout(45000)
     });
+    console.info("Gemini customer support response time (ms):", Date.now() - aiStartedAt);
     const result = await aiResponse.json();
     if (!aiResponse.ok) {
       console.error("Gemini customer support error:", aiResponse.status, result?.error?.message || JSON.stringify(result).slice(0, 500));
