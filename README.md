@@ -19,16 +19,16 @@ The website chat endpoint is:
 POST /api/customer-support/chat
 ```
 
-It uses the OpenAI Chat Completions API and loads the current active products, active categories, and selected store policies from Supabase for each request.
+It uses Google Gemini through the Gemini OpenAI-compatible Chat Completions endpoint and loads the current active products, active categories, and selected store policies from Supabase for each request.
 
 Required Vercel environment variables:
 
-- `OPENAI_API_KEY` — OpenAI API key (server-side only).
+- `OPENAI_API_KEY` — Google Gemini API key (server-side only). The legacy variable name is retained for compatibility with the existing deployment.
 - Supabase service-client variables required by `lib/supabase/service.ts`.
 
 Optional:
 
-- `OPENAI_MODEL` — model name; defaults to `gpt-4o-mini`.
+- `GEMINI_MODEL` — Gemini model name; defaults to `gemini-3.8-flash`.
 
 Do not expose secret keys through `NEXT_PUBLIC_*` variables or commit them to Git.
 
@@ -45,7 +45,7 @@ Required Vercel environment variables:
 - `META_VERIFY_TOKEN` — a private verification phrase you choose. Enter the exact same value in Meta's webhook Verify Token field.
 - `META_APP_SECRET` — App Secret from the Meta app's basic settings. Keep it private.
 - `META_PAGE_ACCESS_TOKEN` — Page Access Token for the Facebook Page connected to the app. It must have the required Messenger messaging permission.
-- `OPENAI_API_KEY` — used to generate customer replies.
+- `OPENAI_API_KEY` — Google Gemini API key used to generate customer replies (legacy variable name retained).
 - Supabase service-client variables required by `lib/supabase/service.ts`.
 
 Optional:
@@ -70,7 +70,7 @@ The webhook verifies Meta's `X-Hub-Signature-256` request signature using `META_
 - Test with a separate Facebook account, not only the account administering the app/Page.
 - While the Meta app is in Development mode, only permitted app roles/testers may be able to exercise the integration. Public customer access requires the relevant Meta app configuration, permissions, and review/approval where Meta requires it.
 - Messenger replies must comply with Meta's messaging policies and allowed response window. Do not use this integration for unsolicited promotional messages.
-- Do not paste App Secret, Page Access Token, or OpenAI API key into chat, screenshots, or source control.
+- Do not paste App Secret, Page Access Token, or Gemini API key into chat, screenshots, or source control.
 
 ## Deployment
 
