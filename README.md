@@ -1,6 +1,6 @@
 # NEXORA Storefront
 
-Responsive multi-category ecommerce frontend built with Next.js, React, TypeScript, and CSS.
+NEXORA ecommerce storefront built with Next.js, React, TypeScript, and Supabase.
 
 ## Run locally
 
@@ -11,10 +11,67 @@ npm run dev
 
 Open http://localhost:3000.
 
-## Deploy on Vercel
+## Customer support AI
 
-Import this repository in Vercel and use the default Next.js build settings. No environment variables are required for this demo frontend.
+The website chat endpoint is:
 
-## Scope
+```
+POST /api/customer-support/chat
+```
 
-This is a frontend starter with demo products and client-side search, category filtering, cart, and wishlist interactions. It does not include a production backend, authentication, persistent checkout, or payment processing.
+It uses the OpenAI Chat Completions API and loads the current active products, active categories, and selected store policies from Supabase for each request.
+
+Required Vercel environment variables:
+
+- `OPENAI_API_KEY` — OpenAI API key (server-side only).
+- Supabase service-client variables required by `lib/supabase/service.ts`.
+
+Optional:
+
+- `OPENAI_MODEL` — model name; defaults to `gpt-4o-mini`.
+
+Do not expose secret keys through `NEXT_PUBLIC_*` variables or commit them to Git.
+
+## Facebook Messenger integration
+
+Webhook endpoint:
+
+```
+GET/POST /api/webhooks/messenger
+```
+
+Required Vercel environment variables:
+
+- `META_VERIFY_TOKEN` — a private verification phrase you choose. Enter the exact same value in Meta's webhook Verify Token field.
+- `META_APP_SECRET` — App Secret from the Meta app's basic settings. Keep it private.
+- `META_PAGE_ACCESS_TOKEN` — Page Access Token for the Facebook Page connected to the app. It must have the required Messenger messaging permission.
+- `OPENAI_API_KEY` — used to generate customer replies.
+- Supabase service-client variables required by `lib/supabase/service.ts`.
+
+Optional:
+
+- `NEXT_PUBLIC_SITE_URL` — canonical deployed site origin, for example `https://your-store-domain.com`. Set this to the exact production origin if used by the deployment.
+
+### Meta setup checklist
+
+1. Deploy the application to Vercel after adding the environment variables.
+2. In Meta App Dashboard, open Messenger settings and configure the callback URL as `https://YOUR-DOMAIN/api/webhooks/messenger`.
+3. Enter the same value as Vercel's `META_VERIFY_TOKEN` in Meta's Verify Token field and verify/save.
+4. Subscribe the app to the Page webhook fields `messages` and `messaging_postbacks`.
+5. In the Page subscription section, select and subscribe the actual Facebook Page that should receive customer messages.
+6. Confirm the Page Access Token belongs to that same Page and has the required messaging permission.
+7. Send a message to the Page from a separate Facebook account and inspect Vercel Function Logs if no reply arrives.
+
+The webhook verifies Meta's `X-Hub-Signature-256` request signature using `META_APP_SECRET`. Never disable signature verification in production.
+
+### Important testing notes
+
+- A successful webhook callback verification only confirms the GET verification handshake. It does not prove that the Facebook Page is subscribed or that message replies work.
+- Test with a separate Facebook account, not only the account administering the app/Page.
+- While the Meta app is in Development mode, only permitted app roles/testers may be able to exercise the integration. Public customer access requires the relevant Meta app configuration, permissions, and review/approval where Meta requires it.
+- Messenger replies must comply with Meta's messaging policies and allowed response window. Do not use this integration for unsolicited promotional messages.
+- Do not paste App Secret, Page Access Token, or OpenAI API key into chat, screenshots, or source control.
+
+## Deployment
+
+Import the GitHub repository into Vercel with the standard Next.js settings. Add the required environment variables in Vercel, then redeploy. A successful GitHub commit is not by itself proof that the production deployment or external integrations are working.
