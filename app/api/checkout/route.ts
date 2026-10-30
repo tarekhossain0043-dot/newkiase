@@ -24,17 +24,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Please provide valid delivery details, payment method and 1–50 cart items." }, { status: 400 });
     }
 
-    const normalized = new Map<string, number>();
+    const normalized = new Map<string, {quantity:number;selected_option:string}>();
     for (const item of items) {
       if (!item || typeof item.product_id !== "string" || !Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 20) {
         return NextResponse.json({ error: "Cart item is invalid." }, { status: 400 });
       }
-      normalized.set(item.product_id, (normalized.get(item.product_id) ?? 0) + item.quantity);
+      const selectedOption = typeof item.selected_option === "string" ? item.selected_option.trim().slice(0,40) : "";
+      const existing = normalized.get(item.product_id);
+      if (existing && existing.selected_option !== selectedOption) return NextResponse.json({ error: "Please add each product with one selected size per cart item." }, { status: 400 });
+      normalized.set(item.product_id, { quantity: (existing?.quantity ?? 0) + item.quantity, selected_option: selectedOption });
     }
 
     const { data: products, error: productError } = await supabase
       .from("products")
-      .select("id, sku, name, price, stock_quantity, status")
+      .select("id, sku, name, price, stock_quantity, status, sizes")
       .in("id", [...normalized.keys()]);
     if (productError || !products || products.length !== normalized.size) {
       return NextResponse.json({ error: "One or more products are unavailable." }, { status: 400 });
@@ -43,7 +46,10 @@ export async function POST(request: Request) {
     const orderLines = [];
     let subtotal = 0;
     for (const product of products) {
-      const quantity = normalized.get(product.id) ?? 0;
+      const selection = normalized.get(product.id) ?? {quantity:0,selected_option:""};
+      const quantity = selection.quantity;
+      const availableSizes = Array.isArray(product.sizes) ? product.sizes : [];
+      if (availableSizes.length && (!selection.selected_option || !availableSizes.includes(selection.selected_option))) return NextResponse.json({ error: "Please select a valid size for " + product.name + "." }, { status: 400 });
       if (product.status !== "active" || product.stock_quantity < quantity) {
         return NextResponse.json({ error: "A product is out of stock or does not have enough stock." }, { status: 409 });
       }
@@ -56,6 +62,7 @@ export async function POST(request: Request) {
         unit_price: unitPrice,
         quantity,
         line_total: unitPrice * quantity,
+        selected_option: selection.selected_option,
       });
     }
 
@@ -101,7 +108,7 @@ export async function POST(request: Request) {
     // Conditional stock updates help prevent overselling when orders arrive together.
     const adjusted: Array<{ id: string; quantity: number; previous: number }> = [];
     for (const product of products) {
-      const quantity = normalized.get(product.id) ?? 0;
+      const quantity = normalized.get(product.id)?.quantity ?? 0;
       const previous = Number(product.stock_quantity);
       const { data: updated, error: stockError } = await db
         .from("products")
