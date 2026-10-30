@@ -1,15 +1,19 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/supabase/admin";
+import { createSupabaseServiceClient } from "@/lib/supabase/service";
 export const dynamic = "force-dynamic";
 export async function GET() {
   try {
-    const { supabase } = await requireAdmin();
+    await requireAdmin();
+    // Admin authorization is checked above; use the server-only service client
+    // so customer/order reads are not silently restricted by customer RLS policies.
+    const supabase = createSupabaseServiceClient();
     const [{ data: profiles, error: profileError }, { data: orders, error: orderError }] = await Promise.all([
       supabase.from("profiles").select("id,full_name,email,phone,role,created_at").eq("role", "customer").order("created_at", { ascending: false }).limit(2000),
       supabase.from("orders").select("id,customer_id,customer_name,customer_email,customer_phone,total,status,created_at").order("created_at", { ascending: false }).limit(10000),
     ]);
-    if (profileError) throw profileError;
-    if (orderError) throw orderError;
+    if (profileError) { console.error("[admin/customers] profiles query failed:", profileError); throw profileError; }
+    if (orderError) { console.error("[admin/customers] orders query failed:", orderError); throw orderError; }
     const grouped = new Map<string, any>();
     const aliases = new Map<string, string>();
     for (const profile of profiles || []) {
@@ -41,7 +45,8 @@ export async function GET() {
     }
     const customers=Array.from(grouped.values()).sort((a,b)=>new Date(b.lastOrderAt||b.created_at||0).getTime()-new Date(a.lastOrderAt||a.created_at||0).getTime());
     return NextResponse.json({ customers }, { headers: { "Cache-Control": "no-store, max-age=0" } });
-  } catch {
-    return NextResponse.json({ error: "Could not load customers. Check admin access and database configuration." }, { status: 500 });
+  } catch (error) {
+    console.error("[admin/customers] request failed:", error);
+    return NextResponse.json({ error: "Could not load customers. Check server logs and Supabase configuration." }, { status: 500 });
   }
 }
