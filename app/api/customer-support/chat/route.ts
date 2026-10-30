@@ -43,11 +43,11 @@ export async function POST(request: Request) {
 LIVE STORE KNOWLEDGE (refreshed from database for this request):
 ${JSON.stringify(knowledge)}`;
 
-    const aiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
+    const aiResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+        model: process.env.GEMINI_MODEL || "gemini-3.8-flash",
         temperature: 0.3,
         max_tokens: 500,
         messages: [{ role: "system", content: system }, ...messages]
@@ -56,7 +56,7 @@ ${JSON.stringify(knowledge)}`;
     });
     const result = await aiResponse.json();
     if (!aiResponse.ok) {
-      console.error("OpenAI customer support error:", result?.error?.message || aiResponse.status);
+      console.error("Gemini customer support error:", result?.error?.message || aiResponse.status);
       return NextResponse.json({ error: "The assistant is temporarily unavailable. Please try again." }, { status: 502 });
     }
     const reply = result?.choices?.[0]?.message?.content;
