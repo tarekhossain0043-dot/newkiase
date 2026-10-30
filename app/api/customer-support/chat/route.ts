@@ -13,22 +13,22 @@ export async function POST(request: Request) {
     const body = await request.json();
     const messages = (Array.isArray(body.messages) ? body.messages : [])
       .filter((m: any) => (m?.role === "user" || m?.role === "assistant") && typeof m.content === "string")
-      .slice(-12)
-      .map((m: any) => ({ role: m.role, content: m.content.slice(0, 1500) })) as ChatMessage[];
+      .slice(-8)
+      .map((m: any) => ({ role: m.role, content: m.content.slice(0, 1000) })) as ChatMessage[];
     if (!messages.length || messages[messages.length - 1].role !== "user") {
       return NextResponse.json({ error: "Please send a message." }, { status: 400 });
     }
 
     const supabase = createSupabaseServiceClient();
     const [productsResult, categoriesResult, settingsResult] = await Promise.all([
-      supabase.from("products").select("name,brand,sku,description,price,compare_at_price,stock_quantity,sizes,color,status,categories(name)").eq("status", "active").order("updated_at", { ascending: false }).limit(100),
+      supabase.from("products").select("name,brand,sku,description,price,compare_at_price,stock_quantity,sizes,color,status,categories(name)").eq("status", "active").order("updated_at", { ascending: false }).limit(40),
       supabase.from("categories").select("name,description").eq("is_active", true).order("sort_order").limit(50),
       supabase.from("site_settings").select("key,value").in("key", ["store_policy","shipping_policy","return_policy","contact_info","support_faq"]).limit(20)
     ]);
     if (productsResult.error) throw productsResult.error;
 
     const catalog = (productsResult.data || []).map((p: any) => ({
-      name: p.name, brand: p.brand, sku: p.sku, description: p.description,
+      name: p.name, brand: p.brand, sku: p.sku, description: typeof p.description === "string" ? p.description.slice(0, 180) : p.description,
       price: p.price, compare_at_price: p.compare_at_price, stock: p.stock_quantity,
       sizes: p.sizes, color: p.color, category: p.categories?.name || "Other"
     }));
@@ -49,7 +49,7 @@ ${JSON.stringify(knowledge)}`;
       body: JSON.stringify({
         model: process.env.GEMINI_MODEL || "gemini-3.8-flash",
         temperature: 0.3,
-        max_tokens: 500,
+        max_tokens: 350,
         messages: [{ role: "system", content: system }, ...messages]
       }),
       cache: "no-store"
