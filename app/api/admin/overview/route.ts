@@ -21,7 +21,7 @@ export async function GET(request: Request) {
       { data: payments, error: paymentsError },
       { data: products, error: productsError },
     ] = await Promise.all([
-      supabase.from("orders").select("id,total,status,created_at,customer_id,order_number,payment_status").order("created_at", { ascending: false }).limit(10000),
+      supabase.from("orders").select("id,total,status,created_at,customer_id,customer_name,customer_email,customer_phone,order_number,payment_status").order("created_at", { ascending: false }).limit(10000),
       supabase.from("profiles").select("id", { count: "exact", head: true }).eq("role", "customer"),
       supabase.from("order_items").select("product_id,product_name,line_total,unit_price,quantity,order_id,orders!inner(status)").limit(10000),
       supabase.from("payments").select("method,status,order_id,orders!inner(status,total)").limit(10000),
@@ -42,7 +42,18 @@ export async function GET(request: Request) {
     if (productsError) console.error("[admin/overview] product cost analytics unavailable:", productsError);
 
     const all = orders || [];
-    const safeCustomers = customersError ? 0 : (customers || 0);
+        const { data: customerProfiles, error: profileListError } = await supabase.from("profiles").select("id,email,phone").eq("role","customer");
+    if (profileListError) console.error("[admin/overview] profile list unavailable:", profileListError);
+    const customerKeys = new Set<string>();
+    for (const profile of customerProfiles || []) {
+      const key = profile.id || (profile.email ? "email:"+String(profile.email).toLowerCase() : profile.phone ? "phone:"+String(profile.phone).replace(/\\D/g,"") : "");
+      if (key) customerKeys.add(key);
+    }
+    for (const order of all) {
+      const key = order.customer_id || (order.customer_email ? "email:"+String(order.customer_email).toLowerCase() : order.customer_phone ? "phone:"+String(order.customer_phone).replace(/\\D/g,"") : "order:"+order.id);
+      if (key) customerKeys.add(key);
+    }
+    const safeCustomers = customerKeys.size;
     const safeItems = itemsError ? [] : (items || []);
     const safePayments = paymentsError ? [] : (payments || []);
     const safeProducts = productsError ? [] : (products || []);
