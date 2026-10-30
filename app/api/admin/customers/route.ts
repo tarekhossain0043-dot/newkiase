@@ -21,11 +21,18 @@ export async function GET() {
     }
     for (const order of orders || []) {
       const candidates=[order.customer_id,order.customer_email?"email:"+String(order.customer_email).toLowerCase():"",order.customer_phone?"phone:"+String(order.customer_phone).replace(/\D/g,""):""].filter(Boolean);
-      let key=candidates.map((candidate:string)=>aliases.get(candidate)||candidate).find((candidate:string)=>grouped.has(candidate));
-      if(!key) key=order.customer_id|| (order.customer_email?"email:"+String(order.customer_email).toLowerCase():order.customer_phone?"phone:"+String(order.customer_phone).replace(/\D/g,""):"order:"+order.id);
+      const matchedKey=candidates.map((candidate:string)=>aliases.get(candidate)||candidate).find((candidate:string)=>grouped.has(candidate));
+      const fallbackKey=order.customer_id
+        ? String(order.customer_id)
+        : order.customer_email
+          ? "email:"+String(order.customer_email).toLowerCase()
+          : order.customer_phone
+            ? "phone:"+String(order.customer_phone).replace(/\D/g,"")
+            : "order:"+String(order.id ?? order.created_at ?? "unknown");
+      const key: string = matchedKey ?? fallbackKey;
       let row=grouped.get(key);
       if(!row){row={id:key,full_name:order.customer_name||"Guest customer",email:order.customer_email||"",phone:order.customer_phone||"",role:"guest",created_at:order.created_at,orderCount:0,totalSpent:0,lastOrderAt:null};grouped.set(key,row);}
-      for(const candidate of candidates) aliases.set(candidate,key);
+      for(const candidate of candidates) if(candidate) aliases.set(String(candidate),key);
       if(!row.full_name||row.full_name==="Customer"||row.full_name==="Guest customer") row.full_name=order.customer_name||row.full_name;
       row.email=row.email||order.customer_email||""; row.phone=row.phone||order.customer_phone||"";
       row.orderCount+=1;
