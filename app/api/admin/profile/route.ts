@@ -10,7 +10,7 @@ export async function GET() {
     return NextResponse.json({ profile: { ...data, email: user.email || "" } }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     console.error("[admin/profile GET] Failed to load admin profile:", error);
-    return NextResponse.json({ error: "Could not load admin profile. Apply the latest Supabase profile migration and check Vercel function logs." }, { status: 500 });
+    return NextResponse.json({ error: "Could not load admin profile.", diagnostic: { code: (error as any)?.code ?? null, message: (error as any)?.message ?? String(error) } }, { status: 500, headers: { "Cache-Control": "no-store" } });
   }
 }
 export async function PATCH(request: Request) {
@@ -26,6 +26,6 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ profile: { ...data, email: user.email || "" } });
   } catch (error) {
     console.error("[admin/profile PATCH] Failed to save admin profile:", error);
-    return NextResponse.json({ error: "Could not save admin profile. Apply the latest Supabase profile migration and check Vercel function logs." }, { status: 500 });
+    return NextResponse.json({ error: "Could not save admin profile.", diagnostic: { code: (error as any)?.code ?? null, message: (error as any)?.message ?? String(error) } }, { status: 500, headers: { "Cache-Control": "no-store" } });
   }
 }
