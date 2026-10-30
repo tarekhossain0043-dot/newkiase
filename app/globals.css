@@ -402,3 +402,89 @@ main{overflow-x:clip;overflow-y:visible}
 .account-settings-card-title{display:flex;gap:12px;align-items:center;margin-bottom:20px}.account-settings-card-title>span{width:40px;height:40px;border-radius:10px;background:#eff4dc;color:#59663b;display:grid;place-items:center;flex-shrink:0}.account-settings-card-title h2{font-size:15px;margin:0 0 5px}.account-settings-card-title p{font-size:11px;color:#7a8089;margin:0;line-height:1.5}
 .account-settings-form{display:flex;flex-direction:column;gap:14px}.account-settings-form>label{display:flex;flex-direction:column;gap:7px;font-size:11px;font-weight:600;color:#525962}.account-settings-form input,.account-settings-form textarea{width:100%;min-width:0;border:1px solid #dfe3e8;border-radius:7px;padding:11px 12px;background:#fff;color:#202321;font:inherit;font-size:12px;outline-offset:2px}.account-settings-form input:focus,.account-settings-form textarea:focus{outline:2px solid #d8ed8b;border-color:#a6b76b}.account-settings-form input[readonly]{background:#f7f8fa;color:#737a83}.account-settings-form .admin-primary-btn{align-self:flex-start;min-height:40px}.account-settings-password{display:flex;align-items:center;border:1px solid #dfe3e8;border-radius:7px;padding-right:8px}.account-settings-password input{border:0;outline:0!important}.account-settings-password button{border:0;background:transparent;color:#737a83;padding:5px;display:grid;place-items:center}.account-settings-help{font-size:11px;color:#7a8089;line-height:1.6;margin:-4px 0 0}.account-settings-notice{max-width:1112px;margin:0 auto 18px;padding:12px 15px;border-radius:8px;display:flex;align-items:flex-start;gap:9px;font-size:12px;line-height:1.6}.account-settings-notice.success{background:#edf7e9;border:1px solid #d7e9cf;color:#326b35}.account-settings-notice.error{background:#fff0ef;border:1px solid #f0d0ce;color:#9e3330}.account-settings-card>p{font-size:12px}
 @media(max-width:760px){.account-settings-top{height:66px;padding:0 16px}.account-settings-brand{font-size:16px}.account-settings-back{font-size:11px;padding:9px}.account-settings-heading{margin:26px auto 18px;padding:0 16px}.account-settings-grid{grid-template-columns:1fr;padding:0 16px;gap:14px}.account-settings-card{padding:18px}.account-settings-notice{margin:0 16px 16px}}
+
+
+/* Admin workspace forms: finance, growth, shipping and operations */
+.admin-form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px 16px;
+  padding:20px;
+  margin:18px 0;
+  background:#fafaf8;
+  border:1px solid var(--admin-border);
+  border-radius:10px;
+}
+.admin-form-grid .admin-form-field{
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  gap:8px;
+  min-width:0;
+  color:#4d4d45;
+  font-size:11px;
+  font-weight:650;
+  line-height:1.4;
+  text-transform:capitalize;
+}
+.admin-form-grid input,
+.admin-form-grid select,
+.admin-form-grid textarea{
+  display:block;
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  min-height:44px;
+  padding:11px 13px;
+  color:#292a24;
+  background:#fff;
+  border:1px solid #dedfd7;
+  border-radius:7px;
+  outline:none;
+  font:inherit;
+  font-size:12px;
+  font-weight:400;
+  line-height:1.5;
+  transition:border-color .18s ease,box-shadow .18s ease,background .18s ease;
+}
+.admin-form-grid textarea{
+  min-height:104px;
+  resize:vertical;
+}
+.admin-form-grid input::placeholder,
+.admin-form-grid textarea::placeholder{color:#a09f96}
+.admin-form-grid input:hover,
+.admin-form-grid select:hover,
+.admin-form-grid textarea:hover{border-color:#b8bbae}
+.admin-form-grid input:focus,
+.admin-form-grid select:focus,
+.admin-form-grid textarea:focus{
+  border-color:#78845e;
+  box-shadow:0 0 0 3px #78845e20;
+  background:#fff;
+}
+.admin-form-grid select{
+  appearance:auto;
+  cursor:pointer;
+}
+.admin-form-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  padding-top:4px;
+}
+.admin-form-hint{
+  margin:0 0 16px;
+  padding:12px 14px;
+  border:1px solid #e8e5d9;
+  border-radius:7px;
+  background:#f8f7f1;
+  color:#77766f;
+  font-size:11px;
+  line-height:1.65;
+}
+@media(max-width:640px){
+  .admin-form-grid{grid-template-columns:minmax(0,1fr);gap:14px;padding:14px;margin:14px 0}
+  .admin-form-actions{justify-content:stretch}
+  .admin-form-actions .admin-primary-btn{width:100%}
+}
