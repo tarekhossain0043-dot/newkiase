@@ -10,29 +10,29 @@ export async function GET() {
     ]);
     if (profileError) throw profileError;
     if (orderError) throw orderError;
-    const byUser = new Map<string, any>();
-    const byEmail = new Map<string, any>();
+    const grouped = new Map<string, any>();
+    const aliases = new Map<string, string>();
+    for (const profile of profiles || []) {
+      const key = String(profile.id);
+      grouped.set(key,{id:profile.id,full_name:profile.full_name||"Customer",email:profile.email||"",phone:profile.phone||"",role:profile.role,created_at:profile.created_at,orderCount:0,totalSpent:0,lastOrderAt:null});
+      aliases.set(key,key);
+      if(profile.email) aliases.set("email:"+String(profile.email).toLowerCase(),key);
+      if(profile.phone) aliases.set("phone:"+String(profile.phone).replace(/\D/g,""),key);
+    }
     for (const order of orders || []) {
-      const key = order.customer_id || (order.customer_email ? "email:"+order.customer_email.toLowerCase() : "");
-      if (!key) continue;
-      const row = byUser.get(key) || { orderCount: 0, totalSpent: 0, lastOrderAt: null, latestName: order.customer_name || "", email: order.customer_email || "", phone: order.customer_phone || "" };
-      row.orderCount += 1;
-      if (!["cancelled", "returned"].includes(String(order.status).toLowerCase())) row.totalSpent += Number(order.total || 0);
-      if (!row.lastOrderAt || new Date(order.created_at) > new Date(row.lastOrderAt)) row.lastOrderAt = order.created_at;
-      if (!row.latestName) row.latestName = order.customer_name || "";
-      if (!row.email) row.email = order.customer_email || "";
-      if (!row.phone) row.phone = order.customer_phone || "";
-      byUser.set(key, row);
-      if(order.customer_email) byEmail.set(order.customer_email.toLowerCase(),row);
+      const candidates=[order.customer_id,order.customer_email?"email:"+String(order.customer_email).toLowerCase():"",order.customer_phone?"phone:"+String(order.customer_phone).replace(/\D/g,""):""].filter(Boolean);
+      let key=candidates.map((candidate:string)=>aliases.get(candidate)||candidate).find((candidate:string)=>grouped.has(candidate));
+      if(!key) key=order.customer_id|| (order.customer_email?"email:"+String(order.customer_email).toLowerCase():order.customer_phone?"phone:"+String(order.customer_phone).replace(/\D/g,""):"order:"+order.id);
+      let row=grouped.get(key);
+      if(!row){row={id:key,full_name:order.customer_name||"Guest customer",email:order.customer_email||"",phone:order.customer_phone||"",role:"guest",created_at:order.created_at,orderCount:0,totalSpent:0,lastOrderAt:null};grouped.set(key,row);}
+      for(const candidate of candidates) aliases.set(candidate,key);
+      if(!row.full_name||row.full_name==="Customer"||row.full_name==="Guest customer") row.full_name=order.customer_name||row.full_name;
+      row.email=row.email||order.customer_email||""; row.phone=row.phone||order.customer_phone||"";
+      row.orderCount+=1;
+      if(!["cancelled","returned"].includes(String(order.status).toLowerCase())) row.totalSpent+=Number(order.total||0);
+      if(!row.lastOrderAt||new Date(order.created_at)>new Date(row.lastOrderAt)) row.lastOrderAt=order.created_at;
     }
-    const customers = (profiles || []).map((profile: any) => {
-      const stats = byUser.get(profile.id) || (profile.email ? byEmail.get(profile.email.toLowerCase()) : null) || { orderCount: 0, totalSpent: 0, lastOrderAt: null, latestName: "", email: "" };
-      return { ...profile, full_name: profile.full_name || stats.latestName || "Customer", email: profile.email || stats.email || "", phone: profile.phone || stats.phone || "", orderCount: stats.orderCount, totalSpent: stats.totalSpent, lastOrderAt: stats.lastOrderAt };
-    });
-    const knownEmails = new Set(customers.map((c:any)=>String(c.email||"").toLowerCase()).filter(Boolean));
-    for (const [email,row] of byEmail) {
-      if (!knownEmails.has(email)) customers.push({id:"guest:"+email,full_name:row.latestName||"Guest customer",email,phone:row.phone||"",role:"customer",created_at:row.lastOrderAt,orderCount:row.orderCount,totalSpent:row.totalSpent,lastOrderAt:row.lastOrderAt});
-    }
+    const customers=Array.from(grouped.values()).sort((a,b)=>new Date(b.lastOrderAt||b.created_at||0).getTime()-new Date(a.lastOrderAt||a.created_at||0).getTime());
     return NextResponse.json({ customers }, { headers: { "Cache-Control": "no-store, max-age=0" } });
   } catch {
     return NextResponse.json({ error: "Could not load customers. Check admin access and database configuration." }, { status: 500 });
