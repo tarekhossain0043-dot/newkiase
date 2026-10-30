@@ -29,6 +29,7 @@ export default function CustomerAccountPage() {
         ]);
         if(result.error) throw result.error;
         if(result.data.session) {
+          await fetch("/api/customer/profile",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({full_name:name.trim(),phone:phone.trim()})});
           router.replace("/account?welcome=1");
           router.refresh();
         } else {
@@ -40,6 +41,7 @@ export default function CustomerAccountPage() {
           timeout
         ]);
         if(result.error) throw result.error;
+        await fetch("/api/customer/profile",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({})});
         router.replace("/account?welcome=1");
         router.refresh();
       }
