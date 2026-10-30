@@ -502,3 +502,28 @@ main{overflow-x:clip;overflow-y:visible}
   .admin-form-actions{justify-content:stretch}
   .admin-form-actions .admin-primary-btn{width:100%}
 }
+
+
+/* NEXORA AI customer support */
+.nexora-ai-launcher{position:fixed;right:24px;bottom:188px;z-index:125;display:flex;align-items:center;gap:9px;padding:13px 17px;border:0;border-radius:30px;background:linear-gradient(135deg,#101b36,#2459c7);color:#fff;font-weight:700;box-shadow:0 8px 26px #153d9360;cursor:pointer;animation:aiLauncherPulse 2.8s infinite}
+.nexora-ai-launcher i,.nexora-ai-header small i{width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block}
+@keyframes aiLauncherPulse{0%,100%{box-shadow:0 8px 26px #153d9360}50%{box-shadow:0 8px 32px #2874ed88}}
+.nexora-ai-panel{position:fixed;right:24px;bottom:260px;z-index:126;width:min(370px,calc(100vw - 28px));height:min(540px,calc(100dvh - 300px));min-height:340px;display:flex;flex-direction:column;overflow:hidden;border:1px solid #dce5f2;border-radius:20px;background:#fff;box-shadow:0 18px 60px #0c1c3b35;color:#18243b}
+.nexora-ai-header{display:flex;align-items:center;gap:11px;padding:15px;background:linear-gradient(120deg,#101b36,#2459c7);color:#fff}
+.nexora-ai-avatar{display:grid;place-items:center;width:39px;height:39px;border-radius:50%;background:#ffffff25}
+.nexora-ai-header>span:nth-child(2){display:flex;flex:1;flex-direction:column;gap:4px}
+.nexora-ai-header small{display:flex;align-items:center;gap:6px;font-size:11px;opacity:.9}
+.nexora-ai-header button{border:0;background:transparent;color:#fff;cursor:pointer}
+.nexora-ai-messages{flex:1;display:flex;flex-direction:column;gap:10px;overflow:auto;padding:15px;background:#f6f8fc}
+.nexora-ai-bot,.nexora-ai-user{max-width:88%;padding:10px 12px;border-radius:14px;font-size:13px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.nexora-ai-bot{align-self:flex-start;background:#fff;border:1px solid #e5eaf2;border-bottom-left-radius:4px}
+.nexora-ai-user{align-self:flex-end;background:#2459c7;color:#fff;border-bottom-right-radius:4px}
+.nexora-ai-typing{display:flex;align-items:center;gap:7px;color:#65738b}
+.nexora-ai-form{display:flex;gap:8px;padding:11px;border-top:1px solid #edf0f5;background:#fff}
+.nexora-ai-form input{flex:1;min-width:0;padding:11px 13px;border:1px solid #dce3ee;border-radius:22px;outline:none;font-size:13px}
+.nexora-ai-form input:focus{border-color:#3977e8}
+.nexora-ai-form button{display:grid;place-items:center;width:42px;height:42px;border:0;border-radius:50%;background:#2459c7;color:#fff;cursor:pointer}
+.nexora-ai-form button:disabled{opacity:.45;cursor:not-allowed}
+.nexora-ai-messenger{display:flex;justify-content:center;align-items:center;gap:6px;padding:0 10px 12px;color:#2459c7;font-size:11px;text-decoration:none;background:#fff}
+@media(max-width:760px){.nexora-ai-launcher{right:14px;bottom:165px;padding:11px 14px}.nexora-ai-panel{right:12px;bottom:228px;height:min(520px,calc(100dvh - 250px))}}
+@media(max-width:420px){.nexora-ai-launcher{bottom:154px}.nexora-ai-panel{bottom:215px;width:calc(100vw - 24px)}}
