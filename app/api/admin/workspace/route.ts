@@ -45,7 +45,7 @@ export async function POST(request: Request) {
     if (resource === "expenses") clean.created_by = user.id;
     if (resource === "banners" && !String(clean.title || "").trim()) return NextResponse.json({ error: "Banner title is required." }, { status: 400 });
     if (resource === "expenses" && (!String(clean.title || "").trim() || !Number.isFinite(Number(clean.amount)) || Number(clean.amount) <= 0)) return NextResponse.json({ error: "Expense title and positive amount are required." }, { status: 400 });
-    const { data, error } = await supabase.from(resource).insert(clean).select("*").single();
+    const { data, error } = await supabase.from(resource === "expenses" ? "operating_expenses" : "banners").insert(clean).select("*").single();
     if (error) throw error;
     return NextResponse.json({ record: data }, { status: 201 });
   } catch (error) {
@@ -84,7 +84,7 @@ export async function PATCH(request: Request) {
       : ["title","category","amount","expense_date","notes"];
     const clean: Record<string, unknown> = {};
     for (const key of allowed) if (key in values) clean[key] = values[key];
-    const { data, error } = await supabase.from(resource).update(clean).eq("id", id).select("*").single();
+    const { data, error } = await supabase.from(resource === "expenses" ? "operating_expenses" : "banners").update(clean).eq("id", id).select("*").single();
     if (error) throw error;
     return NextResponse.json({ record: data });
   } catch (error) {
