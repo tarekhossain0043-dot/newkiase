@@ -68,19 +68,28 @@ export async function POST(request: Request) {
 
     // Server-calculated area delivery fee; never trust client-submitted totals.
     const normalizedCity = city.trim().toLocaleLowerCase();
-    const { data: shippingZones, error: shippingError } = await db
-      .from("shipping_zones")
-      .select("name,cities,delivery_fee,free_shipping_threshold,is_active")
-      .eq("is_active", true);
-    if (shippingError) return NextResponse.json({ error: "Could not calculate delivery fee. Please try again." }, { status: 503 });
+    const [{ data: shippingZones, error: shippingError }, { data: shippingSetting, error: settingsError }] = await Promise.all([
+      db.from("shipping_zones")
+        .select("name,cities,delivery_fee,free_shipping_threshold,is_active")
+        .eq("is_active", true),
+      db.from("site_settings").select("value").eq("key", "shipping").maybeSingle(),
+    ]);
+    if (shippingError || settingsError) return NextResponse.json({ error: "Could not calculate delivery fee. Please try again." }, { status: 503 });
+    const settings = shippingSetting?.value && typeof shippingSetting.value === "object"
+      ? shippingSetting.value as Record<string, unknown>
+      : {};
+    const freeDelivery = settings.free_delivery === true;
+    const defaultFee = Math.max(0, Number(settings.default_delivery_fee ?? 0) || 0);
     const matchingZone = (shippingZones || []).find((zone: any) => {
       const cities = Array.isArray(zone.cities) ? zone.cities : [];
       return cities.some((area: string) => String(area).trim().toLocaleLowerCase() === normalizedCity);
     });
     const threshold = matchingZone?.free_shipping_threshold == null ? null : Number(matchingZone.free_shipping_threshold);
-    const deliveryFee = matchingZone
-      ? (threshold !== null && subtotal >= threshold ? 0 : Number(matchingZone.delivery_fee) || 0)
-      : 0;
+    const deliveryFee = freeDelivery
+      ? 0
+      : matchingZone
+        ? (threshold !== null && subtotal >= threshold ? 0 : Math.max(0, Number(matchingZone.delivery_fee) || 0))
+        : defaultFee;
     const total = subtotal + deliveryFee;
     const paymentStatus = method === "cod" ? "unpaid" : "pending_verification";
 
