@@ -44,21 +44,27 @@ export async function POST(request: Request) {
     }
 
     const orderLines = [];
+    const variantReservations: Array<{ id: string; quantity: number; stock: number }> = [];
     let subtotal = 0;
     for (const product of products) {
       const selection = normalized.get(product.id) ?? {quantity:0,selected_option:""};
       const quantity = selection.quantity;
+      const variants = (product.product_variants || []).filter((variant: any) => variant.is_active);
+      const selectedVariant = variants.length ? variants.find((variant: any) => variant.option_value === selection.selected_option) : null;
       const availableSizes = Array.isArray(product.sizes) ? product.sizes : [];
-      if (availableSizes.length && (!selection.selected_option || !availableSizes.includes(selection.selected_option))) return NextResponse.json({ error: "Please select a valid size for " + product.name + "." }, { status: 400 });
+      if (variants.length && !selectedVariant) return NextResponse.json({ error: "Please select an available option for " + product.name + "." }, { status: 400 });
+      if (!variants.length && availableSizes.length && (!selection.selected_option || !availableSizes.includes(selection.selected_option))) return NextResponse.json({ error: "Please select a valid size for " + product.name + "." }, { status: 400 });
+      if (selectedVariant && Number(selectedVariant.stock_quantity) < quantity) return NextResponse.json({ error: "Selected option is out of stock for " + product.name + "." }, { status: 409 });
       if (product.status !== "active" || product.stock_quantity < quantity) {
         return NextResponse.json({ error: "A product is out of stock or does not have enough stock." }, { status: 409 });
       }
-      const unitPrice = Number(product.price);
+      const unitPrice = Number(product.price) + (Number(selectedVariant?.price_delta) || 0);
+      if (selectedVariant) variantReservations.push({ id: selectedVariant.id, quantity, stock: Number(selectedVariant.stock_quantity) });
       subtotal += unitPrice * quantity;
       orderLines.push({
         product_id: product.id,
         product_name: product.name,
-        sku: product.sku,
+        sku: selectedVariant?.sku || product.sku,
         unit_price: unitPrice,
         quantity,
         line_total: unitPrice * quantity,
@@ -134,7 +140,8 @@ export async function POST(request: Request) {
     }
 
     // Conditional stock updates help prevent overselling when orders arrive together.
-    const adjusted: Array<{ id: string; quantity: number; previous: number }> = [];\n    const adjustedVariants: Array<{id:string;previous:number}> = [];
+    const adjusted: Array<{ id: string; quantity: number; previous: number }> = [];
+    const adjustedVariants: Array<{ id: string; previous: number }> = [];\n    const adjustedVariants: Array<{id:string;previous:number}> = [];
     for (const product of products) {
       const quantity = normalized.get(product.id)?.quantity ?? 0;
       const previous = Number(product.stock_quantity);
@@ -146,13 +153,25 @@ export async function POST(request: Request) {
         .select("id")
         .maybeSingle();
       if (stockError || !updated) {
-        for (const item of adjusted.reverse()) {
-          await db.from("products").update({ stock_quantity: item.previous }).eq("id", item.id);
-        }
+        for (const item of adjusted.reverse()) await db.from("products").update({ stock_quantity: item.previous }).eq("id", item.id);
+        for (const item of adjustedVariants) await db.from("product_variants").update({ stock_quantity: item.previous }).eq("id", item.id);
         await db.from("orders").delete().eq("id", order.id);
         return NextResponse.json({ error: "Stock changed during checkout. Refresh your cart and try again." }, { status: 409 });
       }
       adjusted.push({ id: product.id, quantity, previous });
+      const variantReservation = variantReservations.find((variant) => (product.product_variants || []).some((row: any) => row.id === variant.id));
+      if (variantReservation) {
+        const { data: variantUpdated, error: variantError } = await db.from("product_variants")
+          .update({ stock_quantity: variantReservation.stock - quantity })
+          .eq("id", variantReservation.id).gte("stock_quantity", quantity).select("id").maybeSingle();
+        if (variantError || !variantUpdated) {
+          for (const item of adjusted.reverse()) await db.from("products").update({ stock_quantity: item.previous }).eq("id", item.id);
+          for (const item of adjustedVariants) await db.from("product_variants").update({ stock_quantity: item.previous }).eq("id", item.id);
+          await db.from("orders").delete().eq("id", order.id);
+          return NextResponse.json({ error: "Selected option stock changed during checkout. Refresh and try again." }, { status: 409 });
+        }
+        adjustedVariants.push({ id: variantReservation.id, previous: variantReservation.stock });
+      }
       await db.from("inventory_history").insert({
         product_id: product.id,
         quantity_change: -quantity,
