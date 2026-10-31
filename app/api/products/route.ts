@@ -14,7 +14,7 @@ export async function GET(request: Request) {
 
     let query = supabase
       .from("products")
-      .select("id, sku, name, slug, brand, description, price, compare_at_price, stock_quantity, sizes, color, status, is_featured, categories(id, name, slug), product_images(id, storage_path, alt_text, sort_order)")
+      .select("id, sku, name, slug, brand, description, price, compare_at_price, stock_quantity, sizes, color, status, is_featured, categories(id, name, slug), product_images(id, storage_path, alt_text, sort_order), product_variants(id, option_name, option_value, sku, price_delta, stock_quantity, is_active)")
       .eq("status", "active")
       .order("created_at", { ascending: false })
       .limit(limit);
