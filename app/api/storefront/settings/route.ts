@@ -22,7 +22,10 @@ const storefrontDefaults = {
   instagram_url: "",
 };
 
-const storefrontKeys = Object.keys(storefrontDefaults);\nconst paymentKeys = ["cod_enabled","bkash_enabled","nagad_enabled","bkash_number","nagad_number","bkash_instructions","nagad_instructions"];\n\nconst paymentDefaults = {
+const storefrontKeys = Object.keys(storefrontDefaults);
+const paymentKeys = ["cod_enabled","bkash_enabled","nagad_enabled","bkash_number","nagad_number","bkash_instructions","nagad_instructions"];
+
+const paymentDefaults = {
   cod_enabled: true,
   bkash_enabled: true,
   nagad_enabled: true,
