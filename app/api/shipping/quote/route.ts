@@ -11,26 +11,34 @@ export async function GET(request: Request) {
     }
 
     const db = createSupabaseServiceClient();
-    const { data: zones, error } = await db
-      .from("shipping_zones")
-      .select("name,cities,delivery_fee,free_shipping_threshold")
-      .eq("is_active", true);
+    const [{ data: zones, error }, { data: shippingSetting, error: settingsError }] = await Promise.all([
+      db.from("shipping_zones")
+        .select("name,cities,delivery_fee,free_shipping_threshold")
+        .eq("is_active", true),
+      db.from("site_settings").select("value").eq("key", "shipping").maybeSingle(),
+    ]);
     if (error) throw error;
+    if (settingsError) throw settingsError;
 
+    const settings = shippingSetting?.value && typeof shippingSetting.value === "object"
+      ? shippingSetting.value as Record<string, unknown>
+      : {};
+    const freeDelivery = settings.free_delivery === true;
+    const defaultFee = Math.max(0, Number(settings.default_delivery_fee ?? 0) || 0);
     const zone = (zones || []).find((item: any) =>
       Array.isArray(item.cities) &&
       item.cities.some((area: string) => String(area).trim().toLocaleLowerCase() === city)
     );
 
-    if (!zone) {
-      return NextResponse.json({ delivery_fee: 0, label: "Free delivery" });
-    }
-
-    const threshold = zone.free_shipping_threshold == null ? null : Number(zone.free_shipping_threshold);
-    const fee = threshold !== null && subtotal >= threshold ? 0 : Number(zone.delivery_fee) || 0;
+    const threshold = zone?.free_shipping_threshold == null ? null : Number(zone.free_shipping_threshold);
+    const fee = freeDelivery
+      ? 0
+      : zone
+        ? (threshold !== null && subtotal >= threshold ? 0 : Math.max(0, Number(zone.delivery_fee) || 0))
+        : defaultFee;
     return NextResponse.json({
-      delivery_fee: Math.max(0, fee),
-      label: zone.name || "Area delivery",
+      delivery_fee: fee,
+      label: freeDelivery ? "Free delivery" : zone?.name || "Standard delivery",
       free_shipping: fee === 0,
     });
   } catch (error) {
