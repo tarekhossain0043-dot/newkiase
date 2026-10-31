@@ -79,13 +79,14 @@ export async function POST(request: Request) {
       ? shippingSetting.value as Record<string, unknown>
       : {};
     const freeDelivery = settings.free_delivery === true;
-    const defaultFee = Math.max(0, Number(settings.default_delivery_fee ?? 0) || 0);
+    const defaultFee = Math.max(0, Number(settings.default_delivery_fee ?? 80) || 0);
+    const freeCodDelivery = settings.free_cod_delivery === true;
     const matchingZone = (shippingZones || []).find((zone: any) => {
       const cities = Array.isArray(zone.cities) ? zone.cities : [];
       return cities.some((area: string) => String(area).trim().toLocaleLowerCase() === normalizedCity);
     });
     const threshold = matchingZone?.free_shipping_threshold == null ? null : Number(matchingZone.free_shipping_threshold);
-    const deliveryFee = freeDelivery
+    const deliveryFee = freeDelivery || (method === "cod" && freeCodDelivery)
       ? 0
       : matchingZone
         ? (threshold !== null && subtotal >= threshold ? 0 : Math.max(0, Number(matchingZone.delivery_fee) || 0))
