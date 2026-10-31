@@ -141,7 +141,7 @@ export async function POST(request: Request) {
 
     // Conditional stock updates help prevent overselling when orders arrive together.
     const adjusted: Array<{ id: string; quantity: number; previous: number }> = [];
-    const adjustedVariants: Array<{ id: string; previous: number }> = [];\n    const adjustedVariants: Array<{id:string;previous:number}> = [];
+    const adjustedVariants: Array<{ id: string; previous: number }> = [];
     for (const product of products) {
       const quantity = normalized.get(product.id)?.quantity ?? 0;
       const previous = Number(product.stock_quantity);
