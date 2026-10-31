@@ -6,6 +6,7 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     const city = (url.searchParams.get("city") || "").trim().toLocaleLowerCase();
     const subtotal = Number(url.searchParams.get("subtotal") || 0);
+    const paymentMethod = url.searchParams.get("payment") || "cod";
     if (!city || !Number.isFinite(subtotal) || subtotal < 0) {
       return NextResponse.json({ error: "A valid city and subtotal are required." }, { status: 400 });
     }
@@ -24,21 +25,22 @@ export async function GET(request: Request) {
       ? shippingSetting.value as Record<string, unknown>
       : {};
     const freeDelivery = settings.free_delivery === true;
-    const defaultFee = Math.max(0, Number(settings.default_delivery_fee ?? 0) || 0);
+    const defaultFee = Math.max(0, Number(settings.default_delivery_fee ?? 80) || 0);
+    const freeCodDelivery = settings.free_cod_delivery === true;
     const zone = (zones || []).find((item: any) =>
       Array.isArray(item.cities) &&
       item.cities.some((area: string) => String(area).trim().toLocaleLowerCase() === city)
     );
 
     const threshold = zone?.free_shipping_threshold == null ? null : Number(zone.free_shipping_threshold);
-    const fee = freeDelivery
+    const fee = freeDelivery || (paymentMethod === "cod" && freeCodDelivery)
       ? 0
       : zone
         ? (threshold !== null && subtotal >= threshold ? 0 : Math.max(0, Number(zone.delivery_fee) || 0))
         : defaultFee;
     return NextResponse.json({
       delivery_fee: fee,
-      label: freeDelivery ? "Free delivery" : zone?.name || "Standard delivery",
+      label: freeDelivery ? "Free delivery" : paymentMethod === "cod" && freeCodDelivery ? "Free COD delivery" : zone?.name || "Standard delivery",
       free_shipping: fee === 0,
     });
   } catch (error) {
