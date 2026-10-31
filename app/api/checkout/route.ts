@@ -66,8 +66,21 @@ export async function POST(request: Request) {
       });
     }
 
-    // Server-calculated delivery fee; never trust client-submitted totals.
-    const deliveryFee = subtotal >= 3000 ? 0 : 80;
+    // Server-calculated area delivery fee; never trust client-submitted totals.
+    const normalizedCity = city.trim().toLocaleLowerCase();
+    const { data: shippingZones, error: shippingError } = await db
+      .from("shipping_zones")
+      .select("name,cities,delivery_fee,free_shipping_threshold,is_active")
+      .eq("is_active", true);
+    if (shippingError) return NextResponse.json({ error: "Could not calculate delivery fee. Please try again." }, { status: 503 });
+    const matchingZone = (shippingZones || []).find((zone: any) => {
+      const cities = Array.isArray(zone.cities) ? zone.cities : [];
+      return cities.some((area: string) => String(area).trim().toLocaleLowerCase() === normalizedCity);
+    });
+    const threshold = matchingZone?.free_shipping_threshold == null ? null : Number(matchingZone.free_shipping_threshold);
+    const deliveryFee = matchingZone
+      ? (threshold !== null && subtotal >= threshold ? 0 : Number(matchingZone.delivery_fee) || 0)
+      : 0;
     const total = subtotal + deliveryFee;
     const paymentStatus = method === "cod" ? "unpaid" : "pending_verification";
 
