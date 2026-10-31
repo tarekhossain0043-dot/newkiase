@@ -92,6 +92,11 @@ export async function POST(request: Request) {
         ? (threshold !== null && subtotal >= threshold ? 0 : Math.max(0, Number(matchingZone.delivery_fee) || 0))
         : defaultFee;
     const total = subtotal + deliveryFee;
+    const { data: paymentSetting, error: paymentSettingError } = await db.from("site_settings").select("value").eq("key", "payment").maybeSingle();
+    if (paymentSettingError) return NextResponse.json({ error: "Could not validate payment settings." }, { status: 503 });
+    const paymentConfig = paymentSetting?.value && typeof paymentSetting.value === "object" ? paymentSetting.value as Record<string, unknown> : {};
+    const enabled = method === "cod" ? paymentConfig.cod_enabled !== false : method === "bkash_manual" ? paymentConfig.bkash_enabled !== false : paymentConfig.nagad_enabled !== false;
+    if (!enabled) return NextResponse.json({ error: "This payment method is currently unavailable. Please choose another method." }, { status: 400 });
     const paymentStatus = method === "cod" ? "unpaid" : "pending_verification";
 
     const { data: order, error: orderError } = await db.from("orders").insert({
