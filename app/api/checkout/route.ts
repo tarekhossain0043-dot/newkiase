@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 
     const { data: products, error: productError } = await supabase
       .from("products")
-      .select("id, sku, name, price, stock_quantity, status, sizes")
+      .select("id, sku, name, price, stock_quantity, status, sizes, product_variants(id,sku,option_name,option_value,price_delta,stock_quantity,is_active)")
       .in("id", [...normalized.keys()]);
     if (productError || !products || products.length !== normalized.size) {
       return NextResponse.json({ error: "One or more products are unavailable." }, { status: 400 });
@@ -134,7 +134,7 @@ export async function POST(request: Request) {
     }
 
     // Conditional stock updates help prevent overselling when orders arrive together.
-    const adjusted: Array<{ id: string; quantity: number; previous: number }> = [];
+    const adjusted: Array<{ id: string; quantity: number; previous: number }> = [];\n    const adjustedVariants: Array<{id:string;previous:number}> = [];
     for (const product of products) {
       const quantity = normalized.get(product.id)?.quantity ?? 0;
       const previous = Number(product.stock_quantity);
