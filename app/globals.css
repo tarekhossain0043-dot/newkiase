@@ -1333,3 +1333,54 @@ footer{background:#17191c}
   .shop-sidebar .filter-group{flex:0 0 auto}
 }
 @media(prefers-reduced-motion:reduce){.shop-sidebar{transition:none!important}}
+
+
+/* Mobile filter drawer: full viewport height, independently scrollable content */
+@media(max-width:620px){
+  .shop-sidebar{
+    position:fixed!important;top:0!important;bottom:0!important;left:0!important;
+    height:100vh!important;height:100dvh!important;max-height:100vh!important;max-height:100dvh!important;
+    width:min(340px,88vw)!important;max-width:88vw!important;
+    display:block!important;overflow-x:hidden!important;overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;overscroll-behavior-y:contain!important;
+    padding:16px 15px calc(28px + env(safe-area-inset-bottom))!important;
+    box-sizing:border-box!important;
+  }
+  .shop-sidebar.mobile-filters-open{display:block!important;overflow-y:auto!important}
+  .shop-sidebar .mobile-filter-close{position:sticky!important;top:0!important;float:right!important;z-index:8!important}
+  .shop-sidebar .sidebar-heading{clear:both;display:flex!important;min-height:42px}
+  .shop-sidebar .filter-group{display:block!important;overflow:visible!important;flex:none!important}
+  .shop-sidebar .brand-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  .shop-sidebar .brand-filter-chip{
+    display:grid!important;grid-template-columns:38px minmax(0,1fr)!important;
+    grid-template-rows:1fr!important;align-items:center!important;justify-items:start!important;
+    gap:8px!important;height:48px!important;min-height:48px!important;padding:5px 8px!important;
+    text-align:left!important;overflow:hidden!important;
+  }
+  .shop-sidebar .brand-chip-logo{
+    display:grid!important;position:relative!important;width:34px!important;height:34px!important;
+    min-width:34px!important;place-items:center!important;overflow:hidden!important;
+  }
+  .shop-sidebar .brand-chip-logo img{
+    position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+    max-width:100%!important;object-fit:contain!important;z-index:2!important;background:#fff;
+  }
+  .shop-sidebar .brand-chip-logo .brand-logo-fallback{
+    display:grid!important;position:absolute!important;inset:0!important;
+    width:100%!important;height:100%!important;place-items:center!important;
+    border-radius:50%!important;background:#f0f2f5!important;color:#28313e!important;
+    font-size:10px!important;font-weight:850!important;z-index:1!important;
+  }
+  .shop-sidebar .brand-chip-name{
+    display:block!important;position:relative!important;min-width:0!important;max-width:100%!important;
+    overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+    font-size:11px!important;line-height:1.25!important;text-align:left!important;z-index:3!important;
+  }
+  .category-card{position:relative!important;isolation:isolate!important;overflow:hidden!important}
+  .category-card .category-card-image{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;z-index:-1!important}
+  .category-card:before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#17191ccc,transparent 75%);z-index:-1}
+  .messenger-float{animation:none!important;translate:none!important;transform:none!important}
+  .messenger-float .chat-avatar{animation:none!important;transform:none!important;opacity:0!important}
+  .messenger-float .chat-messenger{animation:none!important;opacity:1!important;transform:none!important}
+  .messenger-float:after{display:none!important}
+}
