@@ -23,7 +23,7 @@ const storefrontDefaults = {
 };
 
 const storefrontKeys = Object.keys(storefrontDefaults);
-const paymentKeys = ["cod_enabled","bkash_enabled","nagad_enabled","bkash_number","nagad_number","bkash_instructions","nagad_instructions"];
+const paymentKeys = ["cod_enabled","bkash_enabled","nagad_enabled","bkash_number","nagad_number","bkash_instructions","nagad_instructions"];\nconst appearanceDefaults = { theme: "light", primary_color: "#766394", accent_color: "#d8ed8b", page_background: "#f7f6f1", text_color: "#24241f", muted_color: "#77766f", card_background: "#ffffff", font_family: "DM Sans", border_radius: "4px" };\nconst loadingDefaults = { enabled: true, style: "spinner", label: "Loading your experience…", background: "#f7f6f1", color: "#766394", duration_ms: 450 };
 
 const paymentDefaults = {
   cod_enabled: true,
@@ -38,15 +38,15 @@ const paymentDefaults = {
 export async function GET() {
   try {
     const db = createSupabaseServiceClient();
-    const [{ data: storefront }, { data: payment }, { data: banners }] = await Promise.all([
+    const [{ data: storefront }, { data: payment }, { data: banners }, { data: brands }, { data: appearance }, { data: loading }] = await Promise.all([
       db.from("site_settings").select("value").eq("key", "storefront").maybeSingle(),
       db.from("site_settings").select("value").eq("key", "payment").maybeSingle(),
-      db.from("banners").select("id,title,subtitle,image_path,cta_label,cta_href,sort_order").eq("is_active", true).or("starts_at.is.null,starts_at.lte." + new Date().toISOString()).or("ends_at.is.null,ends_at.gt." + new Date().toISOString()).order("sort_order").limit(10),
+      db.from("banners").select("id,title,subtitle,image_path,cta_label,cta_href,sort_order").eq("is_active", true).or("starts_at.is.null,starts_at.lte." + new Date().toISOString()).or("ends_at.is.null,ends_at.gt." + new Date().toISOString()).order("sort_order").limit(10),\n      db.from("site_settings").select("value").eq("key", "brands").maybeSingle(),\n      db.from("site_settings").select("value").eq("key", "appearance").maybeSingle(),\n      db.from("site_settings").select("value").eq("key", "loading").maybeSingle(),
     ]);
     return NextResponse.json({
       storefront: { ...storefrontDefaults, ...(storefront?.value && typeof storefront.value === "object" ? storefront.value : {}) },
       payment: { ...paymentDefaults, ...(payment?.value && typeof payment.value === "object" ? payment.value : {}) },
-      banners: banners ?? [],
+      banners: banners ?? [],\n      brands: Array.isArray(brands?.value) ? brands.value.filter((x: any) => x && x.is_active !== false) : [],\n      appearance: { ...appearanceDefaults, ...(appearance?.value && typeof appearance.value === "object" ? appearance.value : {}) },\n      loading: { ...loadingDefaults, ...(loading?.value && typeof loading.value === "object" ? loading.value : {}) },
     }, { headers: { "Cache-Control": "no-store, max-age=0" } });
   } catch (error) {
     console.error("[storefront settings]", error);
