@@ -1529,3 +1529,58 @@ footer{background:#17191c}
 @media(prefers-reduced-motion:reduce){
   .nexora-ai-launcher,.messenger-float{animation:none!important}
 }
+
+
+/* Mobile typography and breathing room */
+@media(max-width:620px){
+  .category-grid{gap:12px!important}
+  .category-card{height:220px!important;padding:15px!important}
+  .category-card>span b{font-size:21px!important;line-height:1.2!important}
+  .category-card>span small{font-size:12px!important;line-height:1.45!important;margin-top:7px!important}
+  .category-card>small{font-size:10px!important}
+  .brand-card{height:210px!important;padding:15px!important}
+  .brand-card>span b{font-size:21px!important;line-height:1.2!important}
+  .brand-card>span small{font-size:12px!important;line-height:1.45!important}
+  .brand-card-product{padding:18px 24px 52px!important}
+  .product-info{padding:0 12px 13px!important}
+  .product-card .product-meta{padding-top:13px!important;font-size:11px!important}
+  .product-brand-label{font-size:11px!important;gap:7px!important}
+  .product-brand-label img{width:40px!important;height:21px!important}
+  .product-card h3{font-size:13px!important;line-height:1.45!important;min-height:38px!important;margin:9px 0 6px!important}
+  .product-card .product-sizes{font-size:12px!important;line-height:1.5!important}
+  .product-card .price{font-size:15px!important;gap:8px!important}
+  .product-card .price del{font-size:11px!important}
+  .product-card .card-stock{font-size:10px!important}
+  .product-card .quick-add{font-size:9px!important;min-height:30px!important;padding:6px 10px!important}
+  .editorial{margin:24px 15px 0!important;gap:22px!important}
+  .newsletter{margin-top:28px!important}
+  .storefront-footer{margin-top:0!important}
+  .footer-main{gap:25px 18px!important}
+  .footer-main>div p{font-size:12px!important;line-height:1.65!important}
+  .footer-social-links{display:flex!important;align-items:center!important;gap:11px!important;margin:0 0 18px!important}
+  .footer-social-links a{
+    display:grid!important;place-items:center!important;width:40px!important;height:40px!important;
+    border:1px solid #ffffff45!important;border-radius:50%!important;
+    color:#fff!important;background:#ffffff12!important;text-decoration:none!important;
+    transition:background .2s ease,transform .2s ease!important;
+  }
+  .footer-social-links a:active{background:#c7f35a!important;color:#17191c!important;transform:scale(.95)}
+  .footer-promo-kicker{font-size:9px!important;letter-spacing:1px!important}
+}
+@media(max-width:380px){
+  .category-card{height:205px!important}
+  .category-card>span b,.brand-card>span b{font-size:19px!important}
+  .category-card>span small,.brand-card>span small{font-size:11px!important}
+  .product-card h3{font-size:12px!important}
+  .product-card .price{font-size:14px!important}
+}
+
+/* Keep editorial "One store" section visually separated from the next section */
+.editorial{
+  margin-bottom:clamp(30px,5vw,64px)!important;
+  padding-bottom:clamp(22px,3vw,42px)!important;
+}
+.newsletter{
+  margin-top:clamp(24px,4vw,52px)!important;
+  padding-top:clamp(44px,6vw,72px)!important;
+}
