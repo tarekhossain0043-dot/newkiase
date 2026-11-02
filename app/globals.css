@@ -1966,7 +1966,7 @@ footer{background:#17191c}
     background:rgba(255,255,255,.9)!important;
   }
 }
->>>>>>> 4815e2be97a277928461d59c1f2162ae34358948
+
 
 
 /* Desktop category cards: scale shoe artwork down inside the card so the full shoe stays visible */
@@ -1992,5 +1992,34 @@ footer{background:#17191c}
   }
   .shop-layout .brand-filter-chip .brand-chip-logo img{
     width:auto!important;height:auto!important;max-width:100px!important;max-height:40px!important;object-fit:contain!important;
+  }
+}
+
+
+/* Category and brand card copy follows the storefront's signature purple theme */
+#categories .category-card>small,
+#categories .category-card>span,
+#categories .category-card>span b,
+#categories .category-card>span small,
+#categories .category-card>svg,
+#categories .brand-card>small,
+#categories .brand-card>span,
+#categories .brand-card>span b,
+#categories .brand-card>span small,
+#categories .brand-card>svg{
+  color:var(--purple,#766394)!important;
+}
+@media(max-width:620px){
+  #categories .category-card>small,
+  #categories .category-card>span,
+  #categories .category-card>span b,
+  #categories .category-card>span small,
+  #categories .category-card>svg,
+  #categories .brand-card>small,
+  #categories .brand-card>span,
+  #categories .brand-card>span b,
+  #categories .brand-card>span small,
+  #categories .brand-card>svg{
+    color:var(--purple,#766394)!important;
   }
 }
