@@ -1,46 +1,29 @@
-"use client";
+import { createSupabaseServiceClient } from "@/lib/supabase/service";
 
-import { useEffect, useState } from "react";
+export const dynamic = "force-dynamic";
 
-type LoadingConfig = {
-  enabled?: boolean;
-  style?: "spinner" | "dots" | "bar";
-  label?: string;
-  background?: string;
-  color?: string;
+const DEFAULT_LOADING = {
+  enabled: true,
+  style: "spinner" as "spinner" | "dots" | "bar",
+  label: "Loading your experience…",
+  background: "#f7f6f1",
+  color: "#766394",
 };
 
-export default function RouteLoading() {
-  const [config, setConfig] = useState<LoadingConfig>({
-    enabled: true,
-    style: "spinner",
-    label: "Loading your experience…",
-    background: "#f7f6f1",
-    color: "#766394",
-  });
-
-  useEffect(() => {
-    let active = true;
-    fetch("/api/storefront/settings", { cache: "no-store" })
-      .then((response) => response.json())
-      .then((data) => {
-        if (active && data.loading) setConfig(data.loading);
-      })
-      .catch(() => undefined);
-    return () => {
-      active = false;
-    };
-  }, []);
+export default async function RouteLoading() {
+  let config = DEFAULT_LOADING;
+  try {
+    const db = createSupabaseServiceClient();
+    const { data } = await db.from("site_settings").select("value").eq("key", "loading").maybeSingle();
+    if (data?.value && typeof data.value === "object") config = { ...DEFAULT_LOADING, ...data.value };
+  } catch {
+    // Keep a usable default loader if the settings service is temporarily unavailable.
+  }
 
   if (config.enabled === false) return <div className="route-loading-fallback" aria-label="Loading" />;
-
   return (
-    <div
-      className="store-loading-overlay route-loading"
-      role="status"
-      aria-live="polite"
-      style={{ background: config.background || "#f7f6f1", color: config.color || "#766394" }}
-    >
+    <div className="store-loading-overlay route-loading" role="status" aria-live="polite"
+      style={{ background: config.background || "#f7f6f1", color: config.color || "#766394" }}>
       <div className={"store-loader " + (config.style || "spinner")}>
         {config.style === "dots" ? <><i /><i /><i /></> : <i />}
       </div>
