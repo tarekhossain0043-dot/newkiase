@@ -1239,3 +1239,38 @@ footer{background:#17191c}
   .messenger-float{bottom:calc(78px + env(safe-area-inset-bottom))!important;z-index:170!important}
   .back-to-top{bottom:calc(82px + env(safe-area-inset-bottom))!important}
 }
+
+
+/* Mobile support shortcuts stay on the left, clear of the bottom nav */
+@media(max-width:620px){
+  .nexora-ai-launcher{
+    left:12px!important;
+    right:auto!important;
+    bottom:calc(154px + env(safe-area-inset-bottom))!important;
+    z-index:171!important;
+    max-width:calc(100vw - 24px);
+    padding:10px 13px!important;
+    font-size:12px!important;
+  }
+  .nexora-ai-panel{
+    left:12px!important;
+    right:auto!important;
+    bottom:calc(218px + env(safe-area-inset-bottom))!important;
+    width:min(370px,calc(100vw - 24px))!important;
+    height:min(520px,calc(100dvh - 245px - env(safe-area-inset-bottom)))!important;
+    min-height:300px!important;
+    z-index:172!important;
+  }
+  .messenger-float{
+    left:12px!important;
+    right:auto!important;
+    bottom:calc(82px + env(safe-area-inset-bottom))!important;
+    z-index:170!important;
+  }
+  .back-to-top{
+    right:12px!important;
+    left:auto!important;
+    bottom:calc(78px + env(safe-area-inset-bottom))!important;
+    z-index:169!important;
+  }
+}
