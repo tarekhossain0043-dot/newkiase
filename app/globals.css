@@ -1274,3 +1274,62 @@ footer{background:#17191c}
     z-index:169!important;
   }
 }
+
+
+/* Mobile support controls: small circular icon buttons on the left */
+@media(max-width:620px){
+  .nexora-ai-launcher{
+    left:12px!important;right:auto!important;
+    bottom:calc(148px + env(safe-area-inset-bottom))!important;
+    width:42px!important;height:42px!important;min-width:42px!important;
+    padding:0!important;border-radius:50%!important;
+    display:grid!important;place-items:center!important;gap:0!important;
+    overflow:hidden!important;font-size:0!important;
+  }
+  .nexora-ai-launcher>span,.nexora-ai-launcher>i{display:none!important}
+  .nexora-ai-launcher svg{width:19px!important;height:19px!important}
+  .messenger-float{
+    left:12px!important;right:auto!important;
+    bottom:calc(96px + env(safe-area-inset-bottom))!important;
+    width:42px!important;height:42px!important;
+    display:grid!important;place-items:center!important;
+    border-radius:50%!important;overflow:hidden!important;
+  }
+  .messenger-float img,.messenger-float svg{width:42px!important;height:42px!important;max-width:42px!important;max-height:42px!important;border-radius:50%!important}
+  .messenger-float .chat-woman,.messenger-float .chat-boy,.messenger-float .chat-ping{display:none!important}
+}
+
+/* Slide-in product filter drawer on mobile */
+.mobile-filter-backdrop{display:none}
+.mobile-filter-close{display:none}
+@media(max-width:620px){
+  .mobile-filter-backdrop{
+    display:block!important;position:fixed!important;inset:0!important;
+    z-index:205!important;border:0!important;
+    background:rgba(12,18,30,.5)!important;backdrop-filter:blur(2px);
+  }
+  .shop-sidebar{
+    display:flex!important;flex-direction:column!important;
+    position:fixed!important;top:0!important;bottom:0!important;left:0!important;
+    z-index:206!important;width:min(340px,88vw)!important;max-width:88vw!important;
+    height:100dvh!important;max-height:100dvh!important;
+    margin:0!important;padding:18px 16px calc(24px + env(safe-area-inset-bottom))!important;
+    overflow-y:auto!important;overscroll-behavior:contain;
+    background:#fff!important;box-shadow:12px 0 36px #10182830!important;
+    transform:translateX(-105%)!important;visibility:hidden!important;
+    transition:transform .26s ease,visibility .26s ease!important;
+  }
+  .shop-sidebar.mobile-filters-open{
+    display:flex!important;transform:translateX(0)!important;visibility:visible!important;
+  }
+  .mobile-filter-close{
+    display:grid!important;position:sticky!important;top:0!important;
+    align-self:flex-end!important;flex:0 0 auto!important;place-items:center!important;
+    width:36px!important;height:36px!important;margin:0 0 10px auto!important;
+    border:1px solid #e5e7eb!important;border-radius:50%!important;
+    background:#fff!important;color:#172033!important;z-index:3!important;
+  }
+  .mobile-filter-toggle{position:relative;z-index:1}
+  .shop-sidebar .filter-group{flex:0 0 auto}
+}
+@media(prefers-reduced-motion:reduce){.shop-sidebar{transition:none!important}}
