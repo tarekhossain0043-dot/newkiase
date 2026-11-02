@@ -1384,3 +1384,83 @@ footer{background:#17191c}
   .messenger-float .chat-messenger{animation:none!important;opacity:1!important;transform:none!important}
   .messenger-float:after{display:none!important}
 }
+
+
+/* Product card: compact Add to Cart control */
+.product-card .quick-add{
+  min-height:30px!important;
+  width:auto!important;
+  left:50%!important;
+  right:auto!important;
+  bottom:9px!important;
+  transform:translate(-50%,8px)!important;
+  padding:6px 11px!important;
+  border-radius:7px!important;
+  gap:5px!important;
+  font-size:9px!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+}
+.product-card:hover .quick-add,.product-card:focus-within .quick-add{
+  transform:translate(-50%,0)!important;
+}
+@media(max-width:620px){
+  .product-card .quick-add{
+    min-height:27px!important;
+    left:50%!important;right:auto!important;bottom:7px!important;
+    width:auto!important;max-width:calc(100% - 14px)!important;
+    padding:5px 9px!important;font-size:8px!important;
+    transform:translateX(-50%)!important;
+  }
+  .product-card .quick-add svg{width:12px!important;height:12px!important}
+}
+
+/* Product detail loading screen */
+.product-loading-page{
+  min-height:100svh;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  background:#f7f8fa;
+}
+.product-loading-card{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+  padding:34px 38px;
+  min-width:min(280px,90vw);
+  border:1px solid #e8ebf0;
+  border-radius:16px;
+  background:#fff;
+  box-shadow:0 14px 40px #1720330d;
+  color:#172033;
+}
+.product-loading-card strong{font-size:14px;font-weight:750}
+.product-loading-card>span:last-child{font-size:11px;color:#667085}
+.product-loading-spinner{
+  width:38px;height:38px;border:3px solid #e8edf2;
+  border-top-color:#83bd20;border-right-color:#83bd20;
+  border-radius:50%;animation:nexoraProductSpin .75s linear infinite;
+}
+@keyframes nexoraProductSpin{to{transform:rotate(360deg)}}
+
+/* Exactly three product views: main, alternate angle, outsole */
+.gallery-thumbnails{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
+.gallery-thumbnails button{
+  position:relative!important;display:flex!important;flex-direction:column!important;
+  align-items:center!important;gap:5px!important;min-width:0!important;
+  padding:6px!important;border:1px solid #e5e9ef!important;border-radius:9px!important;
+  background:#fff!important;overflow:hidden!important;
+}
+.gallery-thumbnails button img{
+  display:block!important;width:100%!important;height:78px!important;
+  object-fit:contain!important;background:#f7f8fa!important;border-radius:5px;
+}
+.gallery-thumbnails button small{font-size:9px;font-weight:700;color:#667085}
+.gallery-thumbnails button.active{border-color:#83bd20!important;box-shadow:0 0 0 1px #83bd20}
+@media(max-width:620px){
+  .gallery-thumbnails{gap:7px!important}
+  .gallery-thumbnails button img{height:68px!important}
+}
+@media(prefers-reduced-motion:reduce){.product-loading-spinner{animation:none!important}}
