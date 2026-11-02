@@ -89,7 +89,7 @@ export async function PATCH(request: Request) {
     // The admin editor sends image_urls (gallery), while older clients may send image_url.
     if (Array.isArray(body.image_urls) || typeof body.image_url === "string") {
       const rawUrls: unknown[] = Array.isArray(body.image_urls) ? body.image_urls : [body.image_url];
-      const imageUrls = [...new Set(rawUrls.filter((value): value is string => typeof value === "string").map(value => value.trim()).filter(Boolean).map(value => value.slice(0, 2000)))].slice(0, 5);
+      const imageUrls = [...new Set(rawUrls.filter((value): value is string => typeof value === "string").map(value => value.trim()).filter(Boolean).map(value => value.slice(0, 2000)))].slice(0, 3);
       const { error: deleteImagesError } = await supabase.from("product_images").delete().eq("product_id", data.id);
       if (deleteImagesError) return NextResponse.json({ error: "Product fields updated, but existing gallery images could not be replaced." }, { status: 400 });
       if (imageUrls.length) {
