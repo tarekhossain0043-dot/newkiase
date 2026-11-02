@@ -72,7 +72,7 @@ export async function PATCH(request: Request) {
     }
     if (resource === "settings") {
       const key = String(body.key || "");
-      if (!["storefront","shipping","payment"].includes(key)) return NextResponse.json({ error: "Unsupported settings key." }, { status: 400 });
+      if (!["storefront","shipping","payment","brands","appearance","loading"].includes(key)) return NextResponse.json({ error: "Unsupported settings key." }, { status: 400 });
       const { data: auth } = await supabase.auth.getUser();
       const { data, error } = await supabase.from("site_settings").upsert({ key, value: values, updated_by: auth.user?.id, updated_at: new Date().toISOString() }, { onConflict: "key" }).select("*").single();
       if (error) throw error;
