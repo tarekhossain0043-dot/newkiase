@@ -21,6 +21,8 @@ export default function StorefrontRuntime() {
         root.style.setProperty("--card", appearance.card_background || (dark ? "#242424" : "#ffffff"));
         root.style.setProperty("--store-radius", appearance.border_radius || "4px");
         if (appearance.font_family) root.style.setProperty("--store-font", appearance.font_family);
+        document.body.style.backgroundImage = appearance.page_background_image ? `linear-gradient(${appearance.theme === "dark" ? "rgba(0,0,0,.72)" : "rgba(255,255,255,.68)"}, ${appearance.theme === "dark" ? "rgba(0,0,0,.72)" : "rgba(255,255,255,.68)"}), url("${String(appearance.page_background_image).replace(/"/g, "%22")}")` : "none";
+        document.body.style.backgroundAttachment = "fixed";
       })
       .catch(() => undefined);
     return () => {
