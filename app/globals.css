@@ -1584,3 +1584,90 @@ footer{background:#17191c}
   margin-top:clamp(24px,4vw,52px)!important;
   padding-top:clamp(44px,6vw,72px)!important;
 }
+
+
+/* Final mobile overlay stacking: filter drawer must sit above header and floating widgets */
+@media(max-width:620px){
+  .mobile-filter-backdrop{
+    position:fixed!important;inset:0!important;z-index:99990!important;
+  }
+  .shop-sidebar,
+  .shop-sidebar.mobile-filters-open{
+    position:fixed!important;top:0!important;left:0!important;right:auto!important;bottom:0!important;
+    z-index:99999!important;
+    height:100vh!important;height:100dvh!important;
+    max-height:100vh!important;max-height:100dvh!important;
+    margin:0!important;
+    padding-top:calc(12px + env(safe-area-inset-top))!important;
+    overflow-x:hidden!important;overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior-y:contain!important;
+    isolation:isolate!important;
+  }
+  .shop-sidebar .mobile-filter-close{z-index:100000!important}
+  .shop-sidebar .sidebar-heading{z-index:99998!important}
+}
+
+/* Messenger bubble: perfectly centered icon/avatar, 5-second rotation per face */
+@media(max-width:620px){
+  .messenger-float{
+    width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important;
+    padding:0!important;box-sizing:border-box!important;
+    display:grid!important;place-items:center!important;
+    border-radius:50%!important;overflow:hidden!important;
+    line-height:0!important;isolation:isolate!important;
+    animation:nexoraMessengerPulse 2.8s ease-in-out infinite!important;
+  }
+  .messenger-float .chat-avatar{
+    position:absolute!important;inset:0!important;
+    display:grid!important;place-items:center!important;
+    width:100%!important;height:100%!important;
+    min-width:100%!important;min-height:100%!important;
+    max-width:none!important;max-height:none!important;
+    margin:0!important;padding:0!important;border:0!important;
+    object-fit:cover!important;object-position:center!important;
+    border-radius:50%!important;
+    opacity:0!important;visibility:hidden!important;
+    transform:none!important;animation:none!important;
+  }
+  .messenger-float .chat-messenger{
+    display:grid!important;place-items:center!important;
+    opacity:1!important;visibility:visible!important;
+    animation:nexoraMessengerCycle 15s linear infinite!important;
+    background:#087cff!important;
+  }
+  .messenger-float .chat-messenger svg{
+    display:block!important;width:25px!important;height:25px!important;
+    max-width:25px!important;max-height:25px!important;
+    margin:auto!important;
+  }
+  .messenger-float .chat-woman{
+    animation:nexoraWomanCycle 15s linear infinite!important;
+  }
+  .messenger-float .chat-boy{
+    animation:nexoraBoyCycle 15s linear infinite!important;
+  }
+  .messenger-float .chat-ping{
+    position:absolute!important;right:1px!important;bottom:1px!important;
+    z-index:5!important;pointer-events:none!important;
+  }
+}
+@keyframes nexoraMessengerCycle{
+  0%,32.99%{opacity:1;visibility:visible}
+  33%,100%{opacity:0;visibility:hidden}
+}
+@keyframes nexoraWomanCycle{
+  0%,32.99%{opacity:0;visibility:hidden}
+  33%,65.99%{opacity:1;visibility:visible}
+  66%,100%{opacity:0;visibility:hidden}
+}
+@keyframes nexoraBoyCycle{
+  0%,65.99%{opacity:0;visibility:hidden}
+  66%,99.99%{opacity:1;visibility:visible}
+  100%{opacity:0;visibility:hidden}
+}
+@media(prefers-reduced-motion:reduce){
+  .messenger-float,.messenger-float .chat-avatar,.nexora-ai-launcher{animation:none!important}
+  .messenger-float .chat-messenger{opacity:1!important;visibility:visible!important}
+  .messenger-float .chat-woman,.messenger-float .chat-boy{display:none!important}
+}
