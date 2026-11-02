@@ -19,7 +19,9 @@ const storefrontDefaults = {
   footer_email: "",
   footer_phone: "",
   facebook_url: "",
+  whatsapp_url: "",
   instagram_url: "",
+  youtube_url: "",
 };
 
 const storefrontKeys = Object.keys(storefrontDefaults);
