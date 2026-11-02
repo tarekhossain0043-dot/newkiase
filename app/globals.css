@@ -1785,3 +1785,70 @@ footer{background:#17191c}
     position:sticky!important;top:0!important;z-index:2147483647!important;
   }
 }
+
+
+/* Desktop-only repair: restore normal shop layout and separate brand logos from labels.
+   Mobile filter drawer styles below 620px are intentionally untouched. */
+@media(min-width:621px){
+  .shop-layout{
+    display:grid!important;
+    grid-template-columns:272px minmax(0,1fr)!important;
+    align-items:start!important;
+    gap:14px!important;
+  }
+  .shop-layout>.shop-sidebar{
+    position:sticky!important;
+    top:90px!important;left:auto!important;right:auto!important;bottom:auto!important;
+    width:auto!important;max-width:none!important;
+    height:auto!important;min-height:0!important;max-height:none!important;
+    display:block!important;overflow:visible!important;
+    transform:none!important;visibility:visible!important;
+    z-index:2!important;
+    padding:18px 16px 16px!important;
+    border:1px solid var(--nexora-line)!important;
+    border-radius:13px!important;
+    background:#fff!important;
+  }
+  .shop-layout .brand-filter-grid{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:7px!important;
+    align-items:stretch!important;
+  }
+  .shop-layout .brand-filter-chip{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:5px!important;
+    width:100%!important;height:68px!important;min-height:68px!important;
+    min-width:0!important;padding:6px 5px!important;
+    overflow:hidden!important;text-align:center!important;
+    line-height:normal!important;
+  }
+  .shop-layout .brand-filter-chip .brand-chip-logo{
+    position:relative!important;
+    display:grid!important;place-items:center!important;
+    flex:0 0 34px!important;width:100%!important;height:34px!important;
+    min-width:0!important;min-height:34px!important;max-width:100%!important;
+    overflow:hidden!important;
+  }
+  .shop-layout .brand-filter-chip .brand-chip-logo img{
+    position:static!important;display:block!important;
+    width:auto!important;height:30px!important;max-width:68px!important;
+    object-fit:contain!important;background:transparent!important;
+  }
+  .shop-layout .brand-filter-chip .brand-chip-logo .brand-logo-fallback{
+    position:absolute!important;inset:0!important;
+    display:grid!important;place-items:center!important;
+    width:100%!important;height:100%!important;
+    font-size:13px!important;line-height:1!important;
+  }
+  .shop-layout .brand-filter-chip .brand-chip-name{
+    display:block!important;position:static!important;
+    flex:0 0 auto!important;width:100%!important;max-width:100%!important;
+    min-width:0!important;height:auto!important;max-height:14px!important;
+    overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+    font-size:9px!important;line-height:1.2!important;text-align:center!important;
+  }
+}
