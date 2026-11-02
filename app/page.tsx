@@ -4,9 +4,9 @@ import { Heart, Search, ShoppingBag, Star, ArrowUpRight, Menu, X, Truck, Trash2,
 import { formatPrice, type Category, type Product } from "@/lib/products";
 
 const DEFAULT_HERO_SLIDES = [
- {eyebrow:"THE SNEAKER EDIT · 01",title:"Made to move.",subtitle:"A fresh look at everyday sneaker culture. Find your next favourite pair at NEXORA.",cta_label:"Explore collection",cta_href:"#shop",brand:"Nike",image_alt:"Nike sneaker photographed on a clean light background",shoe_image_url:"https://images.unsplash.com/photo-1637437735621-22472eee4875?auto=format&fit=crop&w=1400&q=88"},
- {eyebrow:"THE SNEAKER EDIT · 02",title:"Everyday classics.",subtitle:"Clean lines, effortless comfort and timeless streetwear inspiration.",cta_label:"Shop sneakers",cta_href:"#shop",brand:"Adidas",image_alt:"Adidas low-top sneaker photographed on a light background",shoe_image_url:"https://images.unsplash.com/photo-1618545647089-da834ede280c?auto=format&fit=crop&w=1400&q=88"},
- {eyebrow:"THE SNEAKER EDIT · 03",title:"Stand out boldly.",subtitle:"Bring a little more character to your everyday rotation with standout sneaker styles.",cta_label:"Discover more",cta_href:"#shop",brand:"Jordan",image_alt:"Red and white basketball sneaker photographed for a sneaker collection",shoe_image_url:"https://images.unsplash.com/photo-1566363384123-360c5f6bc369?auto=format&fit=crop&w=1400&q=88"}
+ {eyebrow:"THE SNEAKER EDIT · 01",title:"Stand out boldly.",subtitle:"Bring a little more character to your everyday rotation with standout Jordan styles.",cta_label:"Discover Jordan",cta_href:"#shop",brand:"Jordan",image_alt:"Jordan basketball sneaker with a transparent background",shoe_image_url:"/banner-shoes/jordan.png"},
+ {eyebrow:"THE SNEAKER EDIT · 02",title:"Everyday classics.",subtitle:"Clean lines, effortless comfort and timeless streetwear inspiration from Puma.",cta_label:"Shop Puma",cta_href:"#shop",brand:"Puma",image_alt:"Puma sneaker with a transparent background",shoe_image_url:"/banner-shoes/puma.png"},
+ {eyebrow:"THE SNEAKER EDIT · 03",title:"Made to move.",subtitle:"Find your next favourite pair and bring fresh energy to your everyday Nike rotation.",cta_label:"Explore Nike",cta_href:"#shop",brand:"Nike",image_alt:"Nike sneaker with a transparent background",shoe_image_url:"/banner-shoes/nike.png"}
 ];
 
 export default function HomePage() {
