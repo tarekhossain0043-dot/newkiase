@@ -1899,3 +1899,30 @@ footer{background:#17191c}
     padding:12px 22px 42px!important;
   }
 }
+
+
+/* Mobile category section: force every text/icon layer to black */
+@media(max-width:620px){
+  #categories .category-card,
+  #categories .category-card>small,
+  #categories .category-card>span,
+  #categories .category-card>span b,
+  #categories .category-card>span small,
+  #categories .category-card>svg,
+  #categories .brand-card,
+  #categories .brand-card>small,
+  #categories .brand-card>span,
+  #categories .brand-card>span b,
+  #categories .brand-card>span small,
+  #categories .brand-card>svg{
+    color:#000!important;
+  }
+  #categories .category-card:before{
+    background:linear-gradient(0deg,rgba(255,255,255,.94),rgba(255,255,255,.48))!important;
+  }
+  #categories .brand-card>span,
+  #categories .brand-card>small,
+  #categories .brand-card>svg{
+    background:rgba(255,255,255,.9)!important;
+  }
+}
