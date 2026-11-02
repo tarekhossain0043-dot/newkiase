@@ -24,7 +24,7 @@ const storefrontDefaults = {
 
 const storefrontKeys = Object.keys(storefrontDefaults);
 const paymentKeys = ["cod_enabled","bkash_enabled","nagad_enabled","bkash_number","nagad_number","bkash_instructions","nagad_instructions"];
-const appearanceDefaults = { theme: "light", primary_color: "#766394", accent_color: "#d8ed8b", page_background: "#f7f6f1", text_color: "#24241f", muted_color: "#77766f", card_background: "#ffffff", font_family: "DM Sans", border_radius: "4px" };
+const appearanceDefaults = { theme: "light", primary_color: "#766394", accent_color: "#d8ed8b", page_background: "#f7f6f1", text_color: "#24241f", muted_color: "#77766f", card_background: "#ffffff", page_background_image: "", font_family: "DM Sans", border_radius: "4px" };
 const loadingDefaults = { enabled: true, style: "spinner", label: "Loading your experience…", background: "#f7f6f1", color: "#766394", duration_ms: 450 };
 
 const paymentDefaults = {
