@@ -2036,10 +2036,10 @@ footer{background:#17191c}
     display:block!important;
     position:absolute!important;
     z-index:0!important;
-    top:6px!important;right:0!important;bottom:auto!important;left:0!important;
-    width:100%!important;height:68%!important;
-    max-width:100%!important;max-height:68%!important;
-    padding:8px 14px!important;margin:0!important;
+    top:6px!important;right:auto!important;bottom:auto!important;left:-5%!important;
+    width:110%!important;height:68%!important;
+    max-width:110%!important;max-height:68%!important;
+    padding:8px 10px!important;margin:0!important;
     object-fit:contain!important;object-position:center center!important;
     opacity:1!important;visibility:visible!important;
     transform:none!important;transition:none!important;
@@ -2059,10 +2059,10 @@ footer{background:#17191c}
   #categories .brand-card-product{
     display:block!important;
     position:absolute!important;z-index:0!important;
-    top:4px!important;right:0!important;bottom:auto!important;left:0!important;
-    width:100%!important;height:68%!important;
-    max-width:100%!important;max-height:68%!important;
-    padding:8px 14px!important;margin:0!important;
+    top:4px!important;right:auto!important;bottom:auto!important;left:-5%!important;
+    width:110%!important;height:68%!important;
+    max-width:110%!important;max-height:68%!important;
+    padding:8px 10px!important;margin:0!important;
     object-fit:contain!important;object-position:center center!important;
     opacity:1!important;visibility:visible!important;
     transform:none!important;transition:none!important;
