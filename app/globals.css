@@ -1494,14 +1494,14 @@ footer{background:#17191c}
   background:#fff!important;overflow:hidden!important;
 }
 .gallery-thumbnails button img{
-  display:block!important;width:100%!important;height:78px!important;
+  display:block!important;width:100%!important;height:112px!important;
   object-fit:contain!important;background:#f7f8fa!important;border-radius:5px;
 }
 .gallery-thumbnails button small{font-size:9px;font-weight:700;color:#667085}
 .gallery-thumbnails button.active{border-color:#83bd20!important;box-shadow:0 0 0 1px #83bd20}
 @media(max-width:620px){
   .gallery-thumbnails{gap:7px!important}
-  .gallery-thumbnails button img{height:68px!important}
+  .gallery-thumbnails button img{height:94px!important}
 }
 @media(prefers-reduced-motion:reduce){.product-loading-spinner{animation:none!important}}
 
