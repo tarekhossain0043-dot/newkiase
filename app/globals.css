@@ -1025,3 +1025,22 @@ footer{background:#17191c}
     max-height:300px!important;
   }
 }
+
+.storefront-footer{padding:40px clamp(18px,3.7vw,56px) 18px!important;background:#fff!important;color:#17191c!important;border-top:1px solid #e9edf2}
+.storefront-footer .footer-main{grid-template-columns:minmax(230px,1.35fr) repeat(2,minmax(120px,.7fr)) minmax(270px,1.15fr);gap:clamp(20px,3vw,44px);padding-bottom:32px}
+.storefront-footer .footer-main>div:not(:first-child):not(:last-child){display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.storefront-footer .logo{color:#17191c;font-family:inherit;font-size:27px;font-weight:850;letter-spacing:-1.6px;text-transform:uppercase}
+.storefront-footer .logo span{font-size:8px;vertical-align:top;margin-left:2px}
+.storefront-footer .logo i{color:#83bd20}
+.storefront-footer .footer-main p{margin:12px 0;color:#667085;font-size:12px;line-height:1.8}
+.storefront-footer .footer-main>div:first-child>a:not(.logo){display:block;margin-top:8px;color:#475467;font-size:11px}
+.storefront-footer .footer-main>div>b{margin-bottom:2px;color:#17191c;font-size:12px;font-weight:750}
+.storefront-footer .footer-main>div:not(:first-child):not(.footer-promo)>a{color:#667085;font-size:11px;transition:color .2s ease}
+.storefront-footer .footer-main>div:not(:first-child):not(.footer-promo)>a:hover,.storefront-footer .footer-main>div:first-child>a:not(.logo):hover{color:#568a08}
+.storefront-footer .footer-promo{padding:20px;border:1px solid #e9edf2;border-radius:12px;background:#f7f9f4;color:#568a08;font-size:9px;font-weight:750;letter-spacing:1px}
+.storefront-footer .footer-promo>a{color:#667085;font-size:10px;font-weight:600;letter-spacing:.2px;transition:color .2s ease}
+.storefront-footer .footer-promo>a:hover{color:#568a08}
+.storefront-footer .footer-promo h3{margin:18px 0 0;color:#17191c;font-family:'Playfair Display',serif;font-size:26px;font-weight:600;line-height:1.2;letter-spacing:-.4px}
+.storefront-footer .footer-bottom{border-top:1px solid #e9edf2;padding-top:16px;color:#667085;font-size:8px;letter-spacing:.5px}
+@media(max-width:900px){.storefront-footer .footer-main{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 20px}.storefront-footer .footer-main>div:first-child,.storefront-footer .footer-promo{grid-column:1/-1}}
+@media(max-width:420px){.storefront-footer{padding:30px 16px 16px!important}.storefront-footer .footer-main{gap:22px 14px}.storefront-footer .footer-promo{padding:16px}.storefront-footer .footer-promo h3{font-size:23px}}
