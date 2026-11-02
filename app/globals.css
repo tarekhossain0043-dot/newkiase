@@ -1671,3 +1671,47 @@ footer{background:#17191c}
   .messenger-float .chat-messenger{opacity:1!important;visibility:visible!important}
   .messenger-float .chat-woman,.messenger-float .chat-boy{display:none!important}
 }
+
+
+/* Final storefront typography, contrast and full-screen filter overlay */
+.brand-card>span b{color:#fff!important}
+.brand-card>span small{color:#f4f5f7!important}
+.brand-card>small,.brand-card>svg{color:#fff!important}
+@media(max-width:620px){
+  .product-card h3{font-size:20px!important;line-height:1.3!important;min-height:0!important;font-weight:650!important}
+  .product-card .price{font-size:20px!important;line-height:1.25!important;gap:9px!important}
+  .product-card .price b{font-size:20px!important;font-weight:800!important}
+  .product-card .price del{font-size:13px!important}
+  .product-card .product-sizes{font-size:13px!important;line-height:1.5!important}
+  .product-card .quick-add{
+    min-height:36px!important;padding:8px 14px!important;
+    font-size:10px!important;border-radius:8px!important;
+  }
+  .product-card .quick-add svg{width:14px!important;height:14px!important}
+  .footer-social-links{flex-wrap:wrap!important;gap:10px!important}
+  .footer-social-links a{width:42px!important;height:42px!important}
+}
+/* Keep the mobile filter sheet above all page and floating UI layers */
+@media(max-width:620px){
+  .mobile-filter-backdrop{
+    position:fixed!important;inset:0!important;
+    z-index:2147483000!important;isolation:isolate!important;
+  }
+  .shop-sidebar,.shop-sidebar.mobile-filters-open{
+    position:fixed!important;inset:0 auto 0 0!important;
+    width:min(360px,90vw)!important;max-width:90vw!important;
+    height:100vh!important;height:100dvh!important;
+    max-height:100vh!important;max-height:100dvh!important;
+    margin:0!important;padding:calc(12px + env(safe-area-inset-top)) 15px calc(24px + env(safe-area-inset-bottom))!important;
+    z-index:2147483001!important;
+    display:block!important;overflow-x:hidden!important;overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;
+    box-sizing:border-box!important;isolation:isolate!important;
+    transform:translateX(-105%)!important;visibility:hidden!important;
+  }
+  .shop-sidebar.mobile-filters-open{
+    transform:translateX(0)!important;visibility:visible!important;
+  }
+  .shop-sidebar .mobile-filter-close{position:sticky!important;top:0!important;z-index:2147483002!important}
+  .shop-sidebar .sidebar-heading{position:sticky!important;top:0!important;z-index:2147483001!important;background:#fff!important}
+}
