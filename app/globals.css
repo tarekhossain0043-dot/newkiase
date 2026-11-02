@@ -2023,3 +2023,54 @@ footer{background:#17191c}
     color:var(--purple,#766394)!important;
   }
 }
+
+
+/* Desktop category artwork: keep shoe images visible, contained and stationary on hover */
+@media(min-width:621px){
+  #categories .category-card{
+    position:relative!important;
+    isolation:isolate!important;
+    overflow:hidden!important;
+  }
+  #categories img.category-card-image{
+    display:block!important;
+    position:absolute!important;
+    z-index:0!important;
+    top:6px!important;right:0!important;bottom:auto!important;left:0!important;
+    width:100%!important;height:68%!important;
+    max-width:100%!important;max-height:68%!important;
+    padding:8px 14px!important;margin:0!important;
+    object-fit:contain!important;object-position:center center!important;
+    opacity:1!important;visibility:visible!important;
+    transform:none!important;transition:none!important;
+    filter:none!important;mix-blend-mode:multiply!important;
+    pointer-events:none!important;
+  }
+  #categories .category-card:hover img.category-card-image,
+  #categories .category-card:focus-visible img.category-card-image{
+    transform:none!important;filter:none!important;
+  }
+  #categories .category-card>small,
+  #categories .category-card>span,
+  #categories .category-card>svg{
+    position:relative!important;z-index:2!important;
+  }
+  #categories .category-card>span{margin-top:auto!important}
+  #categories .brand-card-product{
+    display:block!important;
+    position:absolute!important;z-index:0!important;
+    top:4px!important;right:0!important;bottom:auto!important;left:0!important;
+    width:100%!important;height:68%!important;
+    max-width:100%!important;max-height:68%!important;
+    padding:8px 14px!important;margin:0!important;
+    object-fit:contain!important;object-position:center center!important;
+    opacity:1!important;visibility:visible!important;
+    transform:none!important;transition:none!important;
+    filter:drop-shadow(0 8px 8px rgba(0,0,0,.12))!important;
+    pointer-events:none!important;
+  }
+  #categories .brand-card:hover .brand-card-product,
+  #categories .brand-card:focus-visible .brand-card-product{
+    transform:none!important;filter:drop-shadow(0 8px 8px rgba(0,0,0,.12))!important;
+  }
+}
