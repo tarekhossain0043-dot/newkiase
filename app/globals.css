@@ -1044,3 +1044,88 @@ footer{background:#17191c}
 .storefront-footer .footer-bottom{border-top:1px solid #e9edf2;padding-top:16px;color:#667085;font-size:8px;letter-spacing:.5px}
 @media(max-width:900px){.storefront-footer .footer-main{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 20px}.storefront-footer .footer-main>div:first-child,.storefront-footer .footer-promo{grid-column:1/-1}}
 @media(max-width:420px){.storefront-footer{padding:30px 16px 16px!important}.storefront-footer .footer-main{gap:22px 14px}.storefront-footer .footer-promo{padding:16px}.storefront-footer .footer-promo h3{font-size:23px}}
+
+
+/* Mobile bottom actions: keep cart and account reachable on narrow screens */
+@media (max-width: 420px) {
+  .header .actions .cart-header-action {
+    display: grid !important;
+    position: fixed !important;
+    right: 14px !important;
+    bottom: 16px !important;
+    z-index: 140 !important;
+    width: 48px !important;
+    height: 48px !important;
+    padding: 0 !important;
+    place-items: center !important;
+    border: 1px solid #e5e9ef !important;
+    border-radius: 50% !important;
+    background: #17191c !important;
+    color: #fff !important;
+    box-shadow: 0 5px 18px #17203330 !important;
+  }
+  .header .actions .cart-header-action span {
+    position: absolute !important;
+    top: -4px !important;
+    right: -3px !important;
+    min-width: 18px !important;
+    height: 18px !important;
+    padding: 0 4px !important;
+    display: grid !important;
+    place-items: center !important;
+    border-radius: 20px !important;
+    background: #c7f35a !important;
+    color: #172033 !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+  }
+  .header .actions .profile-dropdown {
+    display: block !important;
+    position: fixed !important;
+    right: 72px !important;
+    bottom: 16px !important;
+    z-index: 140 !important;
+    width: 48px !important;
+    height: 48px !important;
+  }
+  .header .actions .account-profile {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 48px !important;
+    height: 48px !important;
+    padding: 0 !important;
+    border: 2px solid #fff !important;
+    border-radius: 50% !important;
+    background: #fff !important;
+    box-shadow: 0 5px 18px #17203330 !important;
+  }
+  .header .actions .account-profile img {
+    display: block !important;
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 50% !important;
+  }
+  .header .actions .account-profile > svg { display: none !important; }
+  .header .actions .profile-dropdown-menu {
+    position: absolute !important;
+    top: auto !important;
+    right: 0 !important;
+    bottom: calc(100% + 10px) !important;
+    left: auto !important;
+    z-index: 150 !important;
+    width: 220px !important;
+    max-width: calc(100vw - 24px) !important;
+  }
+  .messenger-float {
+    display: grid !important;
+    position: fixed !important;
+    right: 12px !important;
+    bottom: 82px !important;
+    z-index: 160 !important;
+    width: 58px !important;
+    height: 58px !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}
