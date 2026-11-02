@@ -1715,3 +1715,36 @@ footer{background:#17191c}
   .shop-sidebar .mobile-filter-close{position:sticky!important;top:0!important;z-index:2147483002!important}
   .shop-sidebar .sidebar-heading{position:sticky!important;top:0!important;z-index:2147483001!important;background:#fff!important}
 }
+
+
+/* AI chat: shorter panel with independently scrollable, visually hidden scrollbar */
+.nexora-ai-panel{
+  height:min(440px,calc(100dvh - 220px))!important;
+  max-height:calc(100dvh - 32px)!important;
+  display:flex!important;flex-direction:column!important;
+  overflow:hidden!important;
+}
+.nexora-ai-header,.nexora-ai-form,.nexora-ai-messenger{flex:0 0 auto!important}
+.nexora-ai-messages{
+  flex:1 1 auto!important;min-height:0!important;
+  overflow-y:auto!important;overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+  scrollbar-width:none!important;
+  -ms-overflow-style:none!important;
+}
+.nexora-ai-messages::-webkit-scrollbar{
+  display:none!important;width:0!important;height:0!important;
+}
+@media(max-width:760px){
+  .nexora-ai-panel{
+    height:min(410px,calc(100dvh - 210px - env(safe-area-inset-bottom)))!important;
+    max-height:calc(100dvh - 24px - env(safe-area-inset-top))!important;
+  }
+}
+@media(max-width:420px){
+  .nexora-ai-panel{
+    height:min(390px,calc(100dvh - 200px - env(safe-area-inset-bottom)))!important;
+    min-height:260px!important;
+  }
+}
