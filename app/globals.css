@@ -2074,3 +2074,19 @@ footer{background:#17191c}
     transform:none!important;filter:drop-shadow(0 8px 8px rgba(0,0,0,.12))!important;
   }
 }
+
+
+/* Footer social icons use the same signature purple as the storefront theme */
+.footer-social-links a{
+  color:var(--purple,#766394)!important;
+}
+.footer-social-links a svg{
+  color:var(--purple,#766394)!important;
+  stroke:currentColor!important;
+}
+.footer-social-links a:hover{
+  color:#5f4d7d!important;
+}
+.footer-social-links a:hover svg{
+  color:#5f4d7d!important;
+}
