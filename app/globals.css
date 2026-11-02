@@ -1464,3 +1464,68 @@ footer{background:#17191c}
   .gallery-thumbnails button img{height:68px!important}
 }
 @media(prefers-reduced-motion:reduce){.product-loading-spinner{animation:none!important}}
+
+
+/* Mobile first paint: reveal products as soon as catalogue data arrives */
+.product-grid-premium .product-card,
+.product-grid-premium .product-card.reveal-on-scroll{
+  opacity:1!important;visibility:visible!important;transform:none!important;
+  animation:none!important;
+}
+.product-grid-premium .product-media img{content-visibility:visible}
+@media(max-width:620px){
+  .product-grid-premium .product-card{opacity:1!important;visibility:visible!important}
+  .product-grid-premium .product-img img{display:block!important;min-height:1px}
+}
+
+/* Restore gentle motion for mobile support launchers */
+@media(max-width:620px){
+  .nexora-ai-launcher{
+    animation:nexoraSupportPulse 2.8s ease-in-out infinite!important;
+    transform-origin:center!important;
+  }
+  .messenger-float{
+    animation:nexoraMessengerPulse 2.8s ease-in-out infinite!important;
+    transform-origin:center!important;
+  }
+  .messenger-float .chat-avatar{
+    opacity:1!important;animation:none!important;transform:none!important;
+  }
+  .messenger-float .chat-woman,.messenger-float .chat-boy,.messenger-float .chat-ping{
+    animation:none!important;transform:none!important;
+  }
+}
+@keyframes nexoraSupportPulse{
+  0%,100%{box-shadow:0 4px 14px #153d9330;scale:1}
+  50%{box-shadow:0 5px 20px #153d9360;scale:1.055}
+}
+@keyframes nexoraMessengerPulse{
+  0%,100%{box-shadow:0 4px 14px #17203330;scale:1}
+  50%{box-shadow:0 5px 20px #1877f255;scale:1.06}
+}
+
+/* Mobile filter drawer starts at viewport top and owns its scroll area */
+@media(max-width:620px){
+  .mobile-filter-backdrop{
+    position:fixed!important;inset:0!important;z-index:205!important;
+  }
+  .shop-sidebar,
+  .shop-sidebar.mobile-filters-open{
+    position:fixed!important;top:0!important;left:0!important;bottom:0!important;
+    height:100vh!important;height:100dvh!important;
+    max-height:100vh!important;max-height:100dvh!important;
+    overflow-x:hidden!important;overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior-y:contain!important;
+    box-sizing:border-box!important;
+    padding-top:calc(12px + env(safe-area-inset-top))!important;
+  }
+  .shop-sidebar .mobile-filter-close{
+    position:sticky!important;top:0!important;z-index:20!important;
+    background:#fff!important;
+  }
+  .shop-sidebar .sidebar-heading{position:sticky!important;top:0!important;z-index:10!important;background:#fff!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .nexora-ai-launcher,.messenger-float{animation:none!important}
+}
