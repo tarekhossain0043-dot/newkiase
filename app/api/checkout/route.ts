@@ -20,8 +20,14 @@ export async function POST(request: Request) {
     const method = body.payment_method;
     const items = Array.isArray(body.items) ? body.items : [];
 
-    if (!customerName || customerName.length > 120 || !/^\+?\d{8,15}$/.test(phone) || !address || address.length > 1000 || !city || city.length > 100 || !validPaymentMethods.includes(method) || items.length < 1 || items.length > 50) {
+    const senderPhone = typeof body.sender_phone === "string" ? body.sender_phone.replace(/[\\s-]/g, "").trim() : "";
+    const transactionReference = typeof body.transaction_reference === "string" ? body.transaction_reference.trim().toUpperCase() : "";
+
+    if (!customerName || customerName.length > 120 || !/^\\+?\\d{8,15}$/.test(phone) || !address || address.length > 1000 || !city || city.length > 100 || !validPaymentMethods.includes(method) || items.length < 1 || items.length > 50) {
       return NextResponse.json({ error: "Please provide valid delivery details, payment method and 1–50 cart items." }, { status: 400 });
+    }
+    if (method !== "cod" && (!/^01[3-9]\\d{8}$/.test(senderPhone) || !/^[A-Z0-9-]{6,30}$/.test(transactionReference))) {
+      return NextResponse.json({ error: "A valid 11-digit bKash/Nagad sender number and transaction ID are required." }, { status: 400 });
     }
 
     const normalized = new Map<string, {quantity:number;selected_option:string}>();
@@ -131,8 +137,8 @@ export async function POST(request: Request) {
       order_id: order.id,
       method,
       status: paymentStatus,
-      sender_phone: typeof body.sender_phone === "string" ? body.sender_phone.trim().slice(0, 20) : null,
-      transaction_reference: typeof body.transaction_reference === "string" ? body.transaction_reference.trim().slice(0, 80) : null,
+      sender_phone: method === "cod" ? null : senderPhone,
+      transaction_reference: method === "cod" ? null : transactionReference,
     });
     if (paymentError) {
       await db.from("orders").delete().eq("id", order.id);
