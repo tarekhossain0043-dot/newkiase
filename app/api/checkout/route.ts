@@ -79,7 +79,7 @@ export async function POST(request: Request) {
     }
 
     // Server-calculated area delivery fee; never trust client-submitted totals.
-    const normalizedCity = city.trim().toLocaleLowerCase();
+    const normalizedCity = city.normalize("NFKC").trim().toLocaleLowerCase().replace(/[.,]/g, "").replace(/\s+/g, " ");
     const [{ data: shippingZones, error: shippingError }, { data: shippingSetting, error: settingsError }] = await Promise.all([
       db.from("shipping_zones")
         .select("name,cities,delivery_fee,free_shipping_threshold,is_active")
@@ -95,7 +95,8 @@ export async function POST(request: Request) {
     const freeCodDelivery = settings.free_cod_delivery === true;
     const matchingZone = (shippingZones || []).find((zone: any) => {
       const cities = Array.isArray(zone.cities) ? zone.cities : [];
-      return cities.some((area: string) => String(area).trim().toLocaleLowerCase() === normalizedCity);
+      const areas = [...cities, zone.name].map((area: unknown) => String(area ?? "").normalize("NFKC").trim().toLocaleLowerCase().replace(/[.,]/g, "").replace(/\s+/g, " ")).filter(Boolean);
+      return areas.includes(normalizedCity);
     });
     const threshold = matchingZone?.free_shipping_threshold == null ? null : Number(matchingZone.free_shipping_threshold);
     const deliveryFee = freeDelivery || (method === "cod" && freeCodDelivery)
