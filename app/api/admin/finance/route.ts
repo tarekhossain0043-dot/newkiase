@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     const allowed: Record<TableName, string[]> = {
       refund_requests: ["order_id","payment_id","amount","reason","status","provider_reference","admin_note","requested_by","processed_by","processed_at"],
       payment_transactions: ["order_id","payment_id","transaction_type","provider","provider_reference","amount","status","notes","created_by"],
-      shipping_zones: ["name","cities","delivery_fee","free_shipping_threshold","estimated_days","is_active"],
+      shipping_zones: ["name","cities","delivery_fee","cod_delivery_fee","free_shipping_threshold","estimated_days","is_active"],
       promotions: ["name","description","promotion_type","config","starts_at","ends_at","is_active","created_by"],
       coupons: ["code","description","discount_type","discount_value","minimum_order","usage_limit","starts_at","expires_at","is_active"],
     };
@@ -81,7 +81,7 @@ export async function PATCH(request: Request) {
     const allowed: Record<TableName, string[]> = {
       refund_requests: ["status","provider_reference","admin_note","processed_by","processed_at"],
       payment_transactions: ["status","provider_reference","notes"],
-      shipping_zones: ["name","cities","delivery_fee","free_shipping_threshold","estimated_days","is_active"],
+      shipping_zones: ["name","cities","delivery_fee","cod_delivery_fee","free_shipping_threshold","estimated_days","is_active"],
       promotions: ["name","description","promotion_type","config","starts_at","ends_at","is_active"],
       coupons: ["code","description","discount_type","discount_value","minimum_order","usage_limit","starts_at","expires_at","is_active"],
     };
