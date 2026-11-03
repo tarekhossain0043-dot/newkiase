@@ -71,22 +71,29 @@ export default function HomePage() {
       .fromTo(".hero-copy",{autoAlpha:0,y:24},{autoAlpha:1,y:0,duration:.6},"-=.35")
       .fromTo(".hero-image-slide",{autoAlpha:0,y:30,scale:.94,rotate:2},{autoAlpha:1,y:0,scale:1,rotate:0,duration:.85},"-=.55");
     }
-    const sections=Array.from(document.querySelectorAll<HTMLElement>(".reveal-on-scroll:not(.hero-reference)"));
-    sections.forEach((section,index)=>{
-     gsap.set(section,{autoAlpha:0,y:56});
-     const tween=gsap.to(section,{
-      autoAlpha:1,y:0,duration:.85,delay:(index%3)*.04,ease:"power3.out",
-      scrollTrigger:{trigger:section,start:"top 86%",once:true}
+    const animateRevealTargets=()=>{
+     const sections=Array.from(document.querySelectorAll<HTMLElement>(".reveal-on-scroll:not(.hero-reference)"));
+     sections.forEach((section,index)=>{
+      if(section.dataset.gsapSectionAnimated!=="true"){
+       section.dataset.gsapSectionAnimated="true";
+       gsap.fromTo(section,{autoAlpha:0,y:56},{autoAlpha:1,y:0,duration:.85,delay:(index%3)*.04,ease:"power3.out",immediateRender:false,scrollTrigger:{trigger:section,start:"top 86%",once:true}});
+      }
      });
-     if(tween.scrollTrigger)triggers.push(tween.scrollTrigger);
-     const items=section.querySelectorAll<HTMLElement>(".category-card,.product-card,.trust-item,.section-heading > *, .editorial-content > *, .newsletter-content > *");
-     if(items.length){
-      gsap.set(items,{autoAlpha:0,y:22});
-      const itemTween=gsap.to(items,{autoAlpha:1,y:0,duration:.55,stagger:.09,ease:"power2.out",scrollTrigger:{trigger:section,start:"top 80%",once:true}});
-      if(itemTween.scrollTrigger)triggers.push(itemTween.scrollTrigger);
-     }
+     const selectors=".category-card,.product-card,.trust-item,.section-heading > *, .editorial-content > *, .newsletter-content > *, .shop-results-toolbar,.filters-premium > button,.pagination,.editorial-img,.newsletter > div";
+     const items=Array.from(document.querySelectorAll<HTMLElement>(selectors));
+     items.forEach((item,index)=>{
+      if(item.dataset.gsapItemAnimated==="true")return;
+      item.dataset.gsapItemAnimated="true";
+      gsap.fromTo(item,{autoAlpha:0,y:28},{autoAlpha:1,y:0,duration:.62,delay:(index%5)*.055,ease:"power2.out",immediateRender:false,scrollTrigger:{trigger:item,start:"top 91%",once:true}});
+     });
+     requestAnimationFrame(()=>ScrollTrigger.refresh());
+    };
+    animateRevealTargets();
+    const mutationObserver=new MutationObserver(()=>{
+     if(!cancelled)animateRevealTargets();
     });
-    requestAnimationFrame(()=>ScrollTrigger.refresh());
+    mutationObserver.observe(document.body,{childList:true,subtree:true});
+    triggers.push({kill:()=>mutationObserver.disconnect()} as any);
    }catch{
     if(!cancelled)revealFallback();
    }
