@@ -37,7 +37,7 @@ export async function GET(request: Request) {
     const zone = (zones || []).find((item: any) => {
       const configuredAreas = Array.isArray(item.cities) ? item.cities : [];
       const areas = [...configuredAreas, item.name].map(normalizeArea).filter(Boolean);
-      return areas.includes(city);
+      return areas.some((area: string) => area === city || area.includes(city) || city.includes(area));
     });
 
     const rawThreshold = zone?.free_shipping_threshold == null ? null : Number(zone.free_shipping_threshold);
