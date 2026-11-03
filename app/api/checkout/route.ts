@@ -98,7 +98,8 @@ export async function POST(request: Request) {
       const areas = [...cities, zone.name].map((area: unknown) => String(area ?? "").normalize("NFKC").trim().toLocaleLowerCase().replace(/[.,]/g, "").replace(/\s+/g, " ")).filter(Boolean);
       return areas.includes(normalizedCity);
     });
-    const threshold = matchingZone?.free_shipping_threshold == null ? null : Number(matchingZone.free_shipping_threshold);
+    const rawThreshold = matchingZone?.free_shipping_threshold == null ? null : Number(matchingZone.free_shipping_threshold);
+    const threshold = rawThreshold !== null && Number.isFinite(rawThreshold) && rawThreshold > 0 ? rawThreshold : null;
     const areaFee = matchingZone
       ? Math.max(0, Number(method === "cod" ? (matchingZone.cod_delivery_fee ?? matchingZone.delivery_fee) : matchingZone.delivery_fee) || 0)
       : method === "cod" ? defaultCodFee : defaultFee;
