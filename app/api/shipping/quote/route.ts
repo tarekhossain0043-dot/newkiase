@@ -21,7 +21,7 @@ export async function GET(request: Request) {
     const db = createSupabaseServiceClient();
     const [{ data: zones, error }, { data: shippingSetting, error: settingsError }] = await Promise.all([
       db.from("shipping_zones")
-        .select("name,cities,delivery_fee,free_shipping_threshold,is_active")
+        .select("name,cities,delivery_fee,cod_delivery_fee,free_shipping_threshold,is_active")
         .eq("is_active", true),
       db.from("site_settings").select("value").eq("key", "shipping").maybeSingle(),
     ]);
@@ -33,7 +33,7 @@ export async function GET(request: Request) {
       : {};
     const freeDelivery = settings.free_delivery === true;
     const defaultFee = Math.max(0, Number(settings.default_delivery_fee ?? 80) || 0);
-    const freeCodDelivery = settings.free_cod_delivery === true;
+    const defaultCodFee = Math.max(0, Number(settings.default_cod_delivery_fee ?? defaultFee) || 0);
     const zone = (zones || []).find((item: any) => {
       const configuredAreas = Array.isArray(item.cities) ? item.cities : [];
       const areas = [...configuredAreas, item.name].map(normalizeArea).filter(Boolean);
@@ -41,14 +41,13 @@ export async function GET(request: Request) {
     });
 
     const threshold = zone?.free_shipping_threshold == null ? null : Number(zone.free_shipping_threshold);
-    const fee = freeDelivery || (paymentMethod === "cod" && freeCodDelivery)
-      ? 0
-      : zone
-        ? (threshold !== null && subtotal >= threshold ? 0 : Math.max(0, Number(zone.delivery_fee) || 0))
-        : defaultFee;
+    const areaFee = zone
+      ? Math.max(0, Number(paymentMethod === "cod" ? (zone.cod_delivery_fee ?? zone.delivery_fee) : zone.delivery_fee) || 0)
+      : paymentMethod === "cod" ? defaultCodFee : defaultFee;
+    const fee = freeDelivery || (threshold !== null && subtotal >= threshold) ? 0 : areaFee;
     return NextResponse.json({
       delivery_fee: fee,
-      label: freeDelivery ? "Free delivery" : paymentMethod === "cod" && freeCodDelivery ? "Free COD delivery" : zone?.name || "Standard delivery",
+      label: freeDelivery || (threshold !== null && subtotal >= threshold) ? "Free delivery" : zone?.name || "Standard delivery",
       matched_zone: zone?.name || null,
       free_shipping: fee === 0,
     }, { headers: { "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0" } });
