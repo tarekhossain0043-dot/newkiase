@@ -82,7 +82,7 @@ export async function POST(request: Request) {
     const normalizedCity = city.normalize("NFKC").trim().toLocaleLowerCase().replace(/[.,]/g, "").replace(/\s+/g, " ");
     const [{ data: shippingZones, error: shippingError }, { data: shippingSetting, error: settingsError }] = await Promise.all([
       db.from("shipping_zones")
-        .select("name,cities,delivery_fee,free_shipping_threshold,is_active")
+        .select("name,cities,delivery_fee,cod_delivery_fee,free_shipping_threshold,is_active")
         .eq("is_active", true),
       db.from("site_settings").select("value").eq("key", "shipping").maybeSingle(),
     ]);
@@ -92,18 +92,17 @@ export async function POST(request: Request) {
       : {};
     const freeDelivery = settings.free_delivery === true;
     const defaultFee = Math.max(0, Number(settings.default_delivery_fee ?? 80) || 0);
-    const freeCodDelivery = settings.free_cod_delivery === true;
+    const defaultCodFee = Math.max(0, Number(settings.default_cod_delivery_fee ?? defaultFee) || 0);
     const matchingZone = (shippingZones || []).find((zone: any) => {
       const cities = Array.isArray(zone.cities) ? zone.cities : [];
       const areas = [...cities, zone.name].map((area: unknown) => String(area ?? "").normalize("NFKC").trim().toLocaleLowerCase().replace(/[.,]/g, "").replace(/\s+/g, " ")).filter(Boolean);
       return areas.includes(normalizedCity);
     });
     const threshold = matchingZone?.free_shipping_threshold == null ? null : Number(matchingZone.free_shipping_threshold);
-    const deliveryFee = freeDelivery || (method === "cod" && freeCodDelivery)
-      ? 0
-      : matchingZone
-        ? (threshold !== null && subtotal >= threshold ? 0 : Math.max(0, Number(matchingZone.delivery_fee) || 0))
-        : defaultFee;
+    const areaFee = matchingZone
+      ? Math.max(0, Number(method === "cod" ? (matchingZone.cod_delivery_fee ?? matchingZone.delivery_fee) : matchingZone.delivery_fee) || 0)
+      : method === "cod" ? defaultCodFee : defaultFee;
+    const deliveryFee = freeDelivery || (threshold !== null && subtotal >= threshold) ? 0 : areaFee;
     const total = subtotal + deliveryFee;
     const { data: paymentSetting, error: paymentSettingError } = await db.from("site_settings").select("value").eq("key", "payment").maybeSingle();
     if (paymentSettingError) return NextResponse.json({ error: "Could not validate payment settings." }, { status: 503 });
