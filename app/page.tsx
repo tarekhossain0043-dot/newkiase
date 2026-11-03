@@ -71,19 +71,13 @@ export default function HomePage() {
       .fromTo(".hero-copy",{autoAlpha:0,y:24},{autoAlpha:1,y:0,duration:.6},"-=.35")
       .fromTo(".hero-image-slide",{autoAlpha:0,y:30,scale:.94,rotate:2},{autoAlpha:1,y:0,scale:1,rotate:0,duration:.85},"-=.55");
     }
-    const animateProductCards=()=>{
-     const cards=Array.from(document.querySelectorAll<HTMLElement>(".product-grid .product-card"));
-     cards.forEach((card,index)=>{
-      if(card.dataset.gsapProductAnimated==="true")return;
-      card.dataset.gsapProductAnimated="true";
-      const direction=index%2===0?-1:1;
-      gsap.fromTo(card,
-       {autoAlpha:0,x:direction*34},
-       {autoAlpha:1,x:0,duration:.62,ease:"power2.out",immediateRender:false,scrollTrigger:{trigger:card,start:"top 94%",toggleActions:"play none none reverse"}}
-      );
-     });
-     requestAnimationFrame(()=>ScrollTrigger.refresh());
-    };
+    const shopSection=document.querySelector<HTMLElement>("#shop");
+    if(shopSection){
+     gsap.fromTo(shopSection,
+      {autoAlpha:0,y:64},
+      {autoAlpha:1,y:0,duration:1,ease:"power3.out",immediateRender:false,scrollTrigger:{trigger:shopSection,start:"top 82%",toggleActions:"play none none reverse"}}
+     );
+    }
     const animateFollowingSections=()=>{
      const sections=Array.from(document.querySelectorAll<HTMLElement>(".reveal-on-scroll:not(.hero-reference):not(#shop)"));
      sections.forEach((section,index)=>{
@@ -107,16 +101,8 @@ export default function HomePage() {
      });
      requestAnimationFrame(()=>ScrollTrigger.refresh());
     };
-    animateProductCards();
     animateFollowingSections();
-    const mutationObserver=new MutationObserver(()=>{
-     if(cancelled)return;
-     animateProductCards();
-     animateFollowingSections();
-    });
-    const productGrid=document.querySelector(".product-grid");
-    if(productGrid)mutationObserver.observe(productGrid,{childList:true,subtree:true});
-    triggers.push({kill:()=>mutationObserver.disconnect()} as any);
+    requestAnimationFrame(()=>ScrollTrigger.refresh());
    }catch{
     if(!cancelled)revealFallback();
    }
