@@ -26,56 +26,77 @@ export default function HomePage() {
  
  useEffect(()=>{
   let cancelled=false;
-  const revealWithoutGsap=()=>{
-   document.querySelectorAll<HTMLElement>(".reveal-on-scroll").forEach(node=>node.classList.add("is-visible"));
+  let triggers:any[]=[];
+  let intro:any=null;
+  const revealFallback=()=>{
+   document.querySelectorAll<HTMLElement>(".reveal-on-scroll").forEach(node=>{
+    node.classList.add("is-visible");
+    node.style.opacity="1";
+    node.style.visibility="visible";
+    node.style.transform="none";
+   });
   };
-  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){revealWithoutGsap();return}
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){revealFallback();return}
   const loadScript=(src:string)=>new Promise<void>((resolve,reject)=>{
-   const existing=document.querySelector<HTMLScriptElement>(`script[data-gsap-src="${src}"]`);
+   const existing=document.querySelector<HTMLScriptElement>('script[data-gsap-src="'+src+'"]');
    if(existing){
     if(existing.dataset.loaded==="true"){resolve();return}
     existing.addEventListener("load",()=>resolve(),{once:true});
-    existing.addEventListener("error",()=>reject(new Error("GSAP script failed to load")),{once:true});
+    existing.addEventListener("error",()=>reject(new Error("GSAP CDN failed")),{once:true});
     return;
    }
    const script=document.createElement("script");
    script.src=src;script.async=true;script.dataset.gsapSrc=src;
    script.onload=()=>{script.dataset.loaded="true";resolve()};
-   script.onerror=()=>reject(new Error("GSAP script failed to load"));
+   script.onerror=()=>reject(new Error("GSAP CDN failed"));
    document.head.appendChild(script);
   });
   const animate=async()=>{
    try{
-    await loadScript("https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js");
-    await loadScript("https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js");
+    const base="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/";
+    await loadScript(base+"gsap.min.js");
+    await loadScript(base+"ScrollTrigger.min.js");
     if(cancelled)return;
-    const animationWindow=window as Window & {gsap?:any;ScrollTrigger?:any};
-    const gsap=animationWindow.gsap;
-    const ScrollTrigger=animationWindow.ScrollTrigger;
-    if(!gsap||!ScrollTrigger)throw new Error("GSAP is unavailable");
+    const win=window as Window & {gsap?:any;ScrollTrigger?:any};
+    const gsap=win.gsap;
+    const ScrollTrigger=win.ScrollTrigger;
+    if(!gsap||!ScrollTrigger)throw new Error("GSAP did not initialize");
     gsap.registerPlugin(ScrollTrigger);
-    const main=document.querySelector("main");
-    if(!main)return;
-    const intro=gsap.timeline({defaults:{ease:"power3.out"}});
-    intro.fromTo(".announcement",{autoAlpha:0,y:-12},{autoAlpha:1,y:0,duration:.45})
-     .fromTo(".header",{autoAlpha:0,y:-18},{autoAlpha:1,y:0,duration:.6},"-=.2")
-     .fromTo(".hero-reference",{autoAlpha:0,y:26},{autoAlpha:1,y:0,duration:.75},"-=.12")
-     .fromTo(".hero-copy .eyebrow",{autoAlpha:0,y:16},{autoAlpha:1,y:0,duration:.45},"-=.35")
-     .fromTo(".hero-copy h1",{autoAlpha:0,y:28},{autoAlpha:1,y:0,duration:.65},"-=.25")
-     .fromTo(".hero-copy p",{autoAlpha:0,y:18},{autoAlpha:1,y:0,duration:.5},"-=.32")
-     .fromTo(".hero-copy .primary",{autoAlpha:0,y:14,scale:.97},{autoAlpha:1,y:0,scale:1,duration:.45},"-=.28")
-     .fromTo(".hero-image-slide",{autoAlpha:0,y:24,scale:.94,rotate:1.5},{autoAlpha:1,y:0,scale:1,rotate:0,duration:.9},"-=.7");
-    const sections=Array.from(main.querySelectorAll<HTMLElement>(".reveal-on-scroll:not(.hero-reference)"));
-    sections.forEach(section=>{
-     gsap.fromTo(section,{autoAlpha:0,y:42},{autoAlpha:1,y:0,duration:.85,ease:"power3.out",scrollTrigger:{trigger:section,start:"top 88%",once:true}});
+    const hero=document.querySelector(".hero-reference");
+    if(hero){
+     intro=gsap.timeline({defaults:{ease:"power3.out"}});
+     intro.fromTo(".announcement",{autoAlpha:0,y:-14},{autoAlpha:1,y:0,duration:.45})
+      .fromTo(".header",{autoAlpha:0,y:-20},{autoAlpha:1,y:0,duration:.55},"-=.2")
+      .fromTo(hero,{autoAlpha:0,y:34},{autoAlpha:1,y:0,duration:.7},"-=.12")
+      .fromTo(".hero-copy",{autoAlpha:0,y:24},{autoAlpha:1,y:0,duration:.6},"-=.35")
+      .fromTo(".hero-image-slide",{autoAlpha:0,y:30,scale:.94,rotate:2},{autoAlpha:1,y:0,scale:1,rotate:0,duration:.85},"-=.55");
+    }
+    const sections=Array.from(document.querySelectorAll<HTMLElement>(".reveal-on-scroll:not(.hero-reference)"));
+    sections.forEach((section,index)=>{
+     gsap.set(section,{autoAlpha:0,y:56});
+     const tween=gsap.to(section,{
+      autoAlpha:1,y:0,duration:.85,delay:(index%3)*.04,ease:"power3.out",
+      scrollTrigger:{trigger:section,start:"top 86%",once:true}
+     });
+     if(tween.scrollTrigger)triggers.push(tween.scrollTrigger);
+     const items=section.querySelectorAll<HTMLElement>(".category-card,.product-card,.trust-item,.section-heading > *, .editorial-content > *, .newsletter-content > *");
+     if(items.length){
+      gsap.set(items,{autoAlpha:0,y:22});
+      const itemTween=gsap.to(items,{autoAlpha:1,y:0,duration:.55,stagger:.09,ease:"power2.out",scrollTrigger:{trigger:section,start:"top 80%",once:true}});
+      if(itemTween.scrollTrigger)triggers.push(itemTween.scrollTrigger);
+     }
     });
-    ScrollTrigger.refresh();
+    requestAnimationFrame(()=>ScrollTrigger.refresh());
    }catch{
-    if(!cancelled)revealWithoutGsap();
+    if(!cancelled)revealFallback();
    }
   };
   void animate();
-  return()=>{cancelled=true;const animationWindow=window as Window & {gsap?:any};if(animationWindow.gsap)animationWindow.gsap.killTweensOf(".announcement,.header,.hero-reference,.hero-copy,.hero-image-slide")}
+  return()=>{
+   cancelled=true;
+   triggers.forEach(trigger=>trigger.kill());
+   if(intro)intro.kill();
+  };
  },[]);
  useEffect(()=>{if(!mobileSearchOpen)return;const onKey=(e:KeyboardEvent)=>{if(e.key==="Escape")setMobileSearchOpen(false)};window.addEventListener("keydown",onKey);document.body.style.overflow="hidden";return()=>{window.removeEventListener("keydown",onKey);document.body.style.overflow=""}},[mobileSearchOpen]);
  useEffect(()=>{const closeMenus=(event:MouseEvent)=>{if(!(event.target as HTMLElement).closest(".header-dropdown,.profile-dropdown")){setOpenDropdown(null);setProfileOpen(false)}};const onKey=(event:KeyboardEvent)=>{if(event.key==="Escape"){setOpenDropdown(null);setProfileOpen(false)}};document.addEventListener("click",closeMenus);document.addEventListener("keydown",onKey);return()=>{document.removeEventListener("click",closeMenus);document.removeEventListener("keydown",onKey)}},[]);
