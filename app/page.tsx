@@ -49,8 +49,9 @@ export default function HomePage() {
     await loadScript("https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js");
     await loadScript("https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js");
     if(cancelled)return;
-    const gsap=window.gsap;
-    const ScrollTrigger=window.ScrollTrigger;
+    const animationWindow=window as Window & {gsap?:any;ScrollTrigger?:any};
+    const gsap=animationWindow.gsap;
+    const ScrollTrigger=animationWindow.ScrollTrigger;
     if(!gsap||!ScrollTrigger)throw new Error("GSAP is unavailable");
     gsap.registerPlugin(ScrollTrigger);
     const main=document.querySelector("main");
@@ -74,7 +75,7 @@ export default function HomePage() {
    }
   };
   void animate();
-  return()=>{cancelled=true;if(window.gsap)window.gsap.killTweensOf(".announcement,.header,.hero-reference,.hero-copy,.hero-image-slide")}
+  return()=>{cancelled=true;const animationWindow=window as Window & {gsap?:any};if(animationWindow.gsap)animationWindow.gsap.killTweensOf(".announcement,.header,.hero-reference,.hero-copy,.hero-image-slide")}
  },[]);
  useEffect(()=>{if(!mobileSearchOpen)return;const onKey=(e:KeyboardEvent)=>{if(e.key==="Escape")setMobileSearchOpen(false)};window.addEventListener("keydown",onKey);document.body.style.overflow="hidden";return()=>{window.removeEventListener("keydown",onKey);document.body.style.overflow=""}},[mobileSearchOpen]);
  useEffect(()=>{const closeMenus=(event:MouseEvent)=>{if(!(event.target as HTMLElement).closest(".header-dropdown,.profile-dropdown")){setOpenDropdown(null);setProfileOpen(false)}};const onKey=(event:KeyboardEvent)=>{if(event.key==="Escape"){setOpenDropdown(null);setProfileOpen(false)}};document.addEventListener("click",closeMenus);document.addEventListener("keydown",onKey);return()=>{document.removeEventListener("click",closeMenus);document.removeEventListener("keydown",onKey)}},[]);
