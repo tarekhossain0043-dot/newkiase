@@ -71,29 +71,23 @@ export default function HomePage() {
       .fromTo(".hero-copy",{autoAlpha:0,y:24},{autoAlpha:1,y:0,duration:.6},"-=.35")
       .fromTo(".hero-image-slide",{autoAlpha:0,y:30,scale:.94,rotate:2},{autoAlpha:1,y:0,scale:1,rotate:0,duration:.85},"-=.55");
     }
-    const animateRevealTargets=()=>{
-     const sections=Array.from(document.querySelectorAll<HTMLElement>(".reveal-on-scroll:not(.hero-reference)"));
-     sections.forEach((section,index)=>{
-      if(section.dataset.gsapSectionAnimated!=="true"){
-       section.dataset.gsapSectionAnimated="true";
-       gsap.fromTo(section,{autoAlpha:0,y:56},{autoAlpha:1,y:0,duration:.85,delay:(index%3)*.04,ease:"power3.out",immediateRender:false,scrollTrigger:{trigger:section,start:"top 86%",once:true}});
-      }
-     });
-     const selectors=".category-card,.product-card,.trust-item,.section-heading > *, .editorial-content > *, .newsletter-content > *, .shop-results-toolbar,.filters-premium > button,.pagination,.editorial-img,.newsletter > div";
-     const items=Array.from(document.querySelectorAll<HTMLElement>(selectors));
-     items.forEach((item,index)=>{
-      if(item.dataset.gsapItemAnimated==="true")return;
-      item.dataset.gsapItemAnimated="true";
-      gsap.fromTo(item,{autoAlpha:0,y:28},{autoAlpha:1,y:0,duration:.62,delay:(index%5)*.055,ease:"power2.out",immediateRender:false,scrollTrigger:{trigger:item,start:"top 91%",once:true}});
-     });
-     requestAnimationFrame(()=>ScrollTrigger.refresh());
-    };
-    animateRevealTargets();
-    const mutationObserver=new MutationObserver(()=>{
-     if(!cancelled)animateRevealTargets();
+    const sections=Array.from(document.querySelectorAll<HTMLElement>(".reveal-on-scroll:not(.hero-reference):not(#shop)"));
+    sections.forEach((section,index)=>{
+     const direction=index%2===0?-1:1;
+     gsap.fromTo(section,
+      {autoAlpha:0,x:direction*42},
+      {autoAlpha:1,x:0,duration:.75,ease:"power2.out",immediateRender:false,scrollTrigger:{trigger:section,start:"top 88%",once:true}}
+     );
     });
-    mutationObserver.observe(document.body,{childList:true,subtree:true});
-    triggers.push({kill:()=>mutationObserver.disconnect()} as any);
+    const sideItems=Array.from(document.querySelectorAll<HTMLElement>(".category-card,.trust-item,.editorial-img,.newsletter-content > *"));
+    sideItems.forEach((item,index)=>{
+     const direction=index%2===0?-1:1;
+     gsap.fromTo(item,
+      {autoAlpha:0,x:direction*30},
+      {autoAlpha:1,x:0,duration:.6,delay:(index%3)*.06,ease:"power2.out",immediateRender:false,scrollTrigger:{trigger:item,start:"top 92%",once:true}}
+     );
+    });
+    requestAnimationFrame(()=>ScrollTrigger.refresh());
    }catch{
     if(!cancelled)revealFallback();
    }
