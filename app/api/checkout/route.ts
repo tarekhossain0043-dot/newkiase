@@ -96,7 +96,7 @@ export async function POST(request: Request) {
     const matchingZone = (shippingZones || []).find((zone: any) => {
       const cities = Array.isArray(zone.cities) ? zone.cities : [];
       const areas = [...cities, zone.name].map((area: unknown) => String(area ?? "").normalize("NFKC").trim().toLocaleLowerCase().replace(/[.,]/g, "").replace(/\s+/g, " ")).filter(Boolean);
-      return areas.includes(normalizedCity);
+      return areas.some((area: string) => area === normalizedCity || area.includes(normalizedCity) || normalizedCity.includes(area));
     });
     const rawThreshold = matchingZone?.free_shipping_threshold == null ? null : Number(matchingZone.free_shipping_threshold);
     const threshold = rawThreshold !== null && Number.isFinite(rawThreshold) && rawThreshold > 0 ? rawThreshold : null;
