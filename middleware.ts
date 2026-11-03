@@ -1,20 +1,32 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+function redirectToLogin(request: NextRequest, params?: Record<string, string>) {
+  const login = request.nextUrl.clone();
+  login.pathname = "/admin/login";
+  login.search = "";
+  for (const [key, value] of Object.entries(params ?? {})) {
+    login.searchParams.set(key, value);
+  }
+  const response = NextResponse.redirect(login);
+  response.headers.set("Cache-Control", "private, no-store, max-age=0");
+  return response;
+}
+
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
+  const pathname = request.nextUrl.pathname;
+  const isLogin = pathname === "/admin/login" || pathname === "/admin/login/";
+  const isAdminRoute = pathname.startsWith("/admin/") || pathname === "/admin";
+
+  // Fail closed when Supabase is not configured: never expose the dashboard.
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  // Local UI preview can still build before credentials exist, but admin APIs fail closed.
-  // Once configured, every /admin route requires a valid Supabase session and admin role.
   if (!url || !key) {
-    if (request.nextUrl.pathname.startsWith("/admin") && request.nextUrl.pathname !== "/admin/login") {
-      const login = request.nextUrl.clone();
-      login.pathname = "/admin/login";
-      login.searchParams.set("setup", "supabase");
-      return NextResponse.redirect(login);
+    if (isAdminRoute && !isLogin) {
+      return redirectToLogin(request, { setup: "supabase" });
     }
+    response.headers.set("Cache-Control", "private, no-store, max-age=0");
     return response;
   }
 
@@ -29,37 +41,47 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  const { data: { user } } = await supabase.auth.getUser();
-  const isLogin = request.nextUrl.pathname === "/admin/login";
-  const isAdminRoute = request.nextUrl.pathname.startsWith("/admin") && !isLogin;
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-  if (isAdminRoute) {
-    if (!user) {
-      const login = request.nextUrl.clone();
-      login.pathname = "/admin/login";
-      login.searchParams.set("next", request.nextUrl.pathname);
-      return NextResponse.redirect(login);
+  if (isAdminRoute && !isLogin) {
+    if (authError || !user) {
+      return redirectToLogin(request, { next: pathname });
     }
 
-    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
-    if (profile?.role !== "admin") {
-      const login = request.nextUrl.clone();
-      login.pathname = "/admin/login";
-      login.searchParams.set("error", "not-admin");
-      return NextResponse.redirect(login);
+    // The profile role is the sole authorization source; missing profiles and
+    // database errors are denied, never treated as administrator access.
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (profileError || profile?.role !== "admin") {
+      return redirectToLogin(request, { error: "not-admin" });
     }
   }
 
-  if (isLogin && user) {
-    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
-    if (profile?.role === "admin") {
+  // A signed-in customer may visit the login page, but only an admin can be
+  // redirected into the private dashboard after authentication.
+  if (isLogin && user && !authError) {
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (!profileError && profile?.role === "admin") {
       const dashboard = request.nextUrl.clone();
       dashboard.pathname = "/admin";
       dashboard.search = "";
-      return NextResponse.redirect(dashboard);
+      const redirect = NextResponse.redirect(dashboard);
+      redirect.headers.set("Cache-Control", "private, no-store, max-age=0");
+      response.cookies.getAll().forEach(cookie => redirect.cookies.set(cookie));
+      return redirect;
     }
   }
 
+  response.headers.set("Cache-Control", "private, no-store, max-age=0");
   return response;
 }
 
