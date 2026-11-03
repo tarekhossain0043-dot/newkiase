@@ -24,7 +24,58 @@ export default function HomePage() {
  useEffect(()=>{const timer=window.setInterval(()=>setHeroSlide(s=>(s+1)%Math.max(1,liveBanners.length||3)),5500);return()=>window.clearInterval(timer)},[liveBanners.length]);
  useEffect(()=>{let cancelled=false;const loadingStartedAt=Date.now();(async()=>{let minimumLoadingMs=0;try{const [pr,cr,sr]=await Promise.all([fetch("/api/products?limit=200",{cache:"no-store"}),fetch("/api/categories",{cache:"no-store"}),fetch("/api/storefront/settings",{cache:"no-store"})]);const pd=await pr.json(),cd=await cr.json(),sd=await sr.json();if(sr.ok){setLoadingConfig(sd.loading||{});setStoreConfig(sd.storefront||{});setLiveBanners(sd.banners||[]);setLiveBrands(Array.isArray(sd.brands)?sd.brands:[]);setAppearanceConfig(sd.appearance||{});minimumLoadingMs=Math.max(0,Math.min(3000,Number(sd.loading?.duration_ms)||0));}if(!pr.ok)throw new Error(pd.error||"Products unavailable");if(cancelled)return;setLiveProducts((pd.products||[]).map((p:any)=>({id:p.id,name:p.name,category:(p.categories?.name||"Other") as Category,brand:p.brand||"Unbranded",price:Number(p.price)||0,old:p.compare_at_price?Number(p.compare_at_price):undefined,rating:"New",image:p.product_images?.[0]?.storage_path||"https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=82",badge:p.is_featured?"FEATURED":undefined,description:p.description||"",stock:Number(p.stock_quantity)||0,sizes:Array.isArray(p.sizes)?p.sizes:[],sku:p.sku||"",color:p.color||"Mixed"} as Product)));setLiveCategories((cd.categories||[]).map((x:any)=>{const categoryName=String(x.name||"").toLowerCase();const categoryImage=String(x.image_url||"").trim();const fallbackImage=categoryName.includes("women")||categoryName.includes("heels")||categoryName.includes("sandal")?"photo-1543163521-1bf539c55dd2":categoryName.includes("men")||categoryName.includes("formal")||categoryName.includes("loafer")?"photo-1495555961986-6d4c1ecb7be3":categoryName.includes("sport")||categoryName.includes("running")||categoryName.includes("sneaker")?"photo-1600185365483-26d7a4cc7519":categoryName.includes("shoe")||categoryName.includes("footwear")?"photo-1542291026-7eec264c27ff":categoryName.includes("cosmetic")||categoryName.includes("makeup")||categoryName.includes("beauty")?"photo-1522335789203-aabd1fc54bc9":categoryName.includes("accessor")?"photo-1523275335684-37898b6baf30":categoryName.includes("sock")?"photo-1582966772680-860e372bb558":categoryName.includes("care")||categoryName.includes("polish")?"photo-1608571423902-eed4a5ad8108":"photo-1542291026-7eec264c27ff";return{id:x.id,name:x.name as Category,slug:x.slug,desc:x.description||"Explore the collection",img:categoryImage||fallbackImage}}))}catch{if(!cancelled){setLiveProducts([]);setLiveCategories([]);showNotice("Could not load the live catalogue. Check Supabase setup.")}}finally{const remaining=Math.max(0,minimumLoadingMs-(Date.now()-loadingStartedAt));window.setTimeout(()=>{if(!cancelled)setCatalogueLoading(false)},remaining)}})();return()=>{cancelled=true}},[]);
  
- useEffect(()=>{const nodes=Array.from(document.querySelectorAll<HTMLElement>(".reveal-on-scroll"));if(!("IntersectionObserver" in window)){nodes.forEach(n=>n.classList.add("is-visible"));return}const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("is-visible");observer.unobserve(entry.target)}})},{threshold:.08,rootMargin:"0px 0px 120px 0px"});nodes.forEach((node,index)=>{node.style.setProperty("--reveal-delay",Math.min(index%4,3)*35+"ms");observer.observe(node)});return()=>observer.disconnect()},[liveProducts,catalogueLoading]);
+ useEffect(()=>{
+  let cancelled=false;
+  const revealWithoutGsap=()=>{
+   document.querySelectorAll<HTMLElement>(".reveal-on-scroll").forEach(node=>node.classList.add("is-visible"));
+  };
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){revealWithoutGsap();return}
+  const loadScript=(src:string)=>new Promise<void>((resolve,reject)=>{
+   const existing=document.querySelector<HTMLScriptElement>(`script[data-gsap-src="${src}"]`);
+   if(existing){
+    if(existing.dataset.loaded==="true"){resolve();return}
+    existing.addEventListener("load",()=>resolve(),{once:true});
+    existing.addEventListener("error",()=>reject(new Error("GSAP script failed to load")),{once:true});
+    return;
+   }
+   const script=document.createElement("script");
+   script.src=src;script.async=true;script.dataset.gsapSrc=src;
+   script.onload=()=>{script.dataset.loaded="true";resolve()};
+   script.onerror=()=>reject(new Error("GSAP script failed to load"));
+   document.head.appendChild(script);
+  });
+  const animate=async()=>{
+   try{
+    await loadScript("https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js");
+    await loadScript("https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js");
+    if(cancelled)return;
+    const gsap=window.gsap;
+    const ScrollTrigger=window.ScrollTrigger;
+    if(!gsap||!ScrollTrigger)throw new Error("GSAP is unavailable");
+    gsap.registerPlugin(ScrollTrigger);
+    const main=document.querySelector("main");
+    if(!main)return;
+    const intro=gsap.timeline({defaults:{ease:"power3.out"}});
+    intro.fromTo(".announcement",{autoAlpha:0,y:-12},{autoAlpha:1,y:0,duration:.45})
+     .fromTo(".header",{autoAlpha:0,y:-18},{autoAlpha:1,y:0,duration:.6},"-=.2")
+     .fromTo(".hero-reference",{autoAlpha:0,y:26},{autoAlpha:1,y:0,duration:.75},"-=.12")
+     .fromTo(".hero-copy .eyebrow",{autoAlpha:0,y:16},{autoAlpha:1,y:0,duration:.45},"-=.35")
+     .fromTo(".hero-copy h1",{autoAlpha:0,y:28},{autoAlpha:1,y:0,duration:.65},"-=.25")
+     .fromTo(".hero-copy p",{autoAlpha:0,y:18},{autoAlpha:1,y:0,duration:.5},"-=.32")
+     .fromTo(".hero-copy .primary",{autoAlpha:0,y:14,scale:.97},{autoAlpha:1,y:0,scale:1,duration:.45},"-=.28")
+     .fromTo(".hero-image-slide",{autoAlpha:0,y:24,scale:.94,rotate:1.5},{autoAlpha:1,y:0,scale:1,rotate:0,duration:.9},"-=.7");
+    const sections=Array.from(main.querySelectorAll<HTMLElement>(".reveal-on-scroll:not(.hero-reference)"));
+    sections.forEach(section=>{
+     gsap.fromTo(section,{autoAlpha:0,y:42},{autoAlpha:1,y:0,duration:.85,ease:"power3.out",scrollTrigger:{trigger:section,start:"top 88%",once:true}});
+    });
+    ScrollTrigger.refresh();
+   }catch{
+    if(!cancelled)revealWithoutGsap();
+   }
+  };
+  void animate();
+  return()=>{cancelled=true;if(window.gsap)window.gsap.killTweensOf(".announcement,.header,.hero-reference,.hero-copy,.hero-image-slide")}
+ },[]);
  useEffect(()=>{if(!mobileSearchOpen)return;const onKey=(e:KeyboardEvent)=>{if(e.key==="Escape")setMobileSearchOpen(false)};window.addEventListener("keydown",onKey);document.body.style.overflow="hidden";return()=>{window.removeEventListener("keydown",onKey);document.body.style.overflow=""}},[mobileSearchOpen]);
  useEffect(()=>{const closeMenus=(event:MouseEvent)=>{if(!(event.target as HTMLElement).closest(".header-dropdown,.profile-dropdown")){setOpenDropdown(null);setProfileOpen(false)}};const onKey=(event:KeyboardEvent)=>{if(event.key==="Escape"){setOpenDropdown(null);setProfileOpen(false)}};document.addEventListener("click",closeMenus);document.addEventListener("keydown",onKey);return()=>{document.removeEventListener("click",closeMenus);document.removeEventListener("keydown",onKey)}},[]);
  const brands=useMemo(()=>Array.from(new Set(products.filter(p=>category==="All"||p.category===category).map(p=>p.brand))).sort(),[category,products]);
