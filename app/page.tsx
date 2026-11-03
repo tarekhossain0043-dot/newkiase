@@ -71,23 +71,52 @@ export default function HomePage() {
       .fromTo(".hero-copy",{autoAlpha:0,y:24},{autoAlpha:1,y:0,duration:.6},"-=.35")
       .fromTo(".hero-image-slide",{autoAlpha:0,y:30,scale:.94,rotate:2},{autoAlpha:1,y:0,scale:1,rotate:0,duration:.85},"-=.55");
     }
-    const sections=Array.from(document.querySelectorAll<HTMLElement>(".reveal-on-scroll:not(.hero-reference):not(#shop)"));
-    sections.forEach((section,index)=>{
-     const direction=index%2===0?-1:1;
-     gsap.fromTo(section,
-      {autoAlpha:0,x:direction*42},
-      {autoAlpha:1,x:0,duration:.75,ease:"power2.out",immediateRender:false,scrollTrigger:{trigger:section,start:"top 88%",once:true}}
-     );
+    const animateProductCards=()=>{
+     const cards=Array.from(document.querySelectorAll<HTMLElement>(".product-grid .product-card"));
+     cards.forEach((card,index)=>{
+      if(card.dataset.gsapProductAnimated==="true")return;
+      card.dataset.gsapProductAnimated="true";
+      const direction=index%2===0?-1:1;
+      gsap.fromTo(card,
+       {autoAlpha:0,x:direction*34},
+       {autoAlpha:1,x:0,duration:.62,ease:"power2.out",immediateRender:false,scrollTrigger:{trigger:card,start:"top 94%",toggleActions:"play none none reverse"}}
+      );
+     });
+     requestAnimationFrame(()=>ScrollTrigger.refresh());
+    };
+    const animateFollowingSections=()=>{
+     const sections=Array.from(document.querySelectorAll<HTMLElement>(".reveal-on-scroll:not(.hero-reference):not(#shop)"));
+     sections.forEach((section,index)=>{
+      if(section.dataset.gsapSectionAnimated==="true")return;
+      section.dataset.gsapSectionAnimated="true";
+      const direction=index%2===0?-1:1;
+      gsap.fromTo(section,
+       {autoAlpha:0,x:direction*42},
+       {autoAlpha:1,x:0,duration:.75,ease:"power2.out",immediateRender:false,scrollTrigger:{trigger:section,start:"top 90%",toggleActions:"play none none reverse"}}
+      );
+     });
+     const innerItems=Array.from(document.querySelectorAll<HTMLElement>(".category-card,.trust-item,.editorial-img,.newsletter-content > *"));
+     innerItems.forEach((item,index)=>{
+      if(item.dataset.gsapInnerAnimated==="true")return;
+      item.dataset.gsapInnerAnimated="true";
+      const direction=index%2===0?-1:1;
+      gsap.fromTo(item,
+       {autoAlpha:0,x:direction*26},
+       {autoAlpha:1,x:0,duration:.58,ease:"power2.out",immediateRender:false,scrollTrigger:{trigger:item,start:"top 94%",toggleActions:"play none none reverse"}}
+      );
+     });
+     requestAnimationFrame(()=>ScrollTrigger.refresh());
+    };
+    animateProductCards();
+    animateFollowingSections();
+    const mutationObserver=new MutationObserver(()=>{
+     if(cancelled)return;
+     animateProductCards();
+     animateFollowingSections();
     });
-    const sideItems=Array.from(document.querySelectorAll<HTMLElement>(".category-card,.trust-item,.editorial-img,.newsletter-content > *"));
-    sideItems.forEach((item,index)=>{
-     const direction=index%2===0?-1:1;
-     gsap.fromTo(item,
-      {autoAlpha:0,x:direction*30},
-      {autoAlpha:1,x:0,duration:.6,delay:(index%3)*.06,ease:"power2.out",immediateRender:false,scrollTrigger:{trigger:item,start:"top 92%",once:true}}
-     );
-    });
-    requestAnimationFrame(()=>ScrollTrigger.refresh());
+    const productGrid=document.querySelector(".product-grid");
+    if(productGrid)mutationObserver.observe(productGrid,{childList:true,subtree:true});
+    triggers.push({kill:()=>mutationObserver.disconnect()} as any);
    }catch{
     if(!cancelled)revealFallback();
    }
