@@ -20,13 +20,13 @@ export async function POST(request: Request) {
     const method = body.payment_method;
     const items = Array.isArray(body.items) ? body.items : [];
 
-    const senderPhone = typeof body.sender_phone === "string" ? body.sender_phone.replace(/[\\s-]/g, "").trim() : "";
+    const senderPhone = typeof body.sender_phone === "string" ? body.sender_phone.replace(/[\s-]/g, "").trim() : "";
     const transactionReference = typeof body.transaction_reference === "string" ? body.transaction_reference.trim().toUpperCase() : "";
 
-    if (!customerName || customerName.length > 120 || !/^\\+?\\d{8,15}$/.test(phone) || !address || address.length > 1000 || !city || city.length > 100 || !validPaymentMethods.includes(method) || items.length < 1 || items.length > 50) {
+    if (!customerName || customerName.length > 120 || !/^\+?\d{8,15}$/.test(phone) || !address || address.length > 1000 || !city || city.length > 100 || !validPaymentMethods.includes(method) || items.length < 1 || items.length > 50) {
       return NextResponse.json({ error: "Please provide valid delivery details, payment method and 1–50 cart items." }, { status: 400 });
     }
-    if (method !== "cod" && (!/^01[3-9]\\d{8}$/.test(senderPhone) || !/^[A-Z0-9-]{6,30}$/.test(transactionReference))) {
+    if (method !== "cod" && (!/^01[3-9]\d{8}$/.test(senderPhone) || !/^[A-Z0-9-]{6,30}$/.test(transactionReference))) {
       return NextResponse.json({ error: "A valid 11-digit bKash/Nagad sender number and transaction ID are required." }, { status: 400 });
     }
 
