@@ -2090,3 +2090,8 @@ footer{background:#17191c}
 .footer-social-links a:hover svg{
   color:#5f4d7d!important;
 }
+
+
+/* GSAP owns reveal transforms and visibility; avoid CSS transitions fighting ScrollTrigger. */
+.reveal-on-scroll{transition:none!important;will-change:opacity,transform}
+.reveal-on-scroll.is-visible{opacity:1;transform:none}
