@@ -40,7 +40,8 @@ export async function GET(request: Request) {
       return areas.includes(city);
     });
 
-    const threshold = zone?.free_shipping_threshold == null ? null : Number(zone.free_shipping_threshold);
+    const rawThreshold = zone?.free_shipping_threshold == null ? null : Number(zone.free_shipping_threshold);
+    const threshold = rawThreshold !== null && Number.isFinite(rawThreshold) && rawThreshold > 0 ? rawThreshold : null;
     const areaFee = zone
       ? Math.max(0, Number(paymentMethod === "cod" ? (zone.cod_delivery_fee ?? zone.delivery_fee) : zone.delivery_fee) || 0)
       : paymentMethod === "cod" ? defaultCodFee : defaultFee;
