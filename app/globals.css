@@ -2116,3 +2116,13 @@ footer{background:#17191c}
 .category-skeleton:after,.product-skeleton .skeleton-block:after,.product-skeleton .skeleton-line:after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.68),transparent);animation:nexora-skeleton-shimmer 1.35s ease-in-out infinite}
 @keyframes nexora-skeleton-shimmer{100%{transform:translateX(100%)}}
 @media(prefers-reduced-motion:reduce){.category-skeleton:after,.product-skeleton .skeleton-block:after,.product-skeleton .skeleton-line:after{animation:none}}
+
+
+/* Official payment marks supplied for checkout. */
+.payment-brand{display:flex;align-items:center;gap:14px;min-width:0}
+.wallet-logo{display:block;object-fit:contain;background:#fff;border-radius:6px;padding:3px;flex:0 0 auto}
+.bkash-logo{width:88px;height:52px}
+.nagad-logo{width:82px;height:56px}
+.manual-wallet-logo{display:block;width:82px;height:58px;object-fit:contain;background:#fff;border-radius:6px;padding:3px}
+.wallet-symbol{display:flex;align-items:center;justify-content:center;flex:0 0 auto;width:90px;height:66px;border-radius:10px;background:#fff}
+@media(max-width:480px){.bkash-logo{width:76px;height:46px}.nagad-logo{width:72px;height:50px}.manual-wallet-logo{width:72px;height:52px}}
