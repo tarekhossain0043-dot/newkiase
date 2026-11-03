@@ -2143,3 +2143,19 @@ footer{background:#17191c}
 }
 .product-card .quick-add{background:transparent!important;color:#24241f!important;box-shadow:none!important}
 .product-card .quick-add:hover{background:transparent!important;color:#24241f!important}
+
+
+/* Final storefront filter and add-to-cart adjustments */
+@media(min-width:761px){
+  .brand-filter-chip .brand-chip-name,
+  .brand-filter-chip .brand-logo-fallback{display:none!important}
+}
+.product-card .quick-add{
+  background:#353535!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+.product-card .quick-add:hover{
+  background:#063f3d!important;
+  color:#fff!important;
+}
