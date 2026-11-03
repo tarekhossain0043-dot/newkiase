@@ -2100,3 +2100,19 @@ footer{background:#17191c}
 /* Let GSAP ScrollTrigger animate the complete shop section.
    Product cards remain fully visible and independently scrollable. */
 .product-grid,.product-card{opacity:1;visibility:visible}
+
+
+/* Static-first storefront: render the page shell immediately and load catalogue data in the background. */
+.loading-category-grid{pointer-events:none}
+.category-skeleton,.product-skeleton .skeleton-block,.product-skeleton .skeleton-line{position:relative;overflow:hidden;background:#ece9e4;border-radius:10px}
+.category-skeleton{min-height:220px;border-radius:14px}
+.product-skeleton{pointer-events:none;overflow:hidden}
+.product-skeleton .skeleton-block{width:100%;aspect-ratio:1/1;border-radius:12px}
+.product-skeleton .product-info{display:flex;flex-direction:column;align-items:flex-start;gap:11px;padding-top:14px}
+.product-skeleton .skeleton-line{display:block;height:10px;width:42%;border-radius:20px}
+.product-skeleton .skeleton-brand{width:32%;height:8px}
+.product-skeleton .skeleton-title{width:82%;height:14px}
+.product-skeleton .skeleton-price{width:48%;height:13px}
+.category-skeleton:after,.product-skeleton .skeleton-block:after,.product-skeleton .skeleton-line:after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.68),transparent);animation:nexora-skeleton-shimmer 1.35s ease-in-out infinite}
+@keyframes nexora-skeleton-shimmer{100%{transform:translateX(100%)}}
+@media(prefers-reduced-motion:reduce){.category-skeleton:after,.product-skeleton .skeleton-block:after,.product-skeleton .skeleton-line:after{animation:none}}
