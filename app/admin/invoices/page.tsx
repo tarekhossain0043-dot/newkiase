@@ -58,7 +58,7 @@ export default function AdminInvoicesPage(){
       </article>)}
     </div>}
     <style jsx global>{`
-      .invoice-workspace{min-height:100vh;background:#f4f4f2;color:#222;padding:24px;font-family:Arial,sans-serif}
+      .invoice-workspace{min-height:100vh;background:#f4f4f2;color:#222;padding:24px;font-family:'DM Sans',sans-serif}
       .invoice-toolbar{max-width:900px;margin:0 auto 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;background:#fff;border:1px solid #e5e5e2;border-radius:12px;padding:14px 18px}
       .invoice-toolbar>a{color:#333;text-decoration:none;font-size:13px}.invoice-toolbar>div{display:flex;flex-direction:column;gap:3px}.invoice-toolbar>div span{font-size:11px;color:#777}
       .invoice-toolbar button{border:0;border-radius:7px;background:#202b25;color:white;padding:12px 18px;font-weight:700;cursor:pointer}.invoice-toolbar button:disabled{opacity:.5}
