@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { QRCodeSVG } from "qrcode.react";
+import Barcode from "react-barcode";
 
 type InvoiceOrder = {
   id:string; order_number?:string; created_at:string; status?:string;
@@ -54,6 +56,22 @@ export default function AdminInvoicesPage(){
           <div className="invoice-notes"><small>NOTES</small><p>{order.notes||"Thank you for shopping with NEXORA."}</p></div>
           <div className="invoice-totals"><div><span>Subtotal</span><b>{money(Number(order.subtotal||0))}</b></div><div><span>Delivery charge</span><b>{money(Number(order.delivery_fee||0))}</b></div><div className="invoice-grand-total"><span>Total</span><b>{money(Number(order.total||0))}</b></div></div>
         </div>
+        <section className="invoice-codes" aria-label="Invoice QR code and order barcode">
+          <div className="invoice-qr-block">
+            <QRCodeSVG
+              value={JSON.stringify({store:"NEXORA",type:"INVOICE",invoice:order.order_number||order.id,total:Number(order.total||0),currency:"BDT",issuedAt:order.created_at})}
+              size={112}
+              level="M"
+              includeMargin
+            />
+            <div><b>INVOICE DETAILS QR</b><span>Scan to read invoice reference</span></div>
+          </div>
+          <div className="invoice-barcode-block">
+            <b>ORDER BARCODE</b>
+            <Barcode value={String(order.order_number||order.id).slice(0,80)} format="CODE128" width={1.35} height={48} displayValue={false} margin={4} />
+            <span>{order.order_number||order.id}</span>
+          </div>
+        </section>
         <footer className="invoice-footer"><b>Thank you for choosing NEXORA!</b><span>Store invoice only · Not a courier shipping label or waybill.</span></footer>
       </article>)}
     </div>}
@@ -68,9 +86,10 @@ export default function AdminInvoicesPage(){
       .invoice-title{text-align:right}.invoice-title h1{font-size:27px;letter-spacing:3px;margin:0 0 8px}.invoice-title b,.invoice-title span{display:block;font-size:12px;margin-top:4px}
       .invoice-parties{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;padding:28px 0}.invoice-parties small,.invoice-notes small{font-size:9px;letter-spacing:1.4px;font-weight:800;color:#777}.invoice-parties h2{font-size:15px;margin:9px 0 6px}.invoice-parties p{font-size:11px;line-height:1.6;margin:3px 0;overflow-wrap:anywhere}
       .invoice-items{width:100%;border-collapse:collapse;font-size:11px}.invoice-items th{background:#f1f3f0;text-align:left;font-size:9px;letter-spacing:.5px;text-transform:uppercase}.invoice-items th,.invoice-items td{padding:12px 9px;border-bottom:1px solid #e8e8e5}.invoice-items td:nth-child(n+3),.invoice-items th:nth-child(n+3){text-align:right}
-      .invoice-bottom{display:flex;justify-content:space-between;gap:30px;margin-top:28px}.invoice-notes{max-width:48%}.invoice-notes p{font-size:11px;line-height:1.6;color:#666}.invoice-totals{width:260px}.invoice-totals div{display:flex;justify-content:space-between;gap:20px;padding:8px 0;font-size:12px;border-bottom:1px solid #eee}.invoice-grand-total{font-size:17px!important;border-bottom:0!important;padding-top:14px!important}.invoice-footer{margin-top:auto;padding-top:35px;border-top:1px solid #e7e7e3;display:flex;justify-content:space-between;gap:12px;font-size:11px}.invoice-footer span{color:#888}
+      .invoice-bottom{display:flex;justify-content:space-between;gap:30px;margin-top:28px}.invoice-notes{max-width:48%}.invoice-notes p{font-size:11px;line-height:1.6;color:#666}.invoice-totals{width:260px}.invoice-totals div{display:flex;justify-content:space-between;gap:20px;padding:8px 0;font-size:12px;border-bottom:1px solid #eee}.invoice-grand-total{font-size:17px!important;border-bottom:0!important;padding-top:14px!important}
+      .invoice-codes{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-top:28px;padding:16px 0;border-top:1px dashed #d7d7d2;border-bottom:1px dashed #d7d7d2}.invoice-qr-block{display:flex;align-items:center;gap:12px}.invoice-qr-block>div:last-child,.invoice-barcode-block{display:flex;flex-direction:column;gap:5px}.invoice-qr-block b,.invoice-barcode-block>b{font-size:9px;letter-spacing:1px}.invoice-qr-block span,.invoice-barcode-block>span{font-size:9px;color:#777}.invoice-barcode-block{align-items:flex-end;max-width:55%;overflow:hidden}.invoice-barcode-block svg{max-width:100%;height:auto}.invoice-barcode-block>span{font-family:monospace;overflow-wrap:anywhere;text-align:right}.invoice-footer{margin-top:auto;padding-top:24px;border-top:1px solid #e7e7e3;display:flex;justify-content:space-between;gap:12px;font-size:11px}.invoice-footer span{color:#888}
       .invoice-state{max-width:850px;margin:40px auto;background:white;padding:28px;border-radius:10px}.invoice-error{color:#a33}
-      @media(max-width:650px){.invoice-workspace{padding:10px}.invoice-toolbar{align-items:stretch;flex-direction:column}.invoice-toolbar button{width:100%}.invoice-sheet{padding:25px 18px;min-height:900px}.invoice-parties{grid-template-columns:1fr 1fr}.invoice-bottom{flex-direction:column}.invoice-notes{max-width:none}.invoice-totals{width:100%}.invoice-items{font-size:9px}.invoice-items th,.invoice-items td{padding:8px 4px}}
+      @media(max-width:650px){.invoice-workspace{padding:10px}.invoice-toolbar{align-items:stretch;flex-direction:column}.invoice-toolbar button{width:100%}.invoice-sheet{padding:25px 18px;min-height:900px}.invoice-parties{grid-template-columns:1fr 1fr}.invoice-bottom{flex-direction:column}.invoice-notes{max-width:none}.invoice-totals{width:100%}.invoice-codes{align-items:flex-start;flex-direction:column;gap:14px}.invoice-barcode-block{align-items:flex-start;max-width:100%;width:100%}.invoice-barcode-block svg{width:100%;max-width:260px}.invoice-items{font-size:9px}.invoice-items th,.invoice-items td{padding:8px 4px}}
       @media print{
         @page{size:A4;margin:12mm}
         body{background:#fff!important}.invoice-workspace{padding:0!important;background:#fff!important}.no-print{display:none!important}.invoice-list{display:block!important}.invoice-sheet{width:100%!important;max-width:none!important;min-height:0!important;height:273mm!important;padding:0!important;margin:0!important;box-shadow:none!important;break-after:page;page-break-after:always;overflow:hidden}.invoice-sheet:last-child{break-after:auto;page-break-after:auto}
