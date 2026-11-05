@@ -54,7 +54,7 @@ export default function AdminInvoicesPage(){
           <div className="invoice-notes"><small>NOTES</small><p>{order.notes||"Thank you for shopping with NEXORA."}</p></div>
           <div className="invoice-totals"><div><span>Subtotal</span><b>{money(Number(order.subtotal||0))}</b></div><div><span>Delivery charge</span><b>{money(Number(order.delivery_fee||0))}</b></div><div className="invoice-grand-total"><span>Total</span><b>{money(Number(order.total||0))}</b></div></div>
         </div>
-        <footer className="invoice-footer"><b>Thank you for choosing NEXORA!</b><span>This is a computer-generated invoice.</span></footer>
+        <footer className="invoice-footer"><b>Thank you for choosing NEXORA!</b><span>Store invoice only · Not a courier shipping label or waybill.</span></footer>
       </article>)}
     </div>}
     <style jsx global>{`
