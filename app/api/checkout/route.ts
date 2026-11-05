@@ -127,12 +127,12 @@ export async function POST(request: Request) {
       delivery_fee: deliveryFee,
       total,
     }).select("*").single();
-    if (orderError || !order) return NextResponse.json({ error: "Could not create order." }, { status: 500 });
+    if (orderError || !order) { console.error("[checkout] order insert failed:", orderError); return NextResponse.json({ error: "Could not create order.", database_error: orderError?.message, code: orderError?.code, hint: orderError?.hint }, { status: 500 }); }
 
     const { error: itemsError } = await db.from("order_items").insert(orderLines.map(line => ({ ...line, order_id: order.id })));
     if (itemsError) {
       await db.from("orders").delete().eq("id", order.id);
-      return NextResponse.json({ error: "Could not save order items." }, { status: 500 });
+      console.error("[checkout] order_items insert failed:", itemsError); return NextResponse.json({ error: "Could not save order items.", database_error: itemsError.message, code: itemsError.code, hint: itemsError.hint }, { status: 500 });
     }
 
     const { error: paymentError } = await db.from("payments").insert({
@@ -144,7 +144,7 @@ export async function POST(request: Request) {
     });
     if (paymentError) {
       await db.from("orders").delete().eq("id", order.id);
-      return NextResponse.json({ error: "Could not save payment details." }, { status: 500 });
+      console.error("[checkout] payment insert failed:", paymentError); return NextResponse.json({ error: "Could not save payment details.", database_error: paymentError.message, code: paymentError.code, hint: paymentError.hint }, { status: 500 });
     }
 
     // Conditional stock updates help prevent overselling when orders arrive together.
@@ -194,6 +194,6 @@ export async function POST(request: Request) {
   } catch (error) {
     const message = error instanceof Error ? error.message : "";
     if (message.includes("Supabase is not configured")) return NextResponse.json({ error: "Supabase is not configured." }, { status: 503 });
-    return NextResponse.json({ error: "Unable to place order." }, { status: 500 });
+    console.error("[checkout] unexpected failure:", error);\n    return NextResponse.json({ error: "Unable to place order.", database_error: message || "Unknown server error" }, { status: 500 });
   }
 }
