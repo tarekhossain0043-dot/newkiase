@@ -1,4 +1,10 @@
 
+/* Admin-wide date range controls */
+.admin-date-filter,.admin-date-input{height:38px;min-width:125px;padding:0 10px;border:1px solid var(--admin-border,#e5e7eb);border-radius:7px;background:var(--admin-card,#fff);color:var(--admin-text,#343743);font:inherit;font-size:12px;outline:none}
+.admin-date-filter:focus,.admin-date-input:focus{border-color:var(--admin-accent,#766394)}
+.admin-top-actions{flex-wrap:wrap}
+@media(max-width:760px){.admin-date-filter,.admin-date-input{min-width:0;max-width:100%;flex:1}.admin-top-actions .admin-search{min-width:100%}}
+
 .summary-item{position:relative;padding-right:30px}.summary-remove{position:absolute;right:0;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:28px;height:28px;border:1px solid #eadfda;border-radius:4px;background:#fff;color:#a24b45;cursor:pointer;transition:background .15s ease,color .15s ease}.summary-remove:hover{background:#fff0ef;color:#8f2e2e}
 
 /* Separate profit and purchase-cost bar charts in the admin overview */
