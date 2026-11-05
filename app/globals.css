@@ -9,7 +9,7 @@
 .finance-mini-column{height:100%;min-width:0;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:7px}
 .finance-mini-bars{height:calc(100% - 19px);width:100%;display:flex;align-items:stretch;justify-content:center;gap:3px}
 .finance-mini-bar-track{height:100%;width:min(18px,42%);display:flex;align-items:flex-end;justify-content:center}
-.finance-mini-bar{width:100%;min-height:0;border-radius:3px 3px 0 0;cursor:help;transition:filter .15s ease}
+.finance-mini-bar{width:100%;min-height:0;border-radius:3px 3px 0 0;cursor:default;transition:filter .15s ease}
 .finance-mini-bar:hover{filter:brightness(.85)}
 .finance-mini-column>small{font-size:8px;color:#9297a2;white-space:nowrap}
 .finance-mini-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:9px;color:var(--admin-muted)}
