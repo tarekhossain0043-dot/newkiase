@@ -194,6 +194,7 @@ export async function POST(request: Request) {
   } catch (error) {
     const message = error instanceof Error ? error.message : "";
     if (message.includes("Supabase is not configured")) return NextResponse.json({ error: "Supabase is not configured." }, { status: 503 });
-    console.error("[checkout] unexpected failure:", error);\n    return NextResponse.json({ error: "Unable to place order.", database_error: message || "Unknown server error" }, { status: 500 });
+    console.error("[checkout] unexpected failure:", error);
+    return NextResponse.json({ error: "Unable to place order.", database_error: message || "Unknown server error" }, { status: 500 });
   }
 }
