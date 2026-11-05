@@ -1612,6 +1612,19 @@ footer{background:#17191c}
   margin-bottom:clamp(30px,5vw,64px)!important;
   padding-bottom:clamp(22px,3vw,42px)!important;
 }
+@media(min-width:821px){
+  .editorial{
+    align-items:stretch!important;
+    padding-bottom:0!important;
+  }
+  .editorial-img{
+    height:100%!important;
+    min-height:100%!important;
+    align-self:stretch!important;
+    background-size:cover!important;
+    background-position:center!important;
+  }
+}
 .newsletter{
   margin-top:clamp(24px,4vw,52px)!important;
   padding-top:clamp(44px,6vw,72px)!important;
