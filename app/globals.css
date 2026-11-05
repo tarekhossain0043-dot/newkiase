@@ -1,4 +1,6 @@
 
+.summary-item{position:relative;padding-right:30px}.summary-remove{position:absolute;right:0;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:28px;height:28px;border:1px solid #eadfda;border-radius:4px;background:#fff;color:#a24b45;cursor:pointer;transition:background .15s ease,color .15s ease}.summary-remove:hover{background:#fff0ef;color:#8f2e2e}
+
 /* Separate profit and purchase-cost bar charts in the admin overview */
 .finance-two-charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:12px}
 .finance-mini-chart{min-width:0;border:1px solid var(--admin-border);border-radius:8px;padding:14px;background:var(--admin-card)}
