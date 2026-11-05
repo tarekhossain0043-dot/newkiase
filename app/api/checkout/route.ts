@@ -43,7 +43,7 @@ export async function POST(request: Request) {
 
     const { data: products, error: productError } = await supabase
       .from("products")
-      .select("id, sku, name, price, stock_quantity, status, sizes, product_variants(id,sku,option_name,option_value,price_delta,stock_quantity,is_active)")
+      .select("id, sku, name, price, cost_price, stock_quantity, status, sizes, product_variants(id,sku,option_name,option_value,price_delta,stock_quantity,is_active)")
       .in("id", [...normalized.keys()]);
     if (productError || !products || products.length !== normalized.size) {
       return NextResponse.json({ error: "One or more products are unavailable." }, { status: 400 });
@@ -72,6 +72,7 @@ export async function POST(request: Request) {
         product_name: product.name,
         sku: selectedVariant?.sku || product.sku,
         unit_price: unitPrice,
+        cost_price: Number(product.cost_price || 0),
         quantity,
         line_total: unitPrice * quantity,
         selected_option: selection.selected_option,
