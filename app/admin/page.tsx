@@ -30,7 +30,7 @@ const current=nav.flatMap(g=>g.items).find((i:any)=>i[1]===active)?.[0]||"Dashbo
 const matchesDateFilter=(row:any)=>{
   if(dateFilter==="all")return true;
   const raw=row?.createdAt||row?.created_at||row?.requested_at||row?.lastOrderAt||row?.starts_at||row?.expires_at||row?.updated_at;
-  if(!raw)return false;
+  if(!raw)return true; // Keep static records visible when the source has no date field.
   const value=new Date(raw);if(Number.isNaN(value.getTime()))return false;
   const start=new Date();start.setHours(0,0,0,0);
   const end=new Date();end.setHours(23,59,59,999);
