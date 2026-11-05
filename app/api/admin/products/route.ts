@@ -61,8 +61,14 @@ export async function POST(request: Request) {
 
     const { data, error } = await supabase.from("products").insert(payload).select("*").single();
     if (error) {
+      console.error("Admin product insert failed:", { code: error.code, message: error.message, details: error.details, hint: error.hint });
       const duplicate = error.code === "23505";
-      return NextResponse.json({ error: duplicate ? "SKU or slug already exists." : "Could not create product." }, { status: duplicate ? 409 : 400 });
+      return NextResponse.json({
+        error: duplicate ? "SKU or slug already exists." : "Could not create product.",
+        database_error: error.message,
+        code: error.code,
+        hint: error.hint || undefined,
+      }, { status: duplicate ? 409 : 400 });
     }
     const imageUrls = Array.isArray(body.image_urls) ? body.image_urls.filter((v: unknown) => typeof v === "string" && v.trim()).slice(0, 3) : (typeof body.image_url === "string" && body.image_url.trim() ? [body.image_url.trim()] : []);
     if (imageUrls.length) {
@@ -86,7 +92,15 @@ export async function PATCH(request: Request) {
     if ("cost_price" in patch && (!Number.isFinite(Number(patch.cost_price)) || Number(patch.cost_price) < 0)) return NextResponse.json({ error: "Base price must be a valid non-negative amount." }, { status: 400 });
     patch.updated_at = new Date().toISOString();
     const { data, error } = await supabase.from("products").update(patch).eq("id", body.id).select("*").maybeSingle();
-    if (error) return NextResponse.json({ error: "Could not update product." }, { status: 400 });
+    if (error) {
+      console.error("Admin product update failed:", { code: error.code, message: error.message, details: error.details, hint: error.hint });
+      return NextResponse.json({
+        error: "Could not update product.",
+        database_error: error.message,
+        code: error.code,
+        hint: error.hint || undefined,
+      }, { status: 400 });
+    }
     if (!data) return NextResponse.json({ error: "Product not found." }, { status: 404 });
     // The admin editor sends image_urls (gallery), while older clients may send image_url.
     if (Array.isArray(body.image_urls) || typeof body.image_url === "string") {
@@ -100,8 +114,10 @@ export async function PATCH(request: Request) {
       }
     }
     return NextResponse.json({ product: data });
-  } catch {
-    return NextResponse.json({ error: "Unable to update product." }, { status: 500 });
+  } catch (error) {
+    console.error("Admin product update exception:", error);
+    const message = error instanceof Error ? error.message : "Unknown server error.";
+    return NextResponse.json({ error: "Unable to update product.", details: message }, { status: 500 });
   }
 }
 
