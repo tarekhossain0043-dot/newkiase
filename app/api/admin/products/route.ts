@@ -37,17 +37,18 @@ export async function POST(request: Request) {
     const sku = typeof body.sku === "string" ? body.sku.trim() : "";
     const slug = typeof body.slug === "string" ? body.slug.trim().toLowerCase() : "";
     const price = Number(body.price);
+    const costPrice = Number(body.cost_price ?? 0);
     const stock = Number(body.stock_quantity ?? 0);
 
     if (!name || name.length > 160 || !sku || sku.length > 80 || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
       return NextResponse.json({ error: "Name, SKU and a valid URL slug are required." }, { status: 400 });
     }
-    if (!Number.isFinite(price) || price < 0 || !Number.isInteger(stock) || stock < 0) {
+    if (!Number.isFinite(price) || price < 0 || !Number.isFinite(costPrice) || costPrice < 0 || !Number.isInteger(stock) || stock < 0) {
       return NextResponse.json({ error: "Price and stock must be valid non-negative numbers." }, { status: 400 });
     }
 
     const payload = {
-      name, sku, slug, price, stock_quantity: stock,
+      name, sku, slug, price, cost_price: costPrice, stock_quantity: stock,
       brand: typeof body.brand === "string" ? body.brand.trim().slice(0, 120) : "",
       description: typeof body.description === "string" ? body.description.trim().slice(0, 10000) : "",
       color: typeof body.color === "string" ? body.color.trim().slice(0, 80) : "",
@@ -79,9 +80,10 @@ export async function PATCH(request: Request) {
     const { supabase } = await requireAdmin();
     const body = await request.json();
     if (typeof body.id !== "string" || !body.id) return NextResponse.json({ error: "Product id is required." }, { status: 400 });
-    const allowed = ["name","sku","slug","brand","description","price","compare_at_price","stock_quantity","sizes","color","status","is_featured","category_id"] as const;
+    const allowed = ["name","sku","slug","brand","description","price","cost_price","compare_at_price","stock_quantity","sizes","color","status","is_featured","category_id"] as const;
     const patch: Record<string, unknown> = {};
     for (const key of allowed) if (key in body) patch[key] = body[key];
+    if ("cost_price" in patch && (!Number.isFinite(Number(patch.cost_price)) || Number(patch.cost_price) < 0)) return NextResponse.json({ error: "Base price must be a valid non-negative amount." }, { status: 400 });
     patch.updated_at = new Date().toISOString();
     const { data, error } = await supabase.from("products").update(patch).eq("id", body.id).select("*").maybeSingle();
     if (error) return NextResponse.json({ error: "Could not update product." }, { status: 400 });
