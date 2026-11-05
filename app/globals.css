@@ -950,7 +950,6 @@ footer{background:#17191c}
 .brand-filter-chip{cursor:pointer;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease,background .2s ease}
 .brand-filter-chip:hover{transform:translateY(-3px);border-color:#a8d34b;background:#f7fbeF;box-shadow:0 7px 16px #17203312}
 .brand-filter-chip.selected{border-color:#92c52a;background:#f2f9df;box-shadow:0 0 0 2px #92c52a25}
-.brand-filter-chip .brand-logo-fallback{display:grid;place-items:center;width:100%;height:100%;font-size:12px;letter-spacing:1px;font-weight:850;color:#202a35}
 @media(max-width:760px){
  .header-dropdown{width:100%;display:block}
  .nav-dropdown-trigger{width:100%;justify-content:space-between;padding:10px 0}
@@ -972,7 +971,6 @@ footer{background:#17191c}
 .brand-filter-chip.selected{border-color:#91c42b;background:#f2f9df;box-shadow:0 0 0 2px #91c42b22}
 .brand-chip-logo{width:100%;height:29px;display:grid;place-items:center}
 .brand-chip-logo img{display:block;width:100%;height:100%;max-width:62px;object-fit:contain}
-.brand-chip-logo .brand-logo-fallback{width:100%;height:100%;display:grid;place-items:center;font-size:14px;letter-spacing:.7px;font-weight:900;color:#202a35}
 .brand-chip-name{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px;line-height:1.2;font-weight:750;color:#303846}
 .product-card .product-media{isolation:isolate}
 .product-card .product-media:before{content:"";position:absolute;z-index:0;inset:0;background:radial-gradient(ellipse at 50% 42%,#45494f 0%,#26292e 58%,#15171b 100%);opacity:0;transition:opacity .3s ease}
@@ -1404,12 +1402,6 @@ footer{background:#17191c}
   .shop-sidebar .brand-chip-logo img{
     position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
     max-width:100%!important;object-fit:contain!important;z-index:2!important;background:#fff;
-  }
-  .shop-sidebar .brand-chip-logo .brand-logo-fallback{
-    display:grid!important;position:absolute!important;inset:0!important;
-    width:100%!important;height:100%!important;place-items:center!important;
-    border-radius:50%!important;background:#f0f2f5!important;color:#28313e!important;
-    font-size:10px!important;font-weight:850!important;z-index:1!important;
   }
   .shop-sidebar .brand-chip-name{
     display:block!important;position:relative!important;min-width:0!important;max-width:100%!important;
@@ -1878,12 +1870,6 @@ footer{background:#17191c}
     width:auto!important;height:30px!important;max-width:68px!important;
     object-fit:contain!important;background:transparent!important;
   }
-  .shop-layout .brand-filter-chip .brand-chip-logo .brand-logo-fallback{
-    position:absolute!important;inset:0!important;
-    display:grid!important;place-items:center!important;
-    width:100%!important;height:100%!important;
-    font-size:13px!important;line-height:1!important;
-  }
   .shop-layout .brand-filter-chip .brand-chip-name{
     display:block!important;position:static!important;
     flex:0 0 auto!important;width:100%!important;max-width:100%!important;
@@ -1984,9 +1970,7 @@ footer{background:#17191c}
     transform:translate(-50%,-50%)!important;
   }
   #categories .brand-card:hover .brand-card-product{transform:translate(-50%,-50%) scale(1.035)!important}
-  /* Logo only: remove the repeated brand-name caption in desktop filter chips */
   .shop-layout .brand-filter-chip{min-height:58px!important;height:58px!important;padding:6px!important;gap:0!important}
-  .shop-layout .brand-filter-chip .brand-chip-name{display:none!important}
   .shop-layout .brand-filter-chip .brand-chip-logo{
     flex:1 1 auto!important;width:100%!important;height:42px!important;min-height:42px!important;
   }
@@ -2133,7 +2117,6 @@ footer{background:#17191c}
   .brand-filter-chip{display:flex;align-items:center;justify-content:center}
   .brand-chip-logo{width:100%;height:100%;min-height:29px}
   .brand-chip-logo img{max-width:78px;max-height:34px}
-  .brand-chip-name,.brand-chip-logo .brand-logo-fallback{display:none!important}
 }
 .product-card .product-media:before,
 .product-card:hover .product-media:before,
@@ -2146,10 +2129,6 @@ footer{background:#17191c}
 
 
 /* Final storefront filter and add-to-cart adjustments */
-@media(min-width:761px){
-  .brand-filter-chip .brand-chip-name,
-  .brand-filter-chip .brand-logo-fallback{display:none!important}
-}
 .product-card .quick-add{
   background:#353535!important;
   color:#fff!important;
@@ -2190,12 +2169,56 @@ footer{background:#17191c}
     max-width:78px!important;
     object-fit:contain!important;
   }
-  .shop-layout .brand-filter-chip .brand-chip-name,
-  .shop-layout .brand-filter-chip .brand-logo-fallback{
-    display:none!important;
-  }
 }
 
+/* Show each brand mark above its readable name at every storefront size. */
+.shop-layout .brand-filter-chip,
+.shop-sidebar .brand-filter-chip{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:4px!important;
+  height:68px!important;
+  min-height:68px!important;
+  padding:6px 4px!important;
+  text-align:center!important;
+}
+.shop-layout .brand-filter-chip .brand-chip-logo,
+.shop-sidebar .brand-filter-chip .brand-chip-logo{
+  display:grid!important;
+  flex:0 0 34px!important;
+  width:100%!important;
+  height:34px!important;
+  min-height:34px!important;
+  place-items:center!important;
+}
+.shop-layout .brand-filter-chip .brand-chip-logo img,
+.shop-sidebar .brand-filter-chip .brand-chip-logo img{
+  position:static!important;
+  display:block!important;
+  width:auto!important;
+  height:auto!important;
+  max-width:76px!important;
+  max-height:32px!important;
+  object-fit:contain!important;
+}
+.shop-layout .brand-filter-chip .brand-chip-name,
+.shop-sidebar .brand-filter-chip .brand-chip-name{
+  display:block!important;
+  flex:0 0 auto!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  height:auto!important;
+  max-height:14px!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  font-size:9px!important;
+  line-height:1.2!important;
+  text-align:center!important;
+}
 
 /* Mobile product catalogue layout repair */
 @media(max-width:620px){
