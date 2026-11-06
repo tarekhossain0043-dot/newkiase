@@ -2472,3 +2472,69 @@ footer{background:#17191c}
 .contact-channel-popover .messenger-option{background:#087cff!important;color:#fff!important}
 .contact-channel-popover .contact-channel-option:after{right:calc(100% + 10px)!important;z-index:5!important}
 @media(max-width:700px){.contact-float-wrap{right:14px!important;bottom:100px!important;width:58px!important;height:58px!important}.contact-float-wrap .contact-float-button{width:58px!important;height:58px!important;min-width:58px!important;min-height:58px!important;max-width:58px!important;max-height:58px!important}.contact-channel-popover{right:4px!important;bottom:calc(100% + 12px)!important;gap:12px!important}}
+
+
+/* FINAL floating controls layout: never overlap each other */
+.contact-float-wrap{
+  position:fixed!important;right:24px!important;left:auto!important;
+  bottom:108px!important;width:64px!important;height:64px!important;
+  z-index:1200!important;overflow:visible!important;
+}
+.contact-float-wrap>.messenger-float,
+.contact-float-wrap>.contact-float-button{
+  position:absolute!important;right:0!important;left:auto!important;
+  top:auto!important;bottom:0!important;transform:none!important;
+  margin:0!important;z-index:2!important;
+}
+.contact-float-wrap .contact-channel-popover{
+  position:absolute!important;right:5px!important;left:auto!important;
+  top:auto!important;bottom:calc(100% + 14px)!important;
+  z-index:3!important;
+}
+.nexora-ai-launcher{
+  position:fixed!important;left:24px!important;right:auto!important;
+  bottom:28px!important;z-index:1190!important;
+}
+.nexora-ai-panel{
+  position:fixed!important;left:24px!important;right:auto!important;
+  bottom:88px!important;z-index:1191!important;
+}
+.back-to-top{
+  position:fixed!important;right:24px!important;left:auto!important;
+  bottom:28px!important;z-index:1180!important;
+}
+@media(max-width:620px){
+  .contact-float-wrap{
+    position:fixed!important;right:14px!important;left:auto!important;
+    bottom:calc(104px + env(safe-area-inset-bottom))!important;
+    width:58px!important;height:58px!important;z-index:1200!important;
+  }
+  .contact-float-wrap>.messenger-float,
+  .contact-float-wrap>.contact-float-button{
+    position:absolute!important;right:0!important;left:auto!important;
+    top:auto!important;bottom:0!important;width:58px!important;height:58px!important;
+    min-width:58px!important;min-height:58px!important;max-width:58px!important;max-height:58px!important;
+    transform:none!important;margin:0!important;
+  }
+  .contact-float-wrap .contact-channel-popover{
+    position:absolute!important;right:4px!important;left:auto!important;
+    top:auto!important;bottom:calc(100% + 12px)!important;
+  }
+  .nexora-ai-launcher{
+    position:fixed!important;left:14px!important;right:auto!important;
+    bottom:calc(104px + env(safe-area-inset-bottom))!important;
+    width:46px!important;height:46px!important;min-width:46px!important;
+    z-index:1190!important;
+  }
+  .nexora-ai-panel{
+    position:fixed!important;left:14px!important;right:auto!important;
+    bottom:calc(160px + env(safe-area-inset-bottom))!important;
+    width:min(370px,calc(100vw - 28px))!important;
+    z-index:1191!important;
+  }
+  .back-to-top{
+    position:fixed!important;right:14px!important;left:auto!important;
+    bottom:calc(178px + env(safe-area-inset-bottom))!important;
+    z-index:1180!important;width:42px!important;height:42px!important;
+  }
+}
