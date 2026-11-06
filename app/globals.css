@@ -2440,3 +2440,23 @@ footer{background:#17191c}
 @keyframes brandProductMarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @media(max-width:700px){.contact-float-wrap{right:14px;bottom:94px}.contact-float-button{min-width:0;padding:12px 14px}.contact-channel-popover{width:250px}.brand-product-row{margin-bottom:30px}.brand-product-heading{padding:0 16px}.brand-auto-card{width:165px;flex-basis:165px}.brand-auto-image{height:145px}.brand-auto-inner{gap:10px;animation-duration:38s}}
 @media(prefers-reduced-motion:reduce){.brand-auto-inner{animation:none}.contact-channel-popover{animation:none}}
+
+
+/* Final circular contact launcher and vertically stacked circular channel shortcuts */
+.contact-float-wrap{position:fixed!important;right:24px!important;bottom:112px!important;z-index:1200!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:12px!important}
+.contact-float-wrap .contact-float-button{width:64px!important;height:64px!important;min-width:64px!important;min-height:64px!important;padding:0!important;flex:0 0 64px!important;display:grid!important;place-items:center!important;overflow:hidden!important;border:3px solid #fff!important;border-radius:50%!important;aspect-ratio:1/1!important;background:#fff!important;box-shadow:0 8px 26px #142d6840!important}
+.contact-float-wrap .contact-float-button b,.contact-float-wrap .contact-float-button .contact-float-icon{display:none!important}
+.contact-float-wrap .contact-float-button .chat-avatar{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;aspect-ratio:1/1!important;object-fit:cover!important;object-position:center!important;border-radius:50%!important;clip-path:circle(50% at 50% 50%)!important;overflow:hidden!important;pointer-events:none!important}
+.contact-float-wrap .contact-float-button .chat-messenger{display:grid!important;place-items:center!important;animation:chatMessengerSwap 15s infinite linear!important}
+.contact-float-wrap .contact-float-button .chat-messenger svg{width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important}
+.contact-float-wrap .contact-float-button .chat-woman{animation:chatWomanSwap 15s infinite linear!important}
+.contact-float-wrap .contact-float-button .chat-boy{animation:chatBoySwap 15s infinite linear!important}
+.contact-float-wrap .contact-float-button .chat-ping{right:2px!important;top:2px!important;z-index:8!important}
+.contact-channel-popover{position:absolute!important;right:8px!important;bottom:calc(100% + 12px)!important;width:auto!important;padding:0!important;margin:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:10px!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;animation:contactPopoverIn .18s ease-out!important}
+.contact-channel-popover .contact-channel-option{position:relative!important;width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important;padding:0!important;display:grid!important;place-items:center!important;flex:0 0 50px!important;border:3px solid #fff!important;border-radius:50%!important;color:#fff!important;box-shadow:0 6px 20px #17233b30!important;text-decoration:none!important;transition:transform .18s ease!important}
+.contact-channel-popover .contact-channel-option:hover{transform:scale(1.08)!important}
+.contact-channel-popover .whatsapp-option{background:#20b96b!important}
+.contact-channel-popover .messenger-option{background:#087cff!important}
+.contact-channel-popover .contact-channel-option:after{content:attr(data-label);position:absolute;right:calc(100% + 9px);top:50%;transform:translateY(-50%);padding:6px 9px;border-radius:14px;background:#fff;color:#253047;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 3px 12px #17233b20;pointer-events:none}
+@media(max-width:700px){.contact-float-wrap{right:14px!important;bottom:94px!important}.contact-float-wrap .contact-float-button{width:58px!important;height:58px!important;min-width:58px!important;min-height:58px!important;flex-basis:58px!important}.contact-channel-popover{right:4px!important;bottom:calc(100% + 10px)!important}}
+@media(prefers-reduced-motion:reduce){.contact-float-wrap .contact-float-button .chat-avatar{animation:none!important}.contact-float-wrap .contact-float-button .chat-messenger{opacity:1!important;visibility:visible!important}.contact-float-wrap .contact-float-button .chat-woman,.contact-float-wrap .contact-float-button .chat-boy{display:none!important}}
