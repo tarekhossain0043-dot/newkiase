@@ -190,6 +190,14 @@ export async function POST(request: Request) {
       });
     }
 
+    const { error: notificationError } = await db.from("admin_notifications").insert({
+      type: "order",
+      title: "New order received",
+      description: (order.order_number || "Order") + " · " + customerName + " · ৳" + total.toLocaleString("en-BD"),
+      reference_id: order.id,
+    });
+    if (notificationError) console.error("[checkout] admin notification insert failed:", notificationError);
+
     return NextResponse.json({ order_number: order.order_number, status: order.status, payment_status: order.payment_status, subtotal, delivery_fee: deliveryFee, total }, { status: 201 });
   } catch (error) {
     const message = error instanceof Error ? error.message : "";
