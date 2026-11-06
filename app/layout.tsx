@@ -6,6 +6,7 @@ import StorefrontRuntime from "@/components/storefront-runtime";
 export const metadata: Metadata = {
   title: "NEXORA — Everyday, Elevated",
   description: "Discover modern essentials for every day.",
+  icons: { icon: "/favicon.svg", shortcut: "/favicon.svg", apple: "/favicon.svg" },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
