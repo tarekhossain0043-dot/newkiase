@@ -3,6 +3,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { ArrowRight, Chrome, Facebook, LockKeyhole, UserRound } from "lucide-react";
+import { toast } from "react-toastify";
 export default function CustomerAccountPage() {
   const router = useRouter();
   const [mode,setMode] = useState<"login"|"signup">("login");
@@ -11,12 +12,12 @@ export default function CustomerAccountPage() {
   const [phone,setPhone] = useState("");
   const [password,setPassword] = useState("");
   const [busy,setBusy] = useState(false);
-  const [notice,setNotice] = useState("");
+
   async function submit(e: FormEvent) {
     e.preventDefault();
     if (busy) return;
     setBusy(true);
-    setNotice("");
+
     const timeout = new Promise<never>((_, reject) => {
       window.setTimeout(() => reject(new Error("The authentication request is taking too long. Please check your internet connection and Supabase Auth settings, then try again.")), 15000);
     });
@@ -33,7 +34,7 @@ export default function CustomerAccountPage() {
           router.replace("/account?welcome=1");
           router.refresh();
         } else {
-          setNotice("Account request submitted. If email confirmation is enabled, check your inbox to activate the account before signing in.");
+          toast.success("Account request submitted. Check your inbox to activate your account if email confirmation is enabled.");
         }
       } else {
         const result = await Promise.race([
@@ -47,7 +48,7 @@ export default function CustomerAccountPage() {
       }
     } catch(e) {
       const message = e instanceof Error ? e.message : "Authentication failed. Please try again.";
-      setNotice(message);
+      toast.error(message);
     } finally {
       setBusy(false);
     }
@@ -55,16 +56,16 @@ export default function CustomerAccountPage() {
   async function google() {
     if (busy) return;
     setBusy(true);
-    setNotice("");
+    
     const timer = window.setTimeout(() => {
       setBusy(false);
-      setNotice("Google sign-in did not start. Check Supabase Google provider and redirect URL settings, then try again.");
+      toast.error("Google sign-in did not start. Check Supabase Google provider and redirect URL settings, then try again.");
     }, 15000);
     try {
       const {error}=await createSupabaseBrowserClient().auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+"/auth/callback"}});
       if(error) throw error;
     } catch(e) {
-      setNotice(e instanceof Error?e.message:"Google sign-in failed.");
+      toast.error(e instanceof Error?e.message:"Google sign-in failed.");
       setBusy(false);
     } finally {
       window.clearTimeout(timer);
@@ -76,21 +77,21 @@ export default function CustomerAccountPage() {
     setNotice("");
     const timer = window.setTimeout(() => {
       setBusy(false);
-      setNotice("Facebook sign-in did not start. Enable Facebook provider in Supabase and verify the Meta App ID, App Secret, and redirect URL.");
+      toast.error("Facebook sign-in did not start. Enable Facebook provider in Supabase and verify the Meta App ID, App Secret, and redirect URL.");
     }, 15000);
     try {
       const {error}=await createSupabaseBrowserClient().auth.signInWithOAuth({provider:"facebook",options:{redirectTo:location.origin+"/auth/callback",scopes:"email,public_profile"}});
       if(error) throw error;
     } catch(e) {
-      setNotice(e instanceof Error?e.message:"Facebook sign-in failed.");
+      toast.error(e instanceof Error?e.message:"Facebook sign-in failed.");
       setBusy(false);
     } finally {
       window.clearTimeout(timer);
     }
   }
-  async function signOut(){await createSupabaseBrowserClient().auth.signOut();router.refresh();setNotice("Signed out.");}
+  async function signOut(){const {error}=await createSupabaseBrowserClient().auth.signOut();if(error){toast.error(error.message);return;}router.refresh();toast.success("Signed out.");}
   return <main className="customer-account-page"><a href="/" className="account-back">← NEXORA Store</a><section className="customer-account-card"><div className="account-brand">NEXORA<span> STORE</span></div><div className="account-icon"><UserRound size={22}/></div><p className="account-eyebrow">CUSTOMER ACCOUNT</p><h1>{mode==="login"?"Welcome back":"Create your account"}</h1><p className="account-intro">{mode==="login"?"Sign in to your NEXORA customer account.":"Create an account to keep your details and order history together."}</p>
   <button type="button" className="account-google" onClick={google} disabled={busy}><Chrome size={17}/> Continue with Google</button><button type="button" className="account-facebook" onClick={facebook} disabled={busy}><Facebook size={17} fill="currentColor"/> Continue with Facebook</button><div className="account-divider"><span>or use email</span></div>
-  <form onSubmit={submit}>{mode==="signup"&&<><label>Full name<input required maxLength={120} value={name} onChange={e=>setName(e.target.value)} autoComplete="name"/></label><label>Phone (optional)<input value={phone} onChange={e=>setPhone(e.target.value)} autoComplete="tel"/></label></>}<label>Email address<input type="email" required value={email} onChange={e=>setEmail(e.target.value)} autoComplete="email"/></label><label>Password<input type="password" minLength={6} required value={password} onChange={e=>setPassword(e.target.value)} autoComplete={mode==="login"?"current-password":"new-password"}/></label>{notice&&<p className="account-notice" role="status">{notice}</p>}<button type="submit" className="account-submit" disabled={busy}>{busy?"Please wait…":mode==="login"?"Sign in":"Create account"} <ArrowRight size={16}/></button></form>
+  <form onSubmit={submit}>{mode==="signup"&&<><label>Full name<input required maxLength={120} value={name} onChange={e=>setName(e.target.value)} autoComplete="name"/></label><label>Phone (optional)<input value={phone} onChange={e=>setPhone(e.target.value)} autoComplete="tel"/></label></>}<label>Email address<input type="email" required value={email} onChange={e=>setEmail(e.target.value)} autoComplete="email"/></label><label>Password<input type="password" minLength={6} required value={password} onChange={e=>setPassword(e.target.value)} autoComplete={mode==="login"?"current-password":"new-password"}/></label><button type="submit" className="account-submit" disabled={busy}>{busy?"Please wait…":mode==="login"?"Sign in":"Create account"} <ArrowRight size={16}/></button></form>
   <p className="account-switch">{mode==="login"?"New to NEXORA?":"Already have an account?"} <button type="button" onClick={()=>{setMode(mode==="login"?"signup":"login");setNotice("");}}>{mode==="login"?"Create account":"Sign in"}</button></p><a className="account-admin-link" href="/admin/login"><LockKeyhole size={13}/> Administrator sign-in</a></section><p className="account-terms">Your account is secured by Supabase Authentication.</p></main>
 }
