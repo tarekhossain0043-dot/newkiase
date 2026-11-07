@@ -88,8 +88,15 @@ export async function PATCH(request: Request) {
     if (error) throw error;
     return NextResponse.json({ record: data });
   } catch (error) {
-    console.error("[admin/workspace PATCH]", error);
-    return NextResponse.json({ error: "Could not update record." }, { status: 400 });
+    const detail = error && typeof error === "object" ? error as { message?: string; code?: string; details?: string; hint?: string } : null;
+    console.error("[admin/workspace PATCH]", { message: detail?.message || String(error), code: detail?.code, details: detail?.details, hint: detail?.hint });
+    return NextResponse.json({
+      error: "Could not update record.",
+      database_error: detail?.message || (error instanceof Error ? error.message : "Unknown server error"),
+      code: detail?.code || null,
+      details: detail?.details || null,
+      hint: detail?.hint || null
+    }, { status: 500 });
   }
 }
 
