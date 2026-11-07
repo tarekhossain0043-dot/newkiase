@@ -1028,10 +1028,10 @@ footer{background:#17191c}
 }
 .hero-reference .hero-image-slide img{
   display:block!important;
-  width:115%!important;
-  height:115%!important;
+  width:130%!important;
+  height:130%!important;
   max-width:none!important;
-  max-height:506px!important;
+  max-height:570px!important;
   object-fit:contain!important;
   object-position:center!important;
   mix-blend-mode:normal!important;
@@ -1044,9 +1044,9 @@ footer{background:#17191c}
     max-height:none!important;
   }
   .hero-reference .hero-image-slide img{
-    width:112%!important;
-    height:112%!important;
-    max-height:336px!important;
+    width:124%!important;
+    height:124%!important;
+    max-height:380px!important;
   }
 }
 
