@@ -61,7 +61,7 @@ export async function PATCH(request: Request) {
     const resource = body?.resource as Resource;
     const id = body?.id;
     const values = body?.values;
-    if (!resources.includes(resource) || !values || typeof values !== "object" || Array.isArray(values)) return NextResponse.json({ error: "Invalid update request." }, { status: 400 });
+    if (!resources.includes(resource) || !values || typeof values !== "object" || (Array.isArray(values) && resource !== "settings")) return NextResponse.json({ error: "Invalid update request." }, { status: 400 });
     if (resource === "roles") {
       if (!id || !["admin","customer"].includes(String(values.role))) return NextResponse.json({ error: "A valid profile ID and role are required." }, { status: 400 });
       const { data: current } = await supabase.auth.getUser();
