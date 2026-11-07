@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, ShoppingBag, Star, X, ChevronLeft, ChevronRight, ZoomIn, Send } from "lucide-react";
+import { toast } from "react-toastify";
 import { formatPrice, type Product } from "@/lib/products";
 
 type Review={name:string;rating:number;comment:string;date:string};
@@ -21,7 +22,7 @@ export default function ProductPage(){
  const related=liveProducts.filter(x=>x.category===p.category&&String(x.id)!==String(p.id)).slice(0,4);
  const avg=reviews.length?reviews.reduce((sum,r)=>sum+r.rating,0)/reviews.length:Number(p.rating);
  const onZoomMove=(e:React.MouseEvent<HTMLDivElement>)=>{const rect=e.currentTarget.getBoundingClientRect();setOrigin(((e.clientX-rect.left)/rect.width*100)+"% "+((e.clientY-rect.top)/rect.height*100)+"%")};
- const addToBag=()=>{const old=JSON.parse(sessionStorage.getItem("nexora-checkout-cart")||"[]") as (string|number)[];const selections=JSON.parse(sessionStorage.getItem("nexora-product-selections")||"{}") as Record<string,string>;sessionStorage.setItem("nexora-checkout-cart",JSON.stringify([...old,p.id]));sessionStorage.setItem("nexora-product-selections",JSON.stringify({...selections,[String(p.id)]:size}));window.dispatchEvent(new Event("nexora-cart-updated"));setAdded(true)};
+ const addToBag=()=>{const old=JSON.parse(sessionStorage.getItem("nexora-checkout-cart")||"[]") as (string|number)[];const selections=JSON.parse(sessionStorage.getItem("nexora-product-selections")||"{}") as Record<string,string>;sessionStorage.setItem("nexora-checkout-cart",JSON.stringify([...old,p.id]));sessionStorage.setItem("nexora-product-selections",JSON.stringify({...selections,[String(p.id)]:size}));window.dispatchEvent(new Event("nexora-cart-updated"));setAdded(true);toast.success("Product added to your bag.")};
  const submitReview=async(e:React.FormEvent)=>{e.preventDefault();const name=reviewName.trim(),comment=reviewComment.trim();if(!name||comment.length<5){setReviewNotice("Please enter your name and a review of at least 5 characters.");return}setReviewNotice("Submitting your review…");try{const response=await fetch("/api/product-reviews",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({product_id:String(p.id),name,rating:reviewRating,comment})});const data=await response.json();if(!response.ok)throw new Error(data.error||"Could not submit review");setReviews(old=>[data.review,...old]);setReviewName("");setReviewComment("");setReviewRating(5);setReviewNotice("Thank you! Your review was submitted successfully.");}catch(error){setReviewNotice(error instanceof Error?error.message:"Could not submit review. Please try again.");}};
  const stepImage=(direction:number)=>setActiveImage(i=>(i+direction+gallery.length)%gallery.length);
  return <main className="checkout-page product-page"><a className="back-link" href="/"><ArrowLeft size={16}/> Back to NEXORA</a>
