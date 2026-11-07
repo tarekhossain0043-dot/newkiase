@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, KeyRound, Mail, Save, ShieldCheck, UserRound, Eye, EyeOff, CheckCircle2, AlertCircle } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { toast } from "react-toastify";
 
 type Profile = { full_name: string; phone: string; bio: string; hobbies: string; email: string };
 export default function AdminAccountSettingsPage() {
@@ -17,6 +18,8 @@ export default function AdminAccountSettingsPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [notice, setNotice] = useState<{type:"success"|"error";text:string}|null>(null);
+
+  useEffect(() => { if (!notice) return; (notice.type === "success" ? toast.success : toast.error)(notice.text); setNotice(null); }, [notice]);
 
   useEffect(() => {
     let alive = true;
@@ -66,7 +69,7 @@ export default function AdminAccountSettingsPage() {
   return <main className="account-settings-page">
     <header className="account-settings-top"><button type="button" className="account-settings-back" onClick={() => router.push("/admin")}><ArrowLeft size={17}/> Back to dashboard</button><div className="account-settings-brand">NEXORA <span>ADMIN</span></div></header>
     <section className="account-settings-heading"><span className="admin-eyebrow">NEXORA COMMERCE SUITE</span><h1>Account settings</h1><p>Manage your administrator profile, sign-in email, and password.</p></section>
-    {notice && <div className={"account-settings-notice "+notice.type}>{notice.type === "success" ? <CheckCircle2 size={17}/> : <AlertCircle size={17}/>}<span>{notice.text}</span></div>}
+    
     {loading ? <div className="account-settings-card">Loading account settings…</div> : <div className="account-settings-grid">
       <section className="account-settings-card"><div className="account-settings-card-title"><span><UserRound size={19}/></span><div><h2>Profile information</h2><p>Details shown in your admin profile.</p></div></div>
         <form className="account-settings-form" onSubmit={saveProfile}>
