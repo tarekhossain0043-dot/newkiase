@@ -1,3 +1,4 @@
+@import "tailwindcss";
 
 /* Admin-wide date range controls */
 .admin-date-filter,.admin-date-input{height:38px;min-width:125px;padding:0 10px;border:1px solid var(--admin-border,#e5e7eb);border-radius:7px;background:var(--admin-card,#fff);color:var(--admin-text,#343743);font:inherit;font-size:12px;outline:none}
