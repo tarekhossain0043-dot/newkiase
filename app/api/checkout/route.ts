@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     if (!customerName || customerName.length > 120 || !/^\+?\d{8,15}$/.test(phone) || !address || address.length > 1000 || !city || city.length > 100 || !validPaymentMethods.includes(method) || items.length < 1 || items.length > 50) {
       return NextResponse.json({ error: "Please provide valid delivery details, payment method and 1–50 cart items." }, { status: 400 });
     }
-    if (method !== "cod" && (!/^01[3-9]\d{8}$/.test(senderPhone) || !/^[A-Z0-9-]{6,30}$/.test(transactionReference))) {
+    if (method !== "cod" && (!/^01[3-9]\d{8}$/.test(senderPhone) || !/^(?=.*[A-Z])(?=.*\\d)[A-Z0-9]{8,12}$/.test(transactionReference) || /^([A-Z0-9])\\1+$/.test(transactionReference))) {
       return NextResponse.json({ error: "A valid 11-digit bKash/Nagad sender number and transaction ID are required." }, { status: 400 });
     }
     if (method === "cod" && deliveryPaymentMethod != null && !["bkash_manual","nagad_manual"].includes(deliveryPaymentMethod)) {
@@ -115,7 +115,12 @@ export async function POST(request: Request) {
     const paymentConfig = paymentSetting?.value && typeof paymentSetting.value === "object" ? paymentSetting.value as Record<string, unknown> : {};
     const walletMethodForRecord = method === "cod" && deliveryFee > 0 ? deliveryPaymentMethod : method;
     if (method === "cod" && deliveryFee > 0 && !["bkash_manual","nagad_manual"].includes(walletMethodForRecord)) return NextResponse.json({ error: "Select bKash or Nagad to prepay the delivery charge." }, { status: 400 });
-    if (method === "cod" && deliveryFee > 0 && (!/^01[3-9]\d{8}$/.test(senderPhone) || !/^[A-Z0-9-]{6,30}$/.test(transactionReference))) return NextResponse.json({ error: "A valid sender number and transaction ID are required to prepay delivery." }, { status: 400 });
+    if (method === "cod" && deliveryFee > 0 && (!/^01[3-9]\d{8}$/.test(senderPhone) || !/^(?=.*[A-Z])(?=.*\\d)[A-Z0-9]{8,12}$/.test(transactionReference) || /^([A-Z0-9])\\1+$/.test(transactionReference))) return NextResponse.json({ error: "Enter a valid sender number and an 8–12 character transaction ID containing both letters and numbers." }, { status: 400 });
+    if ((method !== "cod" || deliveryFee > 0) && transactionReference) {
+      const { data: duplicatePayment, error: duplicateCheckError } = await db.from("payments").select("id").eq("transaction_reference", transactionReference).limit(1).maybeSingle();
+      if (duplicateCheckError) return NextResponse.json({ error: "Could not validate transaction ID. Please try again." }, { status: 503 });
+      if (duplicatePayment) return NextResponse.json({ error: "This transaction ID has already been submitted. Please check your payment confirmation and enter the correct TrxID." }, { status: 409 });
+    }
     const enabled = method === "cod" ? paymentConfig.cod_enabled !== false : method === "bkash_manual" ? paymentConfig.bkash_enabled !== false : paymentConfig.nagad_enabled !== false;
     const deliveryWalletEnabled = walletMethodForRecord === "bkash_manual" ? paymentConfig.bkash_enabled !== false : walletMethodForRecord === "nagad_manual" ? paymentConfig.nagad_enabled !== false : true;
     if (!enabled || !deliveryWalletEnabled) return NextResponse.json({ error: "This payment method is currently unavailable. Please choose another method." }, { status: 400 });
