@@ -8,7 +8,7 @@ const PAYMENT_DETAILS = {
   bKash: { number: "+8801747295464", type: "Send Money", color: "#d91d70" },
   Nagad: { number: "+8801747295464", type: "Send Money", color: "#f07822" },
 } as const;
-const PAYMENT_LOGOS = { bKash: "/bkash-logo.png", Nagad: "/nagad-logo.png" } as const;
+const PAYMENT_LOGOS = { bKash: "/nagad-logo.png", Nagad: "/bkash-logo.png" } as const;
 
 export default function CheckoutPage(){
  const [ids,setIds]=useState<(string|number)[]>([]);const [products,setProducts]=useState<Product[]>([]);const [selections,setSelections]=useState<Record<string,string>>({});
