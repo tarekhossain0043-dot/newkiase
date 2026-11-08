@@ -18,6 +18,7 @@ export async function POST(request: Request) {
     const city = typeof body.shipping_city === "string" ? body.shipping_city.trim() : "";
     const notes = typeof body.notes === "string" ? body.notes.trim().slice(0, 1000) : "";
     const method = body.payment_method;
+    const deliveryPaymentMethod = body.delivery_payment_method;
     const items = Array.isArray(body.items) ? body.items : [];
 
     const senderPhone = typeof body.sender_phone === "string" ? body.sender_phone.replace(/[\s-]/g, "").trim() : "";
@@ -28,6 +29,9 @@ export async function POST(request: Request) {
     }
     if (method !== "cod" && (!/^01[3-9]\d{8}$/.test(senderPhone) || !/^[A-Z0-9-]{6,30}$/.test(transactionReference))) {
       return NextResponse.json({ error: "A valid 11-digit bKash/Nagad sender number and transaction ID are required." }, { status: 400 });
+    }
+    if (method === "cod" && deliveryPaymentMethod != null && !["bkash_manual","nagad_manual"].includes(deliveryPaymentMethod)) {
+      return NextResponse.json({ error: "Choose bKash or Nagad for the prepaid delivery charge." }, { status: 400 });
     }
 
     const normalized = new Map<string, {quantity:number;selected_option:string}>();
@@ -109,9 +113,13 @@ export async function POST(request: Request) {
     const { data: paymentSetting, error: paymentSettingError } = await db.from("site_settings").select("value").eq("key", "payment").maybeSingle();
     if (paymentSettingError) return NextResponse.json({ error: "Could not validate payment settings." }, { status: 503 });
     const paymentConfig = paymentSetting?.value && typeof paymentSetting.value === "object" ? paymentSetting.value as Record<string, unknown> : {};
+    const walletMethodForRecord = method === "cod" && deliveryFee > 0 ? deliveryPaymentMethod : method;
+    if (method === "cod" && deliveryFee > 0 && !["bkash_manual","nagad_manual"].includes(walletMethodForRecord)) return NextResponse.json({ error: "Select bKash or Nagad to prepay the delivery charge." }, { status: 400 });
+    if (method === "cod" && deliveryFee > 0 && (!/^01[3-9]\d{8}$/.test(senderPhone) || !/^[A-Z0-9-]{6,30}$/.test(transactionReference))) return NextResponse.json({ error: "A valid sender number and transaction ID are required to prepay delivery." }, { status: 400 });
     const enabled = method === "cod" ? paymentConfig.cod_enabled !== false : method === "bkash_manual" ? paymentConfig.bkash_enabled !== false : paymentConfig.nagad_enabled !== false;
-    if (!enabled) return NextResponse.json({ error: "This payment method is currently unavailable. Please choose another method." }, { status: 400 });
-    const paymentStatus = method === "cod" ? "unpaid" : "pending_verification";
+    const deliveryWalletEnabled = walletMethodForRecord === "bkash_manual" ? paymentConfig.bkash_enabled !== false : walletMethodForRecord === "nagad_manual" ? paymentConfig.nagad_enabled !== false : true;
+    if (!enabled || !deliveryWalletEnabled) return NextResponse.json({ error: "This payment method is currently unavailable. Please choose another method." }, { status: 400 });
+    const paymentStatus = method === "cod" && deliveryFee <= 0 ? "unpaid" : "pending_verification";
 
     const { data: order, error: orderError } = await db.from("orders").insert({
       customer_id: user?.id ?? null,
@@ -137,10 +145,13 @@ export async function POST(request: Request) {
 
     const { error: paymentError } = await db.from("payments").insert({
       order_id: order.id,
-      method,
+      method: walletMethodForRecord,
       status: paymentStatus,
-      sender_phone: method === "cod" ? null : senderPhone,
-      transaction_reference: method === "cod" ? null : transactionReference,
+      amount: method === "cod" ? (deliveryFee > 0 ? deliveryFee : total) : total,
+      purpose: method === "cod" ? (deliveryFee > 0 ? "delivery_fee" : "cod_collection") : "order_total",
+      recipient_number: walletMethodForRecord === "bkash_manual" ? String(paymentConfig.bkash_number || "") : walletMethodForRecord === "nagad_manual" ? String(paymentConfig.nagad_number || "") : null,
+      sender_phone: method === "cod" && deliveryFee <= 0 ? null : senderPhone,
+      transaction_reference: method === "cod" && deliveryFee <= 0 ? null : transactionReference,
     });
     if (paymentError) {
       await db.from("orders").delete().eq("id", order.id);
