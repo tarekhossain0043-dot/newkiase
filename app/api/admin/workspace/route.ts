@@ -61,7 +61,7 @@ export async function PATCH(request: Request) {
     const resource = body?.resource as Resource;
     const id = body?.id;
     const values = body?.values;
-    if (!resources.includes(resource) || !values || typeof values !== "object" || Array.isArray(values)) return NextResponse.json({ error: "Invalid update request." }, { status: 400 });
+    if (!resources.includes(resource) || !values || typeof values !== "object" || (Array.isArray(values) && resource !== "settings")) return NextResponse.json({ error: "Invalid update request." }, { status: 400 });
     if (resource === "roles") {
       if (!id || !["admin","customer"].includes(String(values.role))) return NextResponse.json({ error: "A valid profile ID and role are required." }, { status: 400 });
       const { data: current } = await supabase.auth.getUser();
@@ -88,8 +88,15 @@ export async function PATCH(request: Request) {
     if (error) throw error;
     return NextResponse.json({ record: data });
   } catch (error) {
-    console.error("[admin/workspace PATCH]", error);
-    return NextResponse.json({ error: "Could not update record." }, { status: 400 });
+    const detail = error && typeof error === "object" ? error as { message?: string; code?: string; details?: string; hint?: string } : null;
+    console.error("[admin/workspace PATCH]", { message: detail?.message || String(error), code: detail?.code, details: detail?.details, hint: detail?.hint });
+    return NextResponse.json({
+      error: "Could not update record.",
+      database_error: detail?.message || (error instanceof Error ? error.message : "Unknown server error"),
+      code: detail?.code || null,
+      details: detail?.details || null,
+      hint: detail?.hint || null
+    }, { status: 500 });
   }
 }
 

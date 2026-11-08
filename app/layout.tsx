@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import CustomerSupportChat from "@/components/customer-support-chat";
 import StorefrontRuntime from "@/components/storefront-runtime";
+import ToastProvider from "@/components/toast-provider";
+import "react-toastify/dist/ReactToastify.css";
 
 export const metadata: Metadata = {
   title: "NEXORA — Everyday, Elevated",
@@ -10,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body><StorefrontRuntime />{children}<CustomerSupportChat /></body></html>;
+  return <html lang="en"><body><ToastProvider/><StorefrontRuntime />{children}<CustomerSupportChat /></body></html>;
 }
