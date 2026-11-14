@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./storefront-polish.css";
 import CustomerSupportChat from "@/components/customer-support-chat";
 import StorefrontRuntime from "@/components/storefront-runtime";
 import ToastProvider from "@/components/toast-provider";
