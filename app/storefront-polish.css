@@ -1,0 +1,152 @@
+/* NEXORA storefront polish — Tailwind CSS v4 utilities + focused motion refinements.
+   Kept separate from the legacy stylesheet so the storefront can migrate incrementally. */
+
+.hero-slide-content {
+  animation: nexora-slide-in 720ms cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.hero-copy {
+  animation: nexora-copy-in 680ms cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.hero-image-slide {
+  @apply will-change-transform;
+  animation: nexora-image-in 900ms cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.header,
+.nav a,
+.nav-dropdown-trigger,
+.icon-action,
+.account-profile,
+.bag,
+.primary,
+.category-card,
+.product-card,
+.product-img img,
+.quick-add,
+.brand-auto-card,
+.brand-slider-arrows button,
+.back-to-top {
+  @apply transition-all duration-300 ease-out;
+}
+
+.header {
+  @apply backdrop-blur-xl;
+  box-shadow: 0 5px 24px rgb(36 36 31 / 5%);
+}
+
+.category-card {
+  border-radius: 12px;
+  transform: translateZ(0);
+}
+
+.category-card:hover {
+  box-shadow: 0 16px 34px rgb(36 36 31 / 12%);
+}
+
+.product-card {
+  border-radius: 10px;
+  background: rgb(255 255 255 / 68%);
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 32px rgb(36 36 31 / 9%);
+}
+
+.product-img {
+  overflow: hidden;
+}
+
+.product-img img {
+  will-change: transform;
+}
+
+.product-card:hover .product-img img {
+  transform: scale(1.055);
+}
+
+.primary,
+.quick-add,
+.bag {
+  @apply active:scale-[.98];
+}
+
+.primary:hover,
+.quick-add:hover,
+.bag:hover {
+  box-shadow: 0 8px 20px rgb(36 36 31 / 12%);
+}
+
+.filters button,
+.shop-view-toggle button,
+.hero-arrows button,
+.hero-dots button {
+  @apply transition-all duration-200 ease-out;
+}
+
+.filters button:hover,
+.shop-view-toggle button:hover {
+  transform: translateY(-1px);
+}
+
+.editorial-img {
+  transition: transform 700ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.editorial:hover .editorial-img {
+  transform: scale(1.012);
+}
+
+.newsletter form {
+  transition: border-color 250ms ease, box-shadow 250ms ease;
+}
+
+.newsletter form:focus-within {
+  border-color: var(--purple);
+  box-shadow: 0 2px 0 var(--purple);
+}
+
+@keyframes nexora-slide-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes nexora-copy-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes nexora-image-in {
+  from { opacity: 0; transform: translateY(18px) scale(.975); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 760px) {
+  .product-card:hover { transform: none; box-shadow: none; }
+  .category-card:hover { transform: none; }
+  .hero-slide-content { animation-duration: 560ms; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide-content,
+  .hero-copy,
+  .hero-image-slide { animation: none !important; }
+  .header,
+  .nav a,
+  .nav-dropdown-trigger,
+  .icon-action,
+  .account-profile,
+  .bag,
+  .primary,
+  .category-card,
+  .product-card,
+  .product-img img,
+  .quick-add,
+  .brand-auto-card,
+  .brand-slider-arrows button,
+  .back-to-top,
+  .editorial-img,
+  .newsletter form { transition: none !important; }
+}
