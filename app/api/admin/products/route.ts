@@ -59,6 +59,29 @@ export async function POST(request: Request) {
       compare_at_price: body.compare_at_price == null ? null : Number(body.compare_at_price),
     };
 
+    // Enforce unique product identifiers for every create, including duplicated products.
+    const { data: existingIdentifiers, error: identifiersError } = await supabase
+      .from("products")
+      .select("sku, slug");
+    if (identifiersError) throw identifiersError;
+
+    const usedSkus = new Set((existingIdentifiers ?? []).map((row: { sku?: string | null }) => String(row.sku ?? "").trim().toUpperCase()).filter(Boolean));
+    const usedSlugs = new Set((existingIdentifiers ?? []).map((row: { slug?: string | null }) => String(row.slug ?? "").trim().toLowerCase()).filter(Boolean));
+
+    const uniqueIdentifier = (base: string, used: Set<string>) => {
+      const normalized = base.trim();
+      let candidate = normalized;
+      let suffix = 2;
+      while (used.has(candidate.toLowerCase())) {
+        candidate = `${normalized}-${suffix}`;
+        suffix += 1;
+      }
+      return candidate;
+    };
+
+    payload.sku = uniqueIdentifier(payload.sku, usedSkus).toUpperCase();
+    payload.slug = uniqueIdentifier(payload.slug, usedSlugs).toLowerCase();
+
     const { data, error } = await supabase.from("products").insert(payload).select("*").single();
     if (error) {
       console.error("Admin product insert failed:", { code: error.code, message: error.message, details: error.details, hint: error.hint });
