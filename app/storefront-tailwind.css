@@ -386,7 +386,7 @@
   .nexora-ai-messenger { @apply flex items-center justify-center gap-2 border-t border-slate-100 py-3 text-[10px] font-semibold text-indigo-600; }
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1279px) {
   .nav { @apply hidden; }
   .menu-button { @apply inline-flex; }
 }
@@ -489,3 +489,11 @@
 .bkash-logo,.nagad-logo { @apply h-7 w-auto object-contain; }
 .payment-label { @apply text-xs font-semibold text-slate-800; }
 .delivery-prepayment-choice { @apply rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4; }
+
+
+/* Smart cursor visual — pointer devices only */
+.nexora-cursor { @apply pointer-events-none fixed left-0 top-0 z-[99999] grid size-[25px] place-items-center rounded-full border border-indigo-500/80; mix-blend-mode:multiply; will-change:transform; }
+.nexora-cursor>span { @apply size-[5px] rounded-full bg-indigo-600 transition-transform duration-200; }
+.nexora-cursor--active { @apply size-[42px] bg-indigo-500/10; }
+.nexora-cursor--active>span { @apply scale-150; }
+@media(pointer:coarse),(prefers-reduced-motion:reduce){.nexora-cursor{display:none}}
