@@ -7,6 +7,7 @@ import "./storefront-polish.css";
 import CustomerSupportChat from "@/components/customer-support-chat";
 import StorefrontRuntime from "@/components/storefront-runtime";
 import ToastProvider from "@/components/toast-provider";
+import { NexoraCursor } from "@/components/nexora-interactions";
 import "react-toastify/dist/ReactToastify.css";
 
 export const metadata: Metadata = {
@@ -16,5 +17,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body className={poppins.className}><ToastProvider/><StorefrontRuntime />{children}<CustomerSupportChat /></body></html>;
+  return <html lang="en"><body className={poppins.className}><ToastProvider/><StorefrontRuntime /><NexoraCursor />{children}<CustomerSupportChat /></body></html>;
 }
