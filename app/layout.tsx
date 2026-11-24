@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700", "800"], display: "swap", variable: "--font-poppins" });
 import "./globals.css";
+import "./storefront-tailwind.css";
 import "./storefront-polish.css";
 import "./admin/admin-tailwind.css";
 import CustomerSupportChat from "@/components/customer-support-chat";
