@@ -160,3 +160,71 @@
   .invoice-workspace { background: white !important; padding: 0 !important; }
   .invoice-sheet { break-after: page; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
 }
+
+
+/* Remaining dashboard widgets, menus, inventory and chart primitives */
+.admin-notification-wrap,.admin-profile-wrap { @apply relative; }
+.admin-notification-count { @apply absolute -right-1 -top-1 grid size-4 place-items-center rounded-full bg-rose-500 text-[9px] font-bold text-white; }
+.admin-notification-popover,.admin-profile-menu { @apply absolute right-0 top-[calc(100%+12px)] z-50 w-[min(340px,calc(100vw-32px))] overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-800 shadow-2xl; }
+.admin-notification-heading,.admin-profile-menu-head { @apply border-b border-slate-100 px-4 py-3 text-xs font-bold; }
+.admin-notification-dot { @apply size-2 shrink-0 rounded-full bg-indigo-500; }
+.admin-notification-empty { @apply p-6 text-center text-xs text-slate-400; }
+.admin-profile-cover { @apply h-20 bg-gradient-to-r from-indigo-700 via-indigo-600 to-violet-500; }
+.admin-profile-menu-head { @apply flex items-center gap-3; }
+.admin-profile-form { @apply space-y-3 p-4; }
+.admin-profile-form input,.admin-profile-form textarea { @apply w-full rounded-xl border border-slate-200 px-3 py-2 text-xs outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100; }
+.admin-profile-bio,.admin-profile-hobbies { @apply min-h-20 resize-y; }
+.admin-profile-action { @apply flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-medium text-slate-600 transition hover:bg-indigo-50 hover:text-indigo-700; }
+.admin-profile-action.logout { @apply text-rose-600 hover:bg-rose-50 hover:text-rose-700; }
+.store-mark { @apply grid size-9 place-items-center rounded-xl bg-indigo-500 text-sm font-black text-white; }
+.admin-date-filter,.admin-date-input { @apply min-h-10 rounded-xl border border-slate-200 bg-white px-3 text-xs text-slate-700 outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100; }
+.order-customer-phone { @apply font-semibold text-indigo-600 hover:text-indigo-800; }
+.order-product-list { @apply min-w-40 space-y-1 text-[11px]; }
+.order-product-legacy { @apply text-[10px] italic text-slate-400; }
+.metric-up { @apply text-emerald-600; }
+.admin-sales-panel { @apply min-h-72; }
+.finance-chart-legend,.finance-mini-legend { @apply flex flex-wrap items-center gap-3 text-[10px] text-slate-500; }
+.finance-two-charts { @apply grid grid-cols-1 gap-4 lg:grid-cols-2; }
+.finance-mini-chart { @apply min-w-0 rounded-xl border border-slate-100 bg-slate-50/70 p-3; }
+.finance-mini-chart-bars,.finance-mini-bars { @apply flex h-36 items-end gap-2; }
+.finance-mini-column { @apply flex min-w-0 flex-1 flex-col items-center justify-end gap-1; }
+.finance-mini-bar-track { @apply flex h-full w-full items-end overflow-hidden rounded-t-md bg-slate-200/70; }
+.finance-mini-bar { @apply w-full rounded-t-md bg-indigo-500 transition-all duration-500; }
+.finance-summary-row { @apply flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3 text-xs; }
+.admin-text-btn { @apply text-xs font-semibold text-indigo-600 transition hover:text-indigo-800; }
+.admin-metric-grid { @apply grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3; }
+.admin-product-cell { @apply flex min-w-44 items-center gap-3; }
+.admin-product-placeholder { @apply grid size-10 shrink-0 place-items-center rounded-xl bg-slate-100 text-slate-400; }
+.admin-product-grid { @apply grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3; }
+.admin-gallery-preview { @apply flex flex-wrap gap-3; }
+.admin-modal-description { @apply mt-2 text-xs leading-6 text-slate-500; }
+.admin-product-angle-upload,.admin-angle-upload { @apply grid min-h-28 place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-xs text-slate-500 transition hover:border-indigo-300 hover:bg-indigo-50; }
+.admin-angle-empty { @apply text-[10px] text-slate-400; }
+.admin-notice { @apply mb-4 rounded-xl border border-indigo-100 bg-indigo-50 p-3 text-xs text-indigo-800; }
+.admin-module-grid { @apply grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3; }
+.admin-module-intro { @apply mb-5; }
+.admin-module-intro h2 { @apply text-lg font-bold; }
+.admin-module-intro>p { @apply mt-1 text-xs text-slate-500; }
+.admin-gate { @apply grid min-h-screen place-items-center bg-slate-50 p-5; }
+.admin-gate-card { @apply w-full max-w-md rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-xl; }
+.admin-gate-card h1 { @apply mt-4 text-xl font-bold; }
+.admin-gate-card p,.admin-gate-card small { @apply mt-2 block text-xs leading-6 text-slate-500; }
+.admin-gate-card a { @apply mt-5 inline-flex rounded-xl bg-indigo-600 px-4 py-3 text-xs font-semibold text-white hover:bg-indigo-700; }
+.admin-art-foot { @apply relative z-10 text-xs text-slate-400; }
+.admin-lock { @apply mb-5 grid size-12 place-items-center rounded-2xl bg-indigo-50 text-indigo-600; }
+.admin-login-mobile-brand { @apply mb-8 text-center text-lg font-extrabold lg:hidden; }
+.admin-login-legal { @apply mt-7; }
+.invoice-title span { @apply mt-2 block text-xs text-slate-500; }
+.invoice-toolbar>div { @apply flex items-center gap-3 text-sm; }
+.invoice-toolbar>div span { @apply text-xs text-slate-400; }
+.invoice-items { @apply min-w-[560px]; }
+.invoice-codes svg { @apply max-w-full; }
+@media (max-width: 640px) {
+  .admin-topbar { @apply min-h-16; }
+  .admin-search { @apply max-w-[42vw]; }
+  .admin-user>div:nth-child(2) { @apply hidden; }
+  .admin-page-heading h1 { @apply text-2xl; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-shell *, .admin-login-page *, .account-settings-page * { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
