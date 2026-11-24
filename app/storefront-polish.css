@@ -467,3 +467,20 @@
   #categories .category-card.brand-card,
   #categories .brand-card-product { transition: none !important; }
 }
+
+
+/* Tailwind v4 utility-first refinements for shared storefront actions */
+@layer components {
+  .nexora-action {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 font-semibold text-white transition-all duration-300 ease-out;
+    background: var(--primary, #5b4bdb);
+  }
+  .nexora-action:hover {
+    @apply -translate-y-0.5 shadow-lg;
+    background: var(--primary-hover, #4938c7);
+  }
+  .nexora-surface {
+    @apply rounded-2xl border border-slate-200/70 bg-white/90 shadow-sm transition-all duration-300;
+  }
+  .nexora-surface:hover { @apply -translate-y-1 shadow-xl; }
+}
