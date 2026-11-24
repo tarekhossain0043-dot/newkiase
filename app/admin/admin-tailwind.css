@@ -2,7 +2,6 @@
 
 /* NEXORA Admin UI — Tailwind CSS v4 component layer.
    Existing data/state handlers remain in the page components. */
-@layer components {
   .admin-shell {
     @apply flex min-h-screen overflow-x-clip bg-slate-50 text-slate-900;
     --admin-bg: #f8fafc;
@@ -151,7 +150,6 @@
   .invoice-grand-total { @apply border-t border-slate-200 pt-3 text-base font-bold text-slate-950; }
   .invoice-codes { @apply flex flex-wrap items-center justify-between gap-5 border-t border-slate-200 pt-6; }
   .invoice-footer { @apply mt-8 border-t border-slate-200 pt-5 text-center text-[10px] text-slate-400; }
-}
 @media (max-width: 1023px) {
   .admin-sidebar { @apply fixed -translate-x-full transition-transform duration-300; }
   .admin-sidebar.sidebar-open { @apply translate-x-0; }
