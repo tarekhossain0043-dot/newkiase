@@ -1,0 +1,164 @@
+@reference "tailwindcss";
+
+/* NEXORA Admin UI — Tailwind CSS v4 component layer.
+   Existing data/state handlers remain in the page components. */
+@layer components {
+  .admin-shell {
+    @apply flex min-h-screen overflow-x-clip bg-slate-50 text-slate-900;
+    --admin-bg: #f8fafc;
+    --admin-card: #ffffff;
+    --admin-ink: #172033;
+    --admin-muted: #64748b;
+    --admin-border: #e2e8f0;
+    font-family: var(--font-poppins), sans-serif;
+  }
+  .admin-sidebar {
+    @apply sticky top-0 z-40 flex h-screen w-[270px] shrink-0 flex-col overflow-y-auto bg-slate-950 text-slate-100 shadow-2xl;
+  }
+  .admin-side-brand { @apply flex items-center justify-between border-b border-white/10 px-5 py-5; }
+  .admin-store-pill { @apply mx-4 my-4 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3; }
+  .admin-nav { @apply min-h-0 flex-1 space-y-5 overflow-y-auto px-3 pb-5; }
+  .admin-nav-group { @apply space-y-1; }
+  .admin-nav-group-toggle { @apply flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-[10px] font-bold tracking-[.16em] text-slate-400 transition hover:text-white; }
+  .admin-nav-group-items { @apply mt-1 space-y-1; }
+  .admin-nav-group-items>button { @apply flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs font-medium text-slate-300 transition duration-200 hover:bg-white/10 hover:text-white; }
+  .admin-nav-group-items>button.active { @apply bg-indigo-500 text-white shadow-lg shadow-indigo-950/30; }
+  .admin-sidebar-bottom { @apply border-t border-white/10 p-4; }
+  .admin-online { @apply flex items-center gap-2 text-xs text-slate-400; }
+  .admin-main { @apply min-w-0 flex-1; width: auto; margin-left: 0; }
+  .admin-topbar { @apply sticky top-0 z-30 flex min-h-[76px] items-center justify-between gap-4 border-b border-slate-200/80 bg-white/90 px-4 backdrop-blur-xl sm:px-6 xl:px-8; }
+  .admin-breadcrumb { @apply flex items-center gap-2 text-xs text-slate-500; }
+  .admin-breadcrumb b { @apply font-semibold text-slate-900; }
+  .admin-top-actions { @apply flex min-w-0 items-center gap-2 sm:gap-3; }
+  .admin-search { @apply flex min-w-0 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2; }
+  .admin-search input { @apply w-full min-w-0 bg-transparent text-xs outline-none placeholder:text-slate-400; }
+  .admin-icon-button { @apply relative grid size-10 shrink-0 place-items-center rounded-xl border border-slate-200 bg-white text-slate-600 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700; }
+  .admin-user { @apply flex items-center gap-2 rounded-xl p-1.5 transition hover:bg-slate-50; }
+  .admin-avatar { @apply grid size-9 place-items-center rounded-full bg-indigo-100 font-bold text-indigo-700; }
+  .admin-content { @apply mx-auto w-full max-w-[1600px] p-4 sm:p-6 xl:p-8; }
+  .admin-page-heading { @apply mb-7 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end; }
+  .admin-page-heading h1 { @apply mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl; }
+  .admin-page-heading p { @apply mt-1 max-w-2xl text-sm leading-6 text-slate-500; }
+  .admin-eyebrow { @apply text-[10px] font-bold uppercase tracking-[.18em] text-indigo-600; }
+  .admin-heading-actions { @apply flex flex-wrap items-center gap-2; }
+  .admin-primary-btn { @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-indigo-700 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-50; }
+  .admin-secondary-btn { @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700; }
+  .admin-metrics { @apply mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4; }
+  .admin-metric,.admin-panel { @apply min-w-0 rounded-2xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/[.025]; }
+  .admin-metric { @apply p-4 sm:p-5; }
+  .admin-metric>strong { @apply block text-2xl font-bold tracking-tight text-slate-950; }
+  .metric-top,.metric-bottom { @apply flex items-center justify-between gap-3; }
+  .admin-dashboard-grid { @apply mb-5 grid grid-cols-1 gap-4 2xl:grid-cols-[minmax(0,1.35fr)_minmax(300px,1fr)]; }
+  .admin-panel { @apply p-4 sm:p-5; }
+  .admin-panel-heading { @apply mb-4 flex flex-wrap items-center justify-between gap-3; }
+  .admin-panel-heading h2 { @apply text-sm font-bold text-slate-900; }
+  .admin-panel-heading p { @apply mt-1 text-xs text-slate-500; }
+  .admin-bottom-grid { @apply grid grid-cols-1 gap-4 xl:grid-cols-2; }
+  .admin-table-panel { @apply mb-5 overflow-hidden p-0; }
+  .admin-table-wrap { @apply w-full overflow-x-auto; }
+  .admin-table { @apply w-full min-w-[900px] border-collapse text-left text-xs; }
+  .admin-table th { @apply whitespace-nowrap border-b border-slate-200 bg-slate-50 px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-500; }
+  .admin-table td { @apply border-b border-slate-100 px-4 py-3 align-middle text-slate-600; }
+  .admin-table tbody tr { @apply transition hover:bg-indigo-50/40; }
+  .admin-table td b { @apply font-semibold text-slate-900; }
+  .admin-row-action { @apply inline-grid size-8 place-items-center rounded-lg border border-slate-200 text-slate-500 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700; }
+  .admin-table-tools { @apply mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between; }
+  .admin-no-results,.admin-empty-module { @apply rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center text-sm text-slate-500; }
+  .admin-form-grid,.admin-form-two { @apply grid grid-cols-1 gap-4 sm:grid-cols-2; }
+  .admin-form-field { @apply flex min-w-0 flex-col gap-2; }
+  .admin-form-label { @apply text-xs font-semibold text-slate-700; }
+  .admin-form-field input,.admin-form-field select,.admin-form-field textarea,.admin-modal input,.admin-modal select,.admin-modal textarea { @apply min-h-11 w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100; }
+  .admin-form-hint { @apply text-[11px] leading-5 text-slate-500; }
+  .admin-form-actions { @apply flex flex-wrap justify-end gap-2 border-t border-slate-100 pt-4; }
+  .order-status-select { @apply max-w-40 rounded-lg border border-slate-200 bg-white px-2 py-2 text-[11px] font-medium text-slate-700 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100; }
+  .admin-modal-backdrop { @apply fixed inset-0 z-[500] flex items-center justify-center overflow-y-auto bg-slate-950/55 p-4 backdrop-blur-sm; }
+  .admin-modal { @apply my-auto max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-3xl border border-white/60 bg-white p-5 shadow-2xl sm:p-7; }
+  .admin-modal h2 { @apply text-xl font-bold tracking-tight text-slate-950; }
+  .admin-modal-close { @apply grid size-9 place-items-center rounded-full bg-slate-100 text-slate-600 transition hover:bg-slate-200; }
+  .admin-sidebar-scrim { @apply fixed inset-0 z-30 bg-slate-950/50 backdrop-blur-sm; }
+  .admin-menu-toggle { @apply grid size-10 place-items-center rounded-xl border border-slate-200 bg-white text-slate-700 lg:hidden; }
+
+  .admin-login-page { @apply grid min-h-screen grid-cols-1 overflow-hidden bg-slate-50 text-slate-900 lg:grid-cols-2; }
+  .admin-login-art { @apply relative hidden min-h-screen flex-col justify-between overflow-hidden bg-slate-950 p-10 text-white lg:flex xl:p-14; }
+  .admin-brand { @apply text-xl font-extrabold tracking-tight; }
+  .admin-brand span { @apply ml-2 rounded-full bg-indigo-500/20 px-2 py-1 text-[9px] tracking-[.18em] text-indigo-200; }
+  .admin-art-copy { @apply relative z-10 my-auto max-w-xl; }
+  .admin-art-copy h1 { @apply mt-4 text-4xl font-bold leading-tight tracking-tight xl:text-6xl; }
+  .admin-art-copy h1 em { @apply not-italic text-indigo-400; }
+  .admin-art-copy p { @apply mt-5 max-w-md text-sm leading-7 text-slate-300; }
+  .admin-art-stats { @apply mt-10 grid max-w-lg grid-cols-3 gap-4; }
+  .admin-art-stats b { @apply block text-2xl font-bold text-white; }
+  .admin-art-stats span { @apply mt-1 block text-[10px] text-slate-400; }
+  .admin-login-panel { @apply flex min-h-screen items-center justify-center p-5 sm:p-10; }
+  .admin-login-card { @apply w-full max-w-md rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-900/5 sm:p-9; }
+  .admin-login-card h2 { @apply text-2xl font-bold tracking-tight text-slate-950; }
+  .admin-login-card>p { @apply mt-2 text-sm leading-6 text-slate-500; }
+  .admin-login-card form { @apply mt-7 space-y-5; }
+  .admin-login-card label { @apply flex flex-col gap-2 text-xs font-semibold text-slate-700; }
+  .admin-login-card input { @apply h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm outline-none transition focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100; }
+  .admin-password { @apply flex items-center rounded-xl border border-slate-200 pr-3 focus-within:border-indigo-400 focus-within:ring-4 focus-within:ring-indigo-100; }
+  .admin-password input { @apply border-0 shadow-none focus:ring-0; }
+  .admin-password button { @apply text-slate-400 transition hover:text-indigo-600; }
+  .admin-signin { @apply flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 text-sm font-semibold text-white transition hover:bg-indigo-700; }
+  .admin-login-error { @apply rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700; }
+  .admin-security-note { @apply mt-6 flex items-start gap-2 rounded-xl bg-slate-50 p-3 text-[11px] leading-5 text-slate-500; }
+  .admin-back-store { @apply mt-5 inline-flex items-center gap-2 text-xs font-semibold text-slate-500 transition hover:text-indigo-600; }
+  .admin-login-legal { @apply text-center text-[10px] text-slate-400; }
+
+  .account-settings-page { @apply min-h-screen bg-slate-50 pb-14 text-slate-900; }
+  .account-settings-top { @apply flex items-center justify-between border-b border-slate-200 bg-white px-4 py-4 sm:px-8; }
+  .account-settings-back { @apply inline-flex items-center gap-2 text-xs font-semibold text-slate-600 transition hover:text-indigo-600; }
+  .account-settings-brand { @apply text-sm font-extrabold tracking-tight; }
+  .account-settings-brand span { @apply ml-1 text-[9px] tracking-widest text-indigo-600; }
+  .account-settings-heading { @apply mx-auto max-w-5xl px-4 pb-5 pt-10 sm:px-8; }
+  .account-settings-heading h1 { @apply mt-2 text-3xl font-bold tracking-tight; }
+  .account-settings-heading p { @apply mt-2 text-sm text-slate-500; }
+  .account-settings-grid { @apply mx-auto grid max-w-5xl grid-cols-1 gap-4 px-4 lg:grid-cols-2 sm:px-8; }
+  .account-settings-card { @apply rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7; }
+  .account-settings-card-title { @apply mb-6 flex items-start gap-3; }
+  .account-settings-card-title h2 { @apply text-sm font-bold; }
+  .account-settings-card-title p { @apply mt-1 text-xs text-slate-500; }
+  .account-settings-form { @apply space-y-4; }
+  .account-settings-form label { @apply flex flex-col gap-2 text-xs font-semibold text-slate-700; }
+  .account-settings-form input,.account-settings-form textarea { @apply min-h-11 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100; }
+  .account-settings-password { @apply flex items-center rounded-xl border border-slate-200 pr-3 focus-within:border-indigo-400 focus-within:ring-4 focus-within:ring-indigo-100; }
+  .account-settings-password input { @apply border-0 focus:ring-0; }
+
+  .invoice-workspace { @apply min-h-screen bg-slate-100 px-4 py-6 text-slate-900 sm:px-8; }
+  .invoice-toolbar { @apply mx-auto mb-6 flex max-w-5xl flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm; }
+  .invoice-toolbar a { @apply text-xs font-semibold text-indigo-600 hover:text-indigo-800; }
+  .invoice-toolbar button { @apply rounded-xl bg-indigo-600 px-4 py-3 text-xs font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-50; }
+  .invoice-state { @apply mx-auto max-w-5xl rounded-2xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500; }
+  .invoice-error { @apply border-rose-200 bg-rose-50 text-rose-700; }
+  .invoice-list { @apply mx-auto max-w-5xl space-y-6; }
+  .invoice-sheet { @apply overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-10; }
+  .invoice-header { @apply flex flex-wrap items-start justify-between gap-6 border-b border-slate-200 pb-6; }
+  .invoice-brand { @apply text-2xl font-extrabold tracking-tight text-indigo-700; }
+  .invoice-title { @apply text-right; }
+  .invoice-title h1 { @apply text-3xl font-bold tracking-widest; }
+  .invoice-parties { @apply grid grid-cols-1 gap-5 py-7 sm:grid-cols-3; }
+  .invoice-parties section>small,.invoice-notes small { @apply text-[10px] font-bold tracking-widest text-slate-400; }
+  .invoice-parties h2 { @apply mt-2 text-sm font-bold; }
+  .invoice-parties p { @apply mt-1 text-xs leading-5 text-slate-500; }
+  .invoice-items { @apply w-full border-collapse text-left text-xs; }
+  .invoice-items th { @apply border-y border-slate-200 bg-slate-50 px-3 py-3 font-bold text-slate-600; }
+  .invoice-items td { @apply border-b border-slate-100 px-3 py-3 text-slate-600; }
+  .invoice-bottom { @apply flex flex-col justify-between gap-7 py-7 sm:flex-row; }
+  .invoice-notes { @apply max-w-sm; }
+  .invoice-notes p { @apply mt-2 text-xs leading-6 text-slate-500; }
+  .invoice-totals { @apply w-full max-w-xs space-y-3 text-xs; }
+  .invoice-totals>div { @apply flex justify-between gap-5; }
+  .invoice-grand-total { @apply border-t border-slate-200 pt-3 text-base font-bold text-slate-950; }
+  .invoice-codes { @apply flex flex-wrap items-center justify-between gap-5 border-t border-slate-200 pt-6; }
+  .invoice-footer { @apply mt-8 border-t border-slate-200 pt-5 text-center text-[10px] text-slate-400; }
+}
+@media (max-width: 1023px) {
+  .admin-sidebar { @apply fixed -translate-x-full transition-transform duration-300; }
+  .admin-sidebar.sidebar-open { @apply translate-x-0; }
+  .admin-main { @apply w-full; }
+}
+@media print {
+  .no-print { display: none !important; }
+  .invoice-workspace { background: white !important; padding: 0 !important; }
+  .invoice-sheet { break-after: page; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+}
