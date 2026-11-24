@@ -556,3 +556,60 @@
 @media(prefers-reduced-motion:reduce) {
   .product-card:hover .product-img img,.product-card:hover .product-media img { transform:none; }
 }
+
+
+/* Critical homepage layout repair (2026-11): fix the actual grid wrapper and avatar sizing */
+@layer components {
+  .header { min-height:88px !important; height:88px !important; padding-inline:clamp(18px,5.5vw,88px) !important; display:flex !important; align-items:center !important; }
+  .account-profile { display:flex !important; align-items:center !important; gap:8px !important; padding:5px !important; border-radius:999px !important; background:transparent !important; }
+  .account-profile img { display:block !important; width:38px !important; height:38px !important; min-width:38px !important; max-width:38px !important; aspect-ratio:1/1 !important; object-fit:cover !important; border-radius:50% !important; }
+  .account-profile svg { width:14px !important; height:14px !important; flex:none !important; }
+  .actions { align-items:center !important; }
+  .hero { display:grid !important; grid-template-columns:minmax(0,1fr) !important; align-content:center !important; min-height:590px !important; height:auto !important; padding:64px clamp(22px,7.5vw,120px) 76px !important; overflow:hidden !important; }
+  .hero-slide-content { width:100% !important; max-width:1320px !important; margin-inline:auto !important; display:grid !important; grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr) !important; align-items:center !important; gap:clamp(28px,5vw,76px) !important; }
+  .hero-copy { min-width:0 !important; max-width:580px !important; padding:0 !important; }
+  .hero-copy h1 { margin:16px 0 !important; font-size:clamp(48px,6.1vw,82px) !important; line-height:1.02 !important; letter-spacing:-.065em !important; }
+  .hero-copy>p { max-width:470px !important; margin:18px 0 26px !important; line-height:1.8 !important; }
+  .hero-image { position:relative !important; width:100% !important; height:clamp(330px,34vw,470px) !important; min-height:0 !important; overflow:hidden !important; border-radius:28px !important; }
+  .hero-image img { position:relative !important; z-index:1 !important; display:block !important; width:100% !important; height:100% !important; object-fit:contain !important; padding:30px !important; }
+  .hero-slider-controls { position:absolute !important; left:clamp(22px,7.5vw,120px) !important; bottom:28px !important; z-index:5 !important; }
+  .trust { position:relative !important; z-index:2 !important; display:grid !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; align-items:center !important; gap:24px !important; width:min(1320px,calc(100% - 48px)) !important; margin:0 auto !important; padding:24px 30px !important; border:1px solid #eceaf2 !important; border-radius:0 0 18px 18px !important; background:#fff !important; }
+  .trust>div { display:flex !important; align-items:center !important; gap:12px !important; min-width:0 !important; }
+  .trust>div>svg { width:19px !important; height:19px !important; flex:none !important; color:#6555e8 !important; }
+  .trust>div span { display:flex !important; flex-direction:column !important; gap:4px !important; }
+  .section#categories { position:relative !important; clear:both !important; display:block !important; width:100% !important; margin:0 auto !important; padding:76px clamp(22px,7.5vw,120px) !important; background:#faf9fc !important; }
+  #categories .section-heading { display:flex !important; flex-direction:row !important; align-items:flex-end !important; justify-content:space-between !important; gap:28px !important; width:100% !important; margin:0 0 34px !important; }
+  #categories .section-heading h2 { margin:12px 0 0 !important; font-size:clamp(38px,4.3vw,58px) !important; line-height:1.06 !important; }
+  #categories .section-heading>p { max-width:310px !important; margin:0 0 5px !important; line-height:1.7 !important; }
+  #categories .category-grid { display:grid !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:18px !important; width:100% !important; }
+  #categories .brand-card { position:relative !important; display:flex !important; width:100% !important; height:260px !important; min-height:260px !important; overflow:hidden !important; border:1px solid #e8e6ef !important; border-radius:20px !important; background:linear-gradient(145deg,#f0eef8,#fff) !important; }
+  #categories .brand-card-product { position:absolute !important; inset:14px 12px 54px !important; width:calc(100% - 24px) !important; height:calc(100% - 68px) !important; object-fit:contain !important; padding:12px !important; transform:none !important; }
+  #categories .brand-card>small { position:absolute !important; left:14px !important; top:14px !important; z-index:3 !important; }
+  #categories .brand-card>span { position:absolute !important; left:14px !important; bottom:14px !important; z-index:3 !important; }
+  .brand-product-showcase { clear:both !important; position:relative !important; margin:0 !important; padding:42px 0 !important; }
+}
+@media(max-width:900px) {
+  .header { height:auto !important; min-height:72px !important; }
+  .hero { min-height:0 !important; padding:42px 24px 76px !important; }
+  .hero-slide-content { grid-template-columns:1fr !important; gap:26px !important; }
+  .hero-image { height:340px !important; }
+  .hero-slider-controls { left:24px !important; bottom:22px !important; }
+  .trust { grid-template-columns:1fr !important; width:calc(100% - 32px) !important; padding:20px !important; gap:16px !important; }
+  .section#categories { padding:52px 24px !important; }
+  #categories .category-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+}
+@media(max-width:600px) {
+  .header { min-height:66px !important; height:66px !important; padding-inline:14px !important; }
+  .logo { font-size:25px !important; }
+  .account-profile img { width:32px !important; height:32px !important; min-width:32px !important; max-width:32px !important; }
+  .actions { gap:3px !important; }
+  .hero { padding:34px 18px 72px !important; }
+  .hero-copy h1 { font-size:clamp(42px,12vw,58px) !important; }
+  .hero-image { height:270px !important; border-radius:20px !important; }
+  .hero-image img { padding:16px !important; }
+  .trust { width:calc(100% - 24px) !important; }
+  .section#categories { padding:44px 18px !important; }
+  #categories .section-heading { display:flex !important; flex-direction:column !important; align-items:flex-start !important; gap:12px !important; margin-bottom:22px !important; }
+  #categories .category-grid { grid-template-columns:1fr !important; gap:12px !important; }
+  #categories .brand-card { height:190px !important; min-height:190px !important; }
+}
