@@ -473,3 +473,98 @@
   #categories .category-card.brand-card,
   #categories .brand-card-product { transition: none !important; }
 }
+
+
+/* Refined custom pointer — desktop precision, quiet visual feedback */
+@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  body.has-nexora-cursor, body.has-nexora-cursor a, body.has-nexora-cursor button, body.has-nexora-cursor input, body.has-nexora-cursor select, body.has-nexora-cursor textarea { cursor: none !important; }
+  .nexora-cursor-ring,
+  .nexora-cursor-dot {
+    position: fixed; top: 0; left: 0; z-index: 2147483000;
+    pointer-events: none; border-radius: 50%;
+    will-change: transform, width, height, border-color, background-color;
+  }
+  .nexora-cursor-ring {
+    width: 34px; height: 34px;
+    border: 1px solid rgb(118 99 148 / 72%);
+    background: rgb(255 255 255 / 9%);
+    box-shadow: 0 2px 12px rgb(36 36 31 / 7%);
+    transition: width 220ms cubic-bezier(.2,.8,.2,1), height 220ms cubic-bezier(.2,.8,.2,1), border-color 220ms ease, background-color 220ms ease, opacity 180ms ease;
+  }
+  .nexora-cursor-dot {
+    width: 5px; height: 5px; background: #766394;
+    box-shadow: 0 0 0 3px rgb(255 255 255 / 70%);
+  }
+  .nexora-cursor-ring.is-interactive {
+    width: 48px; height: 48px;
+    border-color: rgb(118 99 148 / 95%);
+    background: rgb(118 99 148 / 9%);
+  }
+  .nexora-cursor-ring.is-pressed { width: 27px; height: 27px; }
+  .nexora-cursor-ring.is-hidden { opacity: 0; }
+}
+
+/* Storefront section surfaces — soft tonal shifts, no heavy blocks */
+#categories.section {
+  background:
+    radial-gradient(ellipse at 8% 12%, rgb(226 218 238 / 42%), transparent 38%),
+    linear-gradient(180deg, #fbfaf8 0%, #f4f1f6 100%);
+  border-top: 1px solid #eeebf0;
+  border-bottom: 1px solid #eeebf0;
+}
+.brand-product-showcase {
+  background:
+    radial-gradient(ellipse at 92% 8%, rgb(219 229 220 / 54%), transparent 34%),
+    linear-gradient(180deg, #f0f2ed 0%, #f7f5f1 100%);
+  border-bottom: 1px solid #e9e9e2;
+}
+.brand-product-row + .brand-product-row {
+  border-top: 1px solid rgb(107 112 100 / 12%);
+  padding-top: 28px;
+}
+.shop.section {
+  background:
+    radial-gradient(ellipse at 4% 10%, rgb(231 224 240 / 34%), transparent 32%),
+    linear-gradient(180deg, #fbfaf8 0%, #f2f0f5 100%);
+  border-top: 1px solid #ece9f0;
+}
+.shop .product-card {
+  background: rgb(255 255 255 / 88%);
+  border: 1px solid rgb(226 222 232 / 78%);
+  box-shadow: 0 5px 22px rgb(43 37 57 / 4%);
+}
+.shop .product-card:hover {
+  box-shadow: 0 15px 34px rgb(43 37 57 / 10%);
+}
+.editorial {
+  overflow: hidden;
+  border-radius: 3px;
+  background:
+    radial-gradient(ellipse at 90% 20%, rgb(222 214 236 / 58%), transparent 38%),
+    linear-gradient(120deg, #eeece5 0%, #e7e4ed 100%);
+}
+.editorial > div:last-child { background: transparent; }
+.newsletter {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 110%, rgb(224 216 238 / 58%), transparent 52%),
+    linear-gradient(180deg, #f8f6f2 0%, #eeebf2 100%);
+  border-top: 1px solid #eae6ef;
+}
+.newsletter::before,
+.newsletter::after {
+  content: ""; position: absolute; width: 210px; height: 210px;
+  border: 1px solid rgb(118 99 148 / 12%); border-radius: 50%;
+  pointer-events: none;
+}
+.newsletter::before { left: -110px; top: 18px; }
+.newsletter::after { right: -110px; bottom: -100px; }
+.newsletter > * { position: relative; z-index: 1; }
+@media (max-width: 760px) {
+  .brand-product-row + .brand-product-row { padding-top: 20px; }
+  .editorial { border-radius: 0; }
+}
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .nexora-cursor-ring, .nexora-cursor-dot { display: none !important; }
+}

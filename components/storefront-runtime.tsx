@@ -30,5 +30,53 @@ export default function StorefrontRuntime() {
     };
   }, []);
 
+  useEffect(() => {
+    if (window.location.pathname.startsWith("/admin") || window.matchMedia("(pointer: fine)").matches === false || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    document.body.classList.add("has-nexora-cursor");
+    const ring = document.createElement("div");
+    const dot = document.createElement("div");
+    ring.className = "nexora-cursor-ring";
+    dot.className = "nexora-cursor-dot";
+    ring.setAttribute("aria-hidden", "true");
+    dot.setAttribute("aria-hidden", "true");
+    document.body.append(ring, dot);
+    let x = window.innerWidth / 2, y = window.innerHeight / 2;
+    let tx = x, ty = y, raf = 0;
+    const render = () => {
+      x += (tx - x) * 0.18;
+      y += (ty - y) * 0.18;
+      ring.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
+      dot.style.transform = `translate3d(${tx}px, ${ty}px, 0) translate(-50%, -50%)`;
+      raf = requestAnimationFrame(render);
+    };
+    const move = (event: PointerEvent) => { tx = event.clientX; ty = event.clientY; };
+    const down = () => ring.classList.add("is-pressed");
+    const up = () => ring.classList.remove("is-pressed");
+    const over = (event: PointerEvent) => {
+      const target = event.target as HTMLElement | null;
+      ring.classList.toggle("is-interactive", !!target?.closest("a,button,[role='button'],input,select,textarea,label"));
+    };
+    const hide = () => ring.classList.add("is-hidden");
+    const show = () => ring.classList.remove("is-hidden");
+    window.addEventListener("pointermove", move, { passive: true });
+    window.addEventListener("pointerover", over, { passive: true });
+    window.addEventListener("pointerdown", down);
+    window.addEventListener("pointerup", up);
+    document.addEventListener("mouseleave", hide);
+    document.addEventListener("mouseenter", show);
+    raf = requestAnimationFrame(render);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerover", over);
+      window.removeEventListener("pointerdown", down);
+      window.removeEventListener("pointerup", up);
+      document.removeEventListener("mouseleave", hide);
+      document.removeEventListener("mouseenter", show);
+      ring.remove(); dot.remove();
+      document.body.classList.remove("has-nexora-cursor");
+    };
+  }, []);
+
   return null;
 }
