@@ -31,7 +31,8 @@ export default function StorefrontRuntime() {
   }, []);
 
   useEffect(() => {
-    if (window.matchMedia("(pointer: fine)").matches === false || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.location.pathname.startsWith("/admin") || window.matchMedia("(pointer: fine)").matches === false || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    document.body.classList.add("has-nexora-cursor");
     const ring = document.createElement("div");
     const dot = document.createElement("div");
     ring.className = "nexora-cursor-ring";
@@ -73,6 +74,7 @@ export default function StorefrontRuntime() {
       document.removeEventListener("mouseleave", hide);
       document.removeEventListener("mouseenter", show);
       ring.remove(); dot.remove();
+      document.body.classList.remove("has-nexora-cursor");
     };
   }, []);
 
