@@ -568,3 +568,52 @@
 @media (pointer: coarse), (prefers-reduced-motion: reduce) {
   .nexora-cursor-ring, .nexora-cursor-dot { display: none !important; }
 }
+
+
+/* Full-width storefront content alignment: keep section surfaces edge-to-edge
+   while allowing their inner content to use the available desktop canvas. */
+@media (min-width: 761px) {
+  .brand-product-showcase {
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+    padding-inline: 0;
+  }
+
+  .brand-product-row {
+    width: calc(100% - clamp(40px, 5.2vw, 104px));
+    max-width: 1760px;
+    box-sizing: border-box;
+  }
+
+  .brand-product-heading {
+    padding-inline: clamp(8px, 1.35vw, 24px);
+  }
+
+  #shop.section,
+  #shop .shop-page-heading,
+  #shop .shop-layout,
+  #shop .shop-results {
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+  }
+
+  #shop .shop-page-heading,
+  #shop .shop-layout {
+    min-width: 0;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1100px) {
+  .brand-product-row {
+    width: calc(100% - 40px);
+  }
+}
+
+@media (max-width: 760px) {
+  .brand-product-row {
+    width: 100%;
+    max-width: none;
+  }
+}
