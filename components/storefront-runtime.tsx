@@ -42,16 +42,14 @@ export default function StorefrontRuntime() {
     ring.setAttribute("aria-hidden", "true");
     dot.setAttribute("aria-hidden", "true");
     ripple.setAttribute("aria-hidden", "true");
-    document.body.append(ripple, ring, dot);
+    ring.append(dot);
+    document.body.append(ripple, ring);
     let x = window.innerWidth / 2, y = window.innerHeight / 2;
     let tx = x, ty = y, raf = 0;
     const render = () => {
       x += (tx - x) * 0.18;
       y += (ty - y) * 0.18;
       ring.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
-      // Keep the animated center dot locked to the lagging ring center.
-      // Its CSS scale/glow pulse animates in place; it never drifts outside the circle.
-      dot.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
       raf = requestAnimationFrame(render);
     };
     const move = (event: PointerEvent) => { tx = event.clientX; ty = event.clientY; };
@@ -91,7 +89,7 @@ export default function StorefrontRuntime() {
       window.removeEventListener("pointerup", up);
       document.removeEventListener("mouseleave", hide);
       document.removeEventListener("mouseenter", show);
-      ring.remove(); dot.remove(); ripple.remove();
+      ring.remove(); ripple.remove();
       document.body.classList.remove("has-nexora-cursor");
     };
   }, []);
