@@ -516,7 +516,9 @@
   }
   .nexora-cursor-ring::after { inset: -11px; }
   .nexora-cursor-dot {
+    position: absolute; top: 50%; left: 50%;
     width: 5px; height: 5px; background: #766394;
+    transform: translate(-50%, -50%);
     box-shadow: 0 0 0 3px rgb(255 255 255 / 70%);
     transition: transform 260ms cubic-bezier(.16,1,.3,1), background 220ms ease, box-shadow 220ms ease;
   }
@@ -564,7 +566,7 @@
   }
   .nexora-cursor-dot.is-pressed { animation: none; scale: .72; }
   .nexora-cursor-ring.is-pressed::before { opacity: 0; transform: scale(1.45); }
-  .nexora-cursor-dot.is-pressed { transform: translate3d(var(--cursor-press-x, 0),var(--cursor-press-y, 0),0) translate(-50%,-50%) scale(.55); }
+
   .nexora-cursor-ring.is-hidden,
   .nexora-cursor-dot.is-hidden { opacity: 0; }
   .nexora-cursor-ripple {
