@@ -525,6 +525,18 @@
     border-color: rgb(118 99 148 / 95%);
     background: rgb(118 99 148 / 10%);
     box-shadow: 0 8px 26px rgb(80 62 112 / 13%), inset 0 0 0 1px rgb(255 255 255 / 55%);
+    animation: nexora-cursor-core-breathe 2.4s cubic-bezier(.45,0,.25,1) infinite;
+  }
+  .nexora-cursor-dot.is-interactive {
+    animation: nexora-cursor-dot-breathe 1.35s cubic-bezier(.45,0,.25,1) infinite;
+  }
+  @keyframes nexora-cursor-core-breathe {
+    0%, 100% { scale: 1; box-shadow: 0 8px 26px rgb(80 62 112 / 13%), inset 0 0 0 1px rgb(255 255 255 / 55%); }
+    50% { scale: 1.075; box-shadow: 0 10px 30px rgb(80 62 112 / 19%), inset 0 0 0 1px rgb(255 255 255 / 72%); }
+  }
+  @keyframes nexora-cursor-dot-breathe {
+    0%, 100% { scale: 1; box-shadow: 0 0 0 3px rgb(255 255 255 / 70%), 0 0 0 5px rgb(118 99 148 / 10%); }
+    50% { scale: 1.42; box-shadow: 0 0 0 4px rgb(255 255 255 / 86%), 0 0 0 8px rgb(118 99 148 / 18%); }
   }
   .nexora-cursor-ring.is-interactive::before,
   .nexora-cursor-ring.is-interactive::after {
@@ -547,7 +559,10 @@
     width: 25px; height: 25px; border-radius: 50%;
     background: rgb(118 99 148 / 20%);
     box-shadow: 0 0 0 5px rgb(118 99 148 / 9%);
+    animation: none;
+    scale: .92;
   }
+  .nexora-cursor-dot.is-pressed { animation: none; scale: .72; }
   .nexora-cursor-ring.is-pressed::before { opacity: 0; transform: scale(1.45); }
   .nexora-cursor-dot.is-pressed { transform: translate3d(var(--cursor-press-x, 0),var(--cursor-press-y, 0),0) translate(-50%,-50%) scale(.55); }
   .nexora-cursor-ring.is-hidden,
