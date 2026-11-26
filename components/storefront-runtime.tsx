@@ -35,11 +35,14 @@ export default function StorefrontRuntime() {
     document.body.classList.add("has-nexora-cursor");
     const ring = document.createElement("div");
     const dot = document.createElement("div");
+    const ripple = document.createElement("div");
     ring.className = "nexora-cursor-ring";
     dot.className = "nexora-cursor-dot";
+    ripple.className = "nexora-cursor-ripple";
     ring.setAttribute("aria-hidden", "true");
     dot.setAttribute("aria-hidden", "true");
-    document.body.append(ring, dot);
+    ripple.setAttribute("aria-hidden", "true");
+    document.body.append(ripple, ring, dot);
     let x = window.innerWidth / 2, y = window.innerHeight / 2;
     let tx = x, ty = y, raf = 0;
     const render = () => {
@@ -50,7 +53,14 @@ export default function StorefrontRuntime() {
       raf = requestAnimationFrame(render);
     };
     const move = (event: PointerEvent) => { tx = event.clientX; ty = event.clientY; };
-    const down = () => ring.classList.add("is-pressed");
+    const down = (event: PointerEvent) => {
+      ring.classList.add("is-pressed");
+      ripple.style.left = `${event.clientX}px`;
+      ripple.style.top = `${event.clientY}px`;
+      ripple.classList.remove("is-active");
+      void ripple.offsetWidth;
+      ripple.classList.add("is-active");
+    };
     const up = () => ring.classList.remove("is-pressed");
     const over = (event: PointerEvent) => {
       const target = event.target as HTMLElement | null;
@@ -73,7 +83,7 @@ export default function StorefrontRuntime() {
       window.removeEventListener("pointerup", up);
       document.removeEventListener("mouseleave", hide);
       document.removeEventListener("mouseenter", show);
-      ring.remove(); dot.remove();
+      ring.remove(); dot.remove(); ripple.remove();
       document.body.classList.remove("has-nexora-cursor");
     };
   }, []);
