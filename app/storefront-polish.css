@@ -475,33 +475,83 @@
 }
 
 
-/* Refined custom pointer — desktop precision, quiet visual feedback */
+/* Premium custom pointer — soft magnetic hover + tactile click ripple */
 @media (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  body.has-nexora-cursor, body.has-nexora-cursor a, body.has-nexora-cursor button, body.has-nexora-cursor input, body.has-nexora-cursor select, body.has-nexora-cursor textarea { cursor: none !important; }
+  body.has-nexora-cursor,
+  body.has-nexora-cursor a,
+  body.has-nexora-cursor button,
+  body.has-nexora-cursor input,
+  body.has-nexora-cursor select,
+  body.has-nexora-cursor textarea { cursor: none !important; }
+
   .nexora-cursor-ring,
-  .nexora-cursor-dot {
-    position: fixed; top: 0; left: 0; z-index: 2147483000;
+  .nexora-cursor-dot,
+  .nexora-cursor-ripple {
+    position: fixed; top: 0; left: 0;
     pointer-events: none; border-radius: 50%;
-    will-change: transform, width, height, border-color, background-color;
   }
+  .nexora-cursor-ring,
+  .nexora-cursor-dot { z-index: 2147483000; }
   .nexora-cursor-ring {
     width: 34px; height: 34px;
     border: 1px solid rgb(118 99 148 / 72%);
     background: rgb(255 255 255 / 9%);
     box-shadow: 0 2px 12px rgb(36 36 31 / 7%);
-    transition: width 220ms cubic-bezier(.2,.8,.2,1), height 220ms cubic-bezier(.2,.8,.2,1), border-color 220ms ease, background-color 220ms ease, opacity 180ms ease;
+    will-change: transform, width, height, border-radius;
+    transition:
+      width 360ms cubic-bezier(.16,1,.3,1),
+      height 360ms cubic-bezier(.16,1,.3,1),
+      border-radius 360ms cubic-bezier(.16,1,.3,1),
+      border-color 240ms ease,
+      background-color 240ms ease,
+      box-shadow 300ms ease,
+      opacity 180ms ease;
   }
+  .nexora-cursor-ring::before,
+  .nexora-cursor-ring::after {
+    content: ""; position: absolute; inset: -6px;
+    border: 1px solid rgb(118 99 148 / 0%);
+    border-radius: inherit; opacity: 0; transform: scale(.78);
+    transition: transform 420ms cubic-bezier(.16,1,.3,1), opacity 240ms ease, border-color 240ms ease;
+  }
+  .nexora-cursor-ring::after { inset: -11px; transition-delay: 35ms; }
   .nexora-cursor-dot {
     width: 5px; height: 5px; background: #766394;
     box-shadow: 0 0 0 3px rgb(255 255 255 / 70%);
+    transition: transform 260ms cubic-bezier(.16,1,.3,1), background 220ms ease, box-shadow 220ms ease;
   }
   .nexora-cursor-ring.is-interactive {
-    width: 48px; height: 48px;
+    width: 50px; height: 50px; border-radius: 17px;
     border-color: rgb(118 99 148 / 95%);
-    background: rgb(118 99 148 / 9%);
+    background: rgb(118 99 148 / 10%);
+    box-shadow: 0 8px 26px rgb(80 62 112 / 13%), inset 0 0 0 1px rgb(255 255 255 / 55%);
   }
-  .nexora-cursor-ring.is-pressed { width: 27px; height: 27px; }
-  .nexora-cursor-ring.is-hidden { opacity: 0; }
+  .nexora-cursor-ring.is-interactive::before,
+  .nexora-cursor-ring.is-interactive::after {
+    opacity: 1; transform: scale(1);
+    border-color: rgb(118 99 148 / 28%);
+  }
+  .nexora-cursor-ring.is-interactive::after { border-color: rgb(118 99 148 / 13%); }
+  .nexora-cursor-ring.is-pressed {
+    width: 25px; height: 25px; border-radius: 50%;
+    background: rgb(118 99 148 / 20%);
+    box-shadow: 0 0 0 5px rgb(118 99 148 / 9%);
+  }
+  .nexora-cursor-ring.is-pressed::before { opacity: 0; transform: scale(1.45); }
+  .nexora-cursor-dot.is-pressed { transform: translate3d(var(--cursor-press-x, 0),var(--cursor-press-y, 0),0) translate(-50%,-50%) scale(.55); }
+  .nexora-cursor-ring.is-hidden,
+  .nexora-cursor-dot.is-hidden { opacity: 0; }
+  .nexora-cursor-ripple {
+    z-index: 2147482999; width: 8px; height: 8px;
+    border: 1px solid rgb(118 99 148 / 62%);
+    transform: translate(-50%,-50%) scale(.35);
+    opacity: 0;
+  }
+  .nexora-cursor-ripple.is-active { animation: nexora-cursor-ripple 620ms cubic-bezier(.16,1,.3,1) both; }
+  @keyframes nexora-cursor-ripple {
+    0% { opacity: .72; transform: translate(-50%,-50%) scale(.35); }
+    100% { opacity: 0; transform: translate(-50%,-50%) scale(5.5); }
+  }
 }
 
 /* Storefront section surfaces — soft tonal shifts, no heavy blocks */
