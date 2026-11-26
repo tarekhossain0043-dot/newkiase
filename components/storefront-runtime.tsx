@@ -49,7 +49,9 @@ export default function StorefrontRuntime() {
       x += (tx - x) * 0.18;
       y += (ty - y) * 0.18;
       ring.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
-      dot.style.transform = `translate3d(${tx}px, ${ty}px, 0) translate(-50%, -50%)`;
+      // Keep the animated center dot locked to the lagging ring center.
+      // Its CSS scale/glow pulse animates in place; it never drifts outside the circle.
+      dot.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
       raf = requestAnimationFrame(render);
     };
     const move = (event: PointerEvent) => { tx = event.clientX; ty = event.clientY; };
