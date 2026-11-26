@@ -55,16 +55,22 @@ export default function StorefrontRuntime() {
     const move = (event: PointerEvent) => { tx = event.clientX; ty = event.clientY; };
     const down = (event: PointerEvent) => {
       ring.classList.add("is-pressed");
+      dot.classList.add("is-pressed");
       ripple.style.left = `${event.clientX}px`;
       ripple.style.top = `${event.clientY}px`;
       ripple.classList.remove("is-active");
       void ripple.offsetWidth;
       ripple.classList.add("is-active");
     };
-    const up = () => ring.classList.remove("is-pressed");
+    const up = () => {
+      ring.classList.remove("is-pressed");
+      dot.classList.remove("is-pressed");
+    };
     const over = (event: PointerEvent) => {
       const target = event.target as HTMLElement | null;
-      ring.classList.toggle("is-interactive", !!target?.closest("a,button,[role='button'],input,select,textarea,label"));
+      const interactive = !!target?.closest("a,button,[role='button'],input,select,textarea,label");
+      ring.classList.toggle("is-interactive", interactive);
+      dot.classList.toggle("is-interactive", interactive);
     };
     const hide = () => ring.classList.add("is-hidden");
     const show = () => ring.classList.remove("is-hidden");
