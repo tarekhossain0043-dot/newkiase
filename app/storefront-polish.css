@@ -511,27 +511,38 @@
   .nexora-cursor-ring::after {
     content: ""; position: absolute; inset: -6px;
     border: 1px solid rgb(118 99 148 / 0%);
-    border-radius: inherit; opacity: 0; transform: scale(.78);
+    border-radius: 50%; opacity: 0; transform: scale(0);
     transition: transform 420ms cubic-bezier(.16,1,.3,1), opacity 240ms ease, border-color 240ms ease;
   }
-  .nexora-cursor-ring::after { inset: -11px; transition-delay: 35ms; }
+  .nexora-cursor-ring::after { inset: -11px; }
   .nexora-cursor-dot {
     width: 5px; height: 5px; background: #766394;
     box-shadow: 0 0 0 3px rgb(255 255 255 / 70%);
     transition: transform 260ms cubic-bezier(.16,1,.3,1), background 220ms ease, box-shadow 220ms ease;
   }
   .nexora-cursor-ring.is-interactive {
-    width: 50px; height: 50px; border-radius: 17px;
+    width: 50px; height: 50px; border-radius: 50%;
     border-color: rgb(118 99 148 / 95%);
     background: rgb(118 99 148 / 10%);
     box-shadow: 0 8px 26px rgb(80 62 112 / 13%), inset 0 0 0 1px rgb(255 255 255 / 55%);
   }
   .nexora-cursor-ring.is-interactive::before,
   .nexora-cursor-ring.is-interactive::after {
-    opacity: 1; transform: scale(1);
-    border-color: rgb(118 99 148 / 28%);
+    opacity: 0;
+    border-color: rgb(118 99 148 / 32%);
+    animation: nexora-cursor-orbit 1.8s cubic-bezier(.16,1,.3,1) infinite;
   }
-  .nexora-cursor-ring.is-interactive::after { border-color: rgb(118 99 148 / 13%); }
+  .nexora-cursor-ring.is-interactive::after {
+    border-color: rgb(118 99 148 / 19%);
+    animation-delay: .62s;
+    animation-duration: 2.1s;
+  }
+  @keyframes nexora-cursor-orbit {
+    0% { opacity: 0; transform: scale(0); }
+    18% { opacity: .9; }
+    72% { opacity: .32; }
+    100% { opacity: 0; transform: scale(1); }
+  }
   .nexora-cursor-ring.is-pressed {
     width: 25px; height: 25px; border-radius: 50%;
     background: rgb(118 99 148 / 20%);
