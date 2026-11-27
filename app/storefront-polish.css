@@ -646,3 +646,34 @@
 @media (pointer: coarse), (prefers-reduced-motion: reduce) {
   .nexora-cursor-ring, .nexora-cursor-dot { display: none !important; }
 }
+
+
+/* Full-bleed brand collections — align with the Our Brands section gutters */
+.brand-product-showcase {
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+.brand-product-row {
+  width: 100%;
+  max-width: none;
+  margin: 0 auto 42px;
+  padding-inline: clamp(20px, 5vw, 88px);
+  box-sizing: border-box;
+}
+.brand-product-heading {
+  width: 100%;
+  padding-inline: 0;
+  box-sizing: border-box;
+}
+.brand-auto-track {
+  width: 100%;
+  max-width: none;
+}
+@media (max-width: 760px) {
+  .brand-product-row {
+    padding-inline: 16px;
+    margin-bottom: 30px;
+  }
+  .brand-product-heading { padding-inline: 0; }
+}
