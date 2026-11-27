@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     const name = getText("name").trim().slice(0,70);
     const comment = getText("comment").trim().slice(0,1000);
     const rating = Number(getText("rating"));
-    const mediaFiles = isMultipart ? body.getAll("media").filter((item): item is File => item instanceof File && item.size > 0) : [];
+    const mediaFiles: File[] = isMultipart ? (body as FormData).getAll("media").filter((item: FormDataEntryValue): item is File => item instanceof File && item.size > 0) : [];
     if (!productId || !name || comment.length < 5 || !Number.isInteger(rating) || rating < 1 || rating > 5) {
       return NextResponse.json({ error: "Enter your name, a 5–1000 character review and a rating from 1 to 5." }, { status: 400 });
     }
