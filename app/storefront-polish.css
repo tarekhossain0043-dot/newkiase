@@ -677,3 +677,56 @@
   }
   .brand-product-heading { padding-inline: 0; }
 }
+
+
+/* Full-viewport brand collection rails: match the Our Brands section canvas. */
+.brand-product-showcase {
+  width: 100vw;
+  max-width: none;
+  margin-left: calc(50% - 50vw);
+  box-sizing: border-box;
+}
+.brand-product-row {
+  width: 100%;
+  max-width: none;
+  margin: 0 auto 42px;
+  padding-inline: clamp(18px, 3.7vw, 56px);
+  box-sizing: border-box;
+}
+.brand-product-heading,
+.brand-auto-track {
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+@media (max-width: 760px) {
+  .brand-product-showcase {
+    width: 100%;
+    margin-left: 0;
+  }
+  .brand-product-row {
+    padding-inline: 16px;
+    margin-bottom: 30px;
+  }
+}
+
+/* Cursor motion is strictly concentric: pulse/scale only, never horizontal drift. */
+@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .nexora-cursor-ring {
+    transform-origin: 50% 50%;
+    transition-property: width, height, border-radius, border-color, background-color, box-shadow, opacity;
+  }
+  .nexora-cursor-ring::before,
+  .nexora-cursor-ring::after {
+    transform-origin: 50% 50%;
+  }
+  .nexora-cursor-dot {
+    transform: translate(-50%, -50%);
+    transform-origin: 50% 50%;
+    transition-property: background, box-shadow;
+  }
+  .nexora-cursor-ring.is-interactive,
+  .nexora-cursor-dot.is-interactive {
+    translate: 0 0;
+  }
+}
