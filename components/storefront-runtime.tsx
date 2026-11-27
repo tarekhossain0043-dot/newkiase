@@ -47,8 +47,9 @@ export default function StorefrontRuntime() {
     let x = window.innerWidth / 2, y = window.innerHeight / 2;
     let tx = x, ty = y, raf = 0;
     const render = () => {
-      x += (tx - x) * 0.18;
-      y += (ty - y) * 0.18;
+      // Track the pointer directly: no easing lag or left/right trailing slide on hover.
+      x = tx;
+      y = ty;
       ring.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
       raf = requestAnimationFrame(render);
     };
