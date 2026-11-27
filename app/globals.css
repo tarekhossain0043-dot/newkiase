@@ -2629,3 +2629,15 @@ footer{background:#17191c}
 .mobile-live-panel{position:static;min-width:0;max-height:45vh;box-shadow:none;border-radius:10px;background:#fff}
 @media(max-width:760px){.search-combobox .search-live-panel{min-width:min(88vw,420px);left:auto;right:0}.mobile-search-results .search-panel-heading{padding-left:4px}.mobile-search-results .search-result-item{padding:8px 4px}.mobile-search-results .search-result-item img{width:44px;height:44px}}
 @media(prefers-reduced-motion:reduce){.search-result-highlight{transition:none}}
+
+
+/* Customer review media attachments */
+.review-media-label .review-media-hint{font-size:10px;font-weight:400;color:var(--muted);line-height:1.5}
+.review-form .review-media-input{padding:10px;background:#faf9f6;border:1px dashed #c9c2d5;cursor:pointer}
+.review-media-previews,.review-media-gallery{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0 18px}
+.review-media-preview{width:86px;height:86px;position:relative;border-radius:8px;overflow:hidden;background:#eeece5}
+.review-media-preview img,.review-media-preview video{width:100%;height:100%;object-fit:cover}
+.review-media-preview button{position:absolute;top:4px;right:4px;width:23px;height:23px;border:0;border-radius:50%;background:#fff;color:#25231f;display:grid;place-items:center;box-shadow:0 2px 8px #0002}
+.review-media-gallery img,.review-media-gallery video{display:block;width:120px;height:120px;object-fit:cover;border-radius:8px;background:#eeece5}
+.review-media-gallery a{display:block}
+@media(max-width:760px){.review-media-gallery img,.review-media-gallery video{width:96px;height:96px}.review-media-preview{width:72px;height:72px}}
