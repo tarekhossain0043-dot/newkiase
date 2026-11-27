@@ -44,16 +44,15 @@ export default function StorefrontRuntime() {
     ripple.setAttribute("aria-hidden", "true");
     ring.append(dot);
     document.body.append(ripple, ring);
-    let x = window.innerWidth / 2, y = window.innerHeight / 2;
-    let tx = x, ty = y, raf = 0;
-    const render = () => {
-      // Track the pointer directly: no easing lag or left/right trailing slide on hover.
-      x = tx;
-      y = ty;
-      ring.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
-      raf = requestAnimationFrame(render);
+    // Position the cursor directly on pointer events. No RAF easing, magnetic offset,
+    // or horizontal drift: hover animations only scale around the exact center.
+    ring.style.left = `${window.innerWidth / 2}px`;
+    ring.style.top = `${window.innerHeight / 2}px`;
+    ring.style.transform = "translate(-50%, -50%)";
+    const move = (event: PointerEvent) => {
+      ring.style.left = `${event.clientX}px`;
+      ring.style.top = `${event.clientY}px`;
     };
-    const move = (event: PointerEvent) => { tx = event.clientX; ty = event.clientY; };
     const down = (event: PointerEvent) => {
       ring.classList.add("is-pressed");
       dot.classList.add("is-pressed");
@@ -81,9 +80,7 @@ export default function StorefrontRuntime() {
     window.addEventListener("pointerup", up);
     document.addEventListener("mouseleave", hide);
     document.addEventListener("mouseenter", show);
-    raf = requestAnimationFrame(render);
     return () => {
-      cancelAnimationFrame(raf);
       window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerover", over);
       window.removeEventListener("pointerdown", down);
